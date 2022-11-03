@@ -41,6 +41,7 @@ bool Preamp::begin()
   m_controller.setAtt_RF(m_attenuation.att_rf, ATT_FRONT_RIGHT_SOFT_STEP);
   m_controller.setAtt_SUB(m_attenuation.att_sub, ATT_SUB_SOFT_STEP);
   m_controller.setMix_Gain_Eff(MIXING_TO_LEFT_FRONT, MIXING_TO_RIGHT_FRONT, MIXING_ENABLE,  SUBWOOFER_ENABLE, GAIN_EFFECT_HPF);
+  m_controller.setSpektor(SA_FILTER_Q_FACTOR, RESET_MODE, SA_SOURCE, SA_RUN, RESET, CLOCK_SOURCE, COUPLING_MODE);
 
   return true;
 }

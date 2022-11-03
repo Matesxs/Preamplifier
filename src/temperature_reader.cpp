@@ -18,10 +18,10 @@ void temperature_task(void*)
   {
     temp_sensors.requestTemperatures();
 
-    vTaskDelay(pdMS_TO_TICKS(10));
+    vTaskDelay(pdMS_TO_TICKS(2));
     temps_store[0] = temp_sensors.getTempCByIndex(0);
 
-    vTaskDelay(pdMS_TO_TICKS(10));
+    vTaskDelay(pdMS_TO_TICKS(2));
     temps_store[1] = temp_sensors.getTempCByIndex(1);
 
     // DEBUG("Temps: %.3lf %.3lf\n", temps_store.temp1, temps_store.temp2);

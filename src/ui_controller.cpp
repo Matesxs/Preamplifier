@@ -602,6 +602,8 @@ void handle_controll(InputType type)
       else
         active_screen = Screens::MAIN_SCREEN;
 
+      display.setPowerSave(false);
+
       DEBUG("Screen saver: OFF\n");
       break;
 
@@ -622,7 +624,10 @@ void check_timeouts()
     if (current_stopwatch_time > SCREEN_SAVER_TIMEOUT_S)
     {
       active_screen = Screens::SCREEN_SAVER;
+      display.setPowerSave(true);
+      
       restartStopwatch();
+
       DEBUG("Screen saver: ON\n");
     }
 #endif

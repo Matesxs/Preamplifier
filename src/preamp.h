@@ -44,11 +44,20 @@
 #define ATT_SUB_SOFT_STEP 0         // 0 - 1 (on, off)
 
 // Mixing / gain effect
-#define MIXING_TO_LEFT_FRONT 1      // 0 - 1 (on, off)
-#define MIXING_TO_RIGHT_FRONT 1     // 0 - 1 (on, off)
-#define MIXING_ENABLE 1             // 0 - 1 (on, off)
+#define MIXING_TO_LEFT_FRONT 0      // 0 - 1 (on, off)
+#define MIXING_TO_RIGHT_FRONT 0     // 0 - 1 (on, off)
+#define MIXING_ENABLE 0             // 0 - 1 (on, off)
 #define SUBWOOFER_ENABLE 0          // 0 - 1 (on, off)
 #define GAIN_EFFECT_HPF 0           // 0 - 10 (4, 6 ... 22, 0)
+
+// Spectrum analyzer / clock source / AC mode
+#define SA_FILTER_Q_FACTOR 0        // 0 - 1 (3.5, 1.75)
+#define RESET_MODE 0                // 0 - 1 (IIC, Auto)
+#define SA_SOURCE 0                 // 0 - 1 (Bass, In Gain)
+#define SA_RUN 0                    // 0 - 1 (on, off)
+#define RESET 0                     // 0 - 1 (on, off)
+#define CLOCK_SOURCE 0              // 0 - 1 (internal, external)
+#define COUPLING_MODE 0             // 0 - 3 (DC Coupling (without HPF), AC coupling after In gain, DC Coupling (with HPF), AC coupling after Bass)
 
 class Preamp
 {
