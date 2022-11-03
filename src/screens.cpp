@@ -95,7 +95,7 @@ void loudness_center_freq_settings()
 {
   int loudnessCenterFreqIndex = preamp.getLoudnessCenterFreq();
   String stringToDisplay = loudnessCenterFreqIndex != 0 ? String(String(loudness_center_freqs[loudnessCenterFreqIndex]) + String("Hz")) : String("Flat");
-  draw_value_selector("Center Frequency", stringToDisplay.c_str());
+  draw_centered_desc_and_val("Center Frequency", stringToDisplay.c_str());
 }
 
 void loudness_high_boost_settings()
@@ -130,12 +130,12 @@ void bass_filter_menu_selector(int index)
 
 void bass_qfactor_settings()
 {
-  draw_value_selector("Q Factor", String(bass_q_factors[preamp.getBassQFactor()]).c_str());
+  draw_centered_desc_and_val("Q Factor", String(bass_q_factors[preamp.getBassQFactor()]).c_str());
 }
 
 void bass_center_freq_settings()
 {
-  draw_value_selector("Center Frequency", String(String(bass_center_freqs[preamp.getBassCenterFreq()]) + String("Hz")).c_str());
+  draw_centered_desc_and_val("Center Frequency", String(String(bass_center_freqs[preamp.getBassCenterFreq()]) + String("Hz")).c_str());
 }
 
 void bass_dc_settings()
@@ -150,12 +150,12 @@ void middle_filter_menu_selector(int index)
 
 void middle_qfactor_settings()
 {
-  draw_value_selector("Q Factor", String(middle_q_factors[preamp.getMiddleQFactor()]).c_str());
+  draw_centered_desc_and_val("Q Factor", String(middle_q_factors[preamp.getMiddleQFactor()]).c_str());
 }
 
 void middle_center_freq_settings()
 {
-  draw_value_selector("Center Frequency", String(String(middle_center_freqs[preamp.getMiddleCenterFreq()]) + String("Hz")).c_str());
+  draw_centered_desc_and_val("Center Frequency", String(String(middle_center_freqs[preamp.getMiddleCenterFreq()]) + String("Hz")).c_str());
 }
 
 void treble_filter_menu_selector(int index)
@@ -165,7 +165,7 @@ void treble_filter_menu_selector(int index)
 
 void treble_center_freq_settings()
 {
-  draw_value_selector("Center Frequency", String(String(treble_center_freqs[preamp.getTrebleCenterFreq()]) + String("kHz")).c_str());
+  draw_centered_desc_and_val("Center Frequency", String(String(treble_center_freqs[preamp.getTrebleCenterFreq()]) + String("kHz")).c_str());
 }
 
 void sub_menu_selector(int index)
@@ -177,10 +177,10 @@ void sub_cutoff_freq_settings()
 {
   int freqIndex = preamp.getSubCutoffFreq();
   String descString = freqIndex == 0 ? String("Flat") : String(String(sub_cutoff_freqs[freqIndex]) + String("Hz"));
-  draw_value_selector("Cutoff Frequency", descString.c_str());
+  draw_centered_desc_and_val("Cutoff Frequency", descString.c_str());
 }
 
 void factory_reset_configmation()
 {
-  draw_value_selector("Factory Reset", "Are you sure?");
+  draw_centered_desc_and_val("Factory Reset", "Are you sure?");
 }

@@ -96,7 +96,7 @@ void draw_menu(const char* description, const char* item)
   display_draw_center(item, display.getDisplayHeight() - display.getMaxCharHeight() - 5);
 }
 
-void draw_value_selector(const char* description, const char* val)
+void draw_centered_desc_and_val(const char* description, const char* val)
 {
   display.setFont(u8g2_font_ncenB14_tr);
 
@@ -111,5 +111,5 @@ void draw_value_selector(const char* description, const char* val)
 void draw_bool_selector(const char* description, bool val)
 {
   const char *valString = val ? "On" : "Off";
-  draw_value_selector(description, valString);
+  draw_centered_desc_and_val(description, valString);
 }
