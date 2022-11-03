@@ -2,20 +2,13 @@
 #include <Wire.h>
 #include "TDA7419.h"
 
-TDA7419::TDA7419()
-{
-  m_wire = &Wire;
-	m_wire->begin();
-}
-
-TDA7419::TDA7419(TwoWire* wire)
-{
-  m_wire = wire;
+TDA7419::TDA7419(){
+	Wire.begin();
 }
 
 void TDA7419::setInput(int input, int gain, int auto_z){
   switch (input) {
-        case 0: input = 0b00000000;break;
+    case 0: input = 0b00000000;break;
 	case 1: input = 0b00000001;break;
 	case 2: input = 0b00000010;break;
 	case 3: input = 0b00000011;break;
@@ -118,15 +111,10 @@ void TDA7419::setSoft(int s_mute, int pin, int s_m_time, int s_time, int clock){
         int soft_mute_gen = s_mute + pin + s_m_time + s_time + clock;
         writeWire(TDA7419_SOFT, soft_mute_gen);
 }
-  
-  
 
-void TDA7419::setVolume(int volume, int soft0)
-{
-  if(volume < -79) volume = -80;
-  if(volume >= 0){} // 0 ... +15 dB
+void TDA7419::setVolume(int volume, int soft0){
+   if(volume >= 0){} // 0 ... +15 dB
   if(volume < 0){volume = abs(volume) + 16;} //-79 ... 0 dB
-
   switch (soft0) {
   case  0:  soft0 = 0b00000000;break;
   case  1:  soft0 = 0b10000000;break;
@@ -135,8 +123,8 @@ void TDA7419::setVolume(int volume, int soft0)
 }
 
 void TDA7419::setAtt_LF(int left_f, int soft1){
-  if(left_f < -79) left_f = -80;
-  if(left_f >= 0){} // 0 ... +15 dB
+//  left_f = 95 - left_f;
+   if(left_f >= 0){} // 0 ... +15 dB
   if(left_f < 0){left_f = abs(left_f) + 16;} //-79 ... 0 dB
 
   switch (soft1) {
@@ -147,8 +135,8 @@ void TDA7419::setAtt_LF(int left_f, int soft1){
 }
 
 void TDA7419::setAtt_RF(int right_f, int soft2){
-  if(right_f < -79) right_f = -80;
-  if(right_f >= 0){} // 0 ... +15 dB
+//  right_f = 95 - right_f;
+   if(right_f >= 0){} // 0 ... +15 dB
   if(right_f < 0){right_f = abs(right_f) + 16;} //-79 ... 0 dB
 
   switch (soft2) {
@@ -159,8 +147,8 @@ void TDA7419::setAtt_RF(int right_f, int soft2){
 }
 
 void TDA7419::setAtt_LT(int left_t, int soft3){
-  if(left_t < -79) left_t = -80;
-  if(left_t >= 0){} // 0 ... +15 dB
+//  left_t = 95 - left_t;
+   if(left_t >= 0){} // 0 ... +15 dB
   if(left_t < 0){left_t = abs(left_t) + 16;} //-79 ... 0 dB
 
   switch (soft3) {
@@ -171,8 +159,8 @@ void TDA7419::setAtt_LT(int left_t, int soft3){
 }
 
 void TDA7419::setAtt_RT(int right_t, int soft4){
-  if(right_t < -79) right_t = -80;
-  if(right_t >= 0){} // 0 ... +15 dB
+//  right_t = 95 - right_t;
+   if(right_t >= 0){} // 0 ... +15 dB
   if(right_t < 0){right_t = abs(right_t) + 16;} //-79 ... 0 dB
 
   switch (soft4) {
@@ -183,8 +171,8 @@ void TDA7419::setAtt_RT(int right_t, int soft4){
 }
 
 void TDA7419::setAtt_SUB(int subwoofer, int soft5){
-  if(subwoofer < -79) subwoofer = -80;
-  if(subwoofer >= 0){} // 0 ... +15 dB
+//  subwoofer = 95 - subwoofer;
+   if(subwoofer >= 0){} // 0 ... +15 dB
   if(subwoofer < 0){subwoofer = abs(subwoofer) + 16;} //-79 ... 0 dB
 
   switch (soft5) {
@@ -195,8 +183,8 @@ void TDA7419::setAtt_SUB(int subwoofer, int soft5){
 }
 
 void TDA7419::setAtt_Mix(int mixing, int soft6){
-  if(mixing < -79) mixing = -80;
-  if(mixing >= 0){} // 0 ... +15 dB
+//  mixing = 95 - mixing;
+   if(mixing >= 0){} // 0 ... +15 dB
   if(mixing < 0){mixing = abs(mixing) + 16;} //-79 ... 0 dB
 
   switch (soft6) {
@@ -493,8 +481,10 @@ void TDA7419::setSpektor(int spek_q, int spek_res, int spek_an_s, int spek_an_r,
 }
 
 void TDA7419::writeWire(char a, char b){
-  m_wire->beginTransmission(TDA7419_address);
-  m_wire->write(a);
-  m_wire->write(b);
-  m_wire->endTransmission();
+  Wire.beginTransmission(TDA7419_address);
+  Wire.write (a);
+  Wire.write (b);
+  uint8_t error = Wire.endTransmission();
+  if (error != 0)
+    Serial.printf("TDA7419 Command error: %d\n", error);
 }

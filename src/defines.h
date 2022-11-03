@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 #include "pins.h"
+#include "settings.h"
 
 typedef enum
 {
@@ -32,6 +33,7 @@ typedef enum
   /////////
 
   // MAIN MENU
+  INPUT_SWITCH,
   LOUDNESS,
   ATTENUATION,
   INPUT_GAIN,
@@ -40,7 +42,7 @@ typedef enum
   TREBLE_FILTER,
   SUBWOOFER,
   SOFT_STEPS,
-  SOFT_MUTE,
+  SOFT_MUTE_TIME,
   FACT_RESET,
   /////////////
 
@@ -87,19 +89,24 @@ typedef enum
   SOFT_STEPS_RIGHT,
   SOFT_STEPS_SUB,
   /////////////
-
-  // Soft Mute
-  SOFT_MUTE_ENABLE,
-  SOFT_MUTE_TIME,
-  ////////////
 } Screens;
 
 #ifdef POT4
-const String main_menu_names[] = { "Loudness", "Attenuations", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute", "Reset" };
-const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE, Screens::FACT_RESET};
+  #ifndef INPUT_SWITCH_IN_MENU
+  const String main_menu_names[] = { "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
+  const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+  #else
+  const String main_menu_names[] = { "Input", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
+  const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+  #endif
 #else
-const String main_menu_names[] = { "Loudness", "Attenuations", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute", "Reset" };
-const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE, Screens::FACT_RESET};
+  #ifndef INPUT_SWITCH_IN_MENU
+  const String main_menu_names[] = { "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
+  const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+  #else
+  const String main_menu_names[] = { "Input", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
+  const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+  #endif
 #endif
 const int number_of_menu_items = sizeof(main_menu_names) / sizeof(main_menu_names[0]);
 
@@ -139,7 +146,4 @@ const int number_of_soft_steps_menu_items = sizeof(soft_steps_menu_names) / size
 const Screens soft_steps_menu_screens[] = { Screens::SOFT_STEPS_TIME, Screens::SOFT_STEPS_VOLUME, Screens::SOFT_STEPS_LOUDNESS, Screens::SOFT_STEPS_MIDDLE, Screens::SOFT_STEPS_BASS, Screens::SOFT_STEPS_LEFT, Screens::SOFT_STEPS_RIGHT, Screens::SOFT_STEPS_SUB };
 const float soft_step_times[] = {0.160f, 0.321f, 0.642f, 1.28f, 2.56f, 5.12f, 10.24f, 20.48f};
 
-const String soft_mute_menu_names[] = { "Enable", "Time" };
-const int number_of_soft_mute_menu_items = sizeof(soft_mute_menu_names) / sizeof(soft_mute_menu_names[0]);
-const Screens soft_mute_menu_screens[] = { Screens::SOFT_MUTE_ENABLE, Screens::SOFT_MUTE_TIME };
 const float soft_mute_times[] = { 0.48f, 0.96f, 123.0f };

@@ -6,6 +6,8 @@ void main_screen();
 void mute_screen();
 
 void main_menu_selector(int index);
+
+void input_selector();
 void loudness_menu_selector(int index);
 void attenuations_menu_selector(int index);
 void bass_filter_menu_selector(int index);
@@ -13,7 +15,6 @@ void middle_filter_menu_selector(int index);
 void treble_filter_menu_selector(int index);
 void sub_menu_selector(int index);
 void soft_steps_menu_selector(int index);
-void soft_mute_menu_selector(int index);
 void factory_reset_configmation();
 
 void input_gain_settings();
@@ -50,5 +51,4 @@ void soft_steps_left_att_settings();
 void soft_steps_right_att_settings();
 void soft_steps_sub_att_settings();
 
-void soft_mute_enable_settings();
 void soft_mute_time_settings();

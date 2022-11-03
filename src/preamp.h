@@ -6,7 +6,7 @@
 #include "TDA7419.h"
 
 // Input
-#define INPUT_AUTO_Z 0              // 0 - 1 (on, off)
+#define INPUT_AUTO_Z 1              // 0 - 1 (on, off)
 
 // Input2
 #define INPUT2_SOURCE 5             // 0 - 5 (5 - mute)
@@ -14,26 +14,26 @@
 #define REAR_SPEAKER_SOURCE 0       // 0 - 1 (main, secondary)
 
 // Soft-mute/clock generator
-#define PIN_INFLUENCE_FOR_MUTE 0    // 0 - 1 (PIN and IIC, IIC)
+#define PIN_INFLUENCE_FOR_MUTE 1    // 0 - 1 (PIN and IIC, IIC)
 #define CLOCK_FAST_MODE 0           // 0 - 1 (on, off)
 
 // Treble Filter
-#define REFERENCE_OUTPUT_SELECT 0   // 0 - 1 (external, internal)
+#define REFERENCE_OUTPUT_SELECT 1   // 0 - 1 (external, internal)
 
 // Freq settings
 #define SMOOTHING_FILTER 0          // 0 - 1 (on, off)
 
 // Mixing / gain effect
-#define MIXING_TO_LEFT_FRONT 0      // 0 - 1 (on, off)
-#define MIXING_TO_RIGHT_FRONT 0     // 0 - 1 (on, off)
-#define MIXING_ENABLE 0             // 0 - 1 (on, off)
+#define MIXING_TO_LEFT_FRONT 1      // 0 - 1 (on, off)
+#define MIXING_TO_RIGHT_FRONT 1     // 0 - 1 (on, off)
+#define MIXING_ENABLE 1             // 0 - 1 (on, off)
 #define SUBWOOFER_ENABLE 0          // 0 - 1 (on, off)
 #define GAIN_EFFECT_HPF 0           // 0 - 10 (4, 6 ... 22, 0)
 
 // Spectrum analyzer / clock source / AC mode
 #define SA_FILTER_Q_FACTOR 0        // 0 - 1 (3.5, 1.75)
 #define SA_RESET_MODE 0             // 0 - 1 (IIC, Auto)
-#define SA_SOURCE 0                 // 0 - 1 (Bass, In Gain)
+#define SA_SOURCE 1                 // 0 - 1 (Bass, In Gain)
 #define SA_RUN 0                    // 0 - 1 (on, off)
 #define SA_RESET 0                  // 0 - 1 (on, off)
 #define SA_CLOCK_SOURCE 0           // 0 - 1 (internal, external)
@@ -51,14 +51,14 @@ class Preamp
   {
     int attenuation = 0;            // 0 - 15
     int center_freq = 0;            // 0 - 3 (flat, 400Hz, 800Hz, 2400Hz)
-    int high_boost = 0;             // 0 - 1 (on, off)
-    int soft_step = 0;              // 0 - 1 (on, off)
+    int high_boost = 1;             // 0 - 1 (on, off)
+    int soft_step = 1;              // 0 - 1 (on, off)
   } LoudnessSettings;
 
   typedef struct
   {
     int volume = 0;                 // -80 - 15
-    int soft_step = 0;              // 0 - 1 (on, off)
+    int soft_step = 1;              // 0 - 1 (on, off)
   } VolumeSettings;
 
   typedef struct
@@ -71,14 +71,14 @@ class Preamp
   {
     int gain = 0;                   // -15 - 15
     int qfactor = 0;                // 0 - 3 (0.5, 0.75, 1, 1.25)
-    int soft_step = 0;              // 0 - 1 (on, off)
+    int soft_step = 1;              // 0 - 1 (on, off)
   } MiddleFilter;
 
   typedef struct
   {
     int gain = 0;                   // -15 - 15
     int qfactor = 0;                // 0 - 3 (1, 1.25, 1.5, 2)
-    int soft_step = 0;              // 0 - 1 (on, off)
+    int soft_step = 1;              // 0 - 1 (on, off)
   } BassFilter;
 
   typedef struct
@@ -86,22 +86,22 @@ class Preamp
     int sub_cutoff_freq = 0;        // 0 - 3 (flat, 80Hz, 120Hz, 160Hz)
     int mid_center_freq = 0;        // 0 - 3 (500Hz, 1000Hz, 1500Hz, 2500Hz)
     int bass_center_freq = 0;       // 0 - 3 (60Hz, 80Hz, 100Hz, 200Hz)
-    int bass_dc = 0;                // 0 - 1 (on, off)
+    int bass_dc = 1;                // 0 - 1 (on, off)
   } FreqSettings;
 
   typedef struct
   {
     int att_lf = 0;                 // -80 - 15
-    int soft_steps_lf = 0;          // 0 - 1 (on, off)
+    int soft_steps_lf = 1;          // 0 - 1 (on, off)
     int att_rf = 0;                 // -80 - 15
-    int soft_steps_rf = 0;          // 0 - 1 (on, off)
+    int soft_steps_rf = 1;          // 0 - 1 (on, off)
     int att_sub = 0;                // -80 - 15
-    int soft_steps_sub = 0;         // 0 - 1 (on, off)
+    int soft_steps_sub = 1;         // 0 - 1 (on, off)
   } Attenuation;
 
   typedef struct
   {
-    int soft_mute = 0;              // 0 - 1 (on, off)
+    int soft_mute = 1;              // 0 - 1 (on, off)
     int soft_mute_time = 0;         // 0 - 2 (0.48ms, 0.96ms, 123ms)
     int soft_step_time = 0;         // 0 - 7 (0.160ms, 0.321ms, 0.642ms, 1.28ms, 2.56ms, 5.12ms, 10.24ms, 20.48ms)
   } SoftMuteStep;
@@ -114,6 +114,8 @@ public:
   int getInput() const { return m_inputSettings.selected_input; }
   void setInput(int val);
   void rotateInput();
+  void incInput();
+  void decInput();
 
   int getGain() const { return m_inputSettings.gain; }
   void setInputGain(int val);
@@ -238,7 +240,6 @@ public:
   void incSoftStepsTime();
   void decSoftStepsTime();
 
-  int getSoftMute() const { return !m_softMuteStep.soft_mute; }
   void setSoftMute(int val);
   void switchSoftMute();
 

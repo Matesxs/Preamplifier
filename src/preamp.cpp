@@ -14,8 +14,14 @@ Preamp::Preamp()
 
 bool Preamp::begin()
 {
-  Wire.begin();
-  m_controller = TDA7419(&Wire);
+  Wire.beginTransmission(TDA7419_address);
+  uint8_t error = Wire.endTransmission();
+  if (error != 0)
+    DEBUG("Failed to connect to TDA7419: %d\n", error);
+  else
+    DEBUG("TDA7419 connected\n");
+
+  m_controller = TDA7419();
 
   m_inputSettingsEEPROM.begin("pa_in", false);
   m_loudnessSettingsEEPROM.begin("pa_loud", false);
@@ -32,7 +38,7 @@ bool Preamp::begin()
   m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, INPUT_AUTO_Z);
   m_controller.setInput2(INPUT2_SOURCE, INPUT2_GAIN, REAR_SPEAKER_SOURCE);
   m_controller.setVolume(m_volumeSettings.volume, m_volumeSettings.soft_step);
-  m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
+  m_controller.setSoft(1, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
   m_controller.setFilter_Treble(m_trebleFilter.gain, m_trebleFilter.center_freq, REFERENCE_OUTPUT_SELECT);
   m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, m_middleFilter.soft_step);
   m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, m_bassFilter.soft_step);
@@ -65,6 +71,24 @@ void Preamp::rotateInput()
   if (m_inputSettings.selected_input > 3)
     m_inputSettings.selected_input = 0;
 
+  m_inputSettingsChanged = true;
+  m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, INPUT_AUTO_Z);
+}
+
+void Preamp::incInput()
+{
+  if (m_inputSettings.selected_input >= 3) return;
+
+  m_inputSettings.selected_input++;
+  m_inputSettingsChanged = true;
+  m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, INPUT_AUTO_Z);
+}
+
+void Preamp::decInput()
+{
+  if (m_inputSettings.selected_input <= 0) return;
+
+  m_inputSettings.selected_input--;
   m_inputSettingsChanged = true;
   m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, INPUT_AUTO_Z);
 }
@@ -683,14 +707,12 @@ void Preamp::setSoftMute(int val)
   if (val == !m_softMuteStep.soft_mute) return;
 
   m_softMuteStep.soft_mute = !val;
-  m_softMuteStepChanged = true;
   m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
 }
 
 void Preamp::switchSoftMute()
 {
   m_softMuteStep.soft_mute = !m_softMuteStep.soft_mute;
-  m_softMuteStepChanged = true;
   m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
 }
 
@@ -725,12 +747,12 @@ void Preamp::decSoftMuteTime()
 
 void Preamp::mute() 
 { 
-  m_controller.setInput(5, 0, INPUT_AUTO_Z); 
+  setSoftMute(1);
 }
 
 void Preamp::unmute()
 {
-  m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, INPUT_AUTO_Z);
+  setSoftMute(0);
 }
 
 void Preamp::saveInputSettings()
@@ -811,7 +833,6 @@ void Preamp::saveAttenuationSettings()
 
 void Preamp::saveSoftMuteStep()
 {
-  m_softMuteStepEEPROM.putInt("sm", m_softMuteStep.soft_mute);
   m_softMuteStepEEPROM.putInt("smt", m_softMuteStep.soft_mute_time);
   m_softMuteStepEEPROM.putInt("sst", m_softMuteStep.soft_step_time);
 
@@ -878,7 +899,6 @@ void Preamp::loadFromMemory()
   m_attenuation.soft_steps_rf = m_attenuationEEPROM.getInt("ss_rf", m_attenuation.soft_steps_rf);
   m_attenuation.soft_steps_sub = m_attenuationEEPROM.getInt("ss_sub", m_attenuation.soft_steps_sub);
 
-  m_softMuteStep.soft_mute = m_softMuteStepEEPROM.getInt("sm", m_softMuteStep.soft_mute);
   m_softMuteStep.soft_mute_time = m_softMuteStepEEPROM.getInt("smt", m_softMuteStep.soft_mute_time);
   m_softMuteStep.soft_step_time = m_softMuteStepEEPROM.getInt("sst", m_softMuteStep.soft_step_time);
 }

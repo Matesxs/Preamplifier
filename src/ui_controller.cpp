@@ -21,7 +21,6 @@ volatile int middle_filter_menu_index = 0;
 volatile int treble_filter_menu_index = 0;
 volatile int sub_menu_index = 0;
 volatile int soft_steps_menu_index = 0;
-volatile int soft_mute_menu_index = 0;
 
 void handle_controll(InputType type)
 {
@@ -158,8 +157,6 @@ void handle_controll(InputType type)
           sub_menu_index = 0;
         else if (active_screen == Screens::SOFT_STEPS)
           soft_steps_menu_index = 0;
-        else if (active_screen == Screens::SOFT_MUTE)
-          soft_mute_menu_index = 0;
         /////////////////////////////
       }
       else if (type == InputType::ENC_CW)
@@ -171,6 +168,22 @@ void handle_controll(InputType type)
       {
         if (main_menu_index > 0) main_menu_index--;
         else main_menu_index = (number_of_menu_items - 1);
+      }
+      break;
+
+    case Screens::INPUT_SWITCH:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+      {
+        DEBUG("Returning to main menu\n");
+        active_screen = Screens::MAIN_MENU;
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        preamp.incInput();
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        preamp.decInput();
       }
       break;
 
@@ -335,26 +348,21 @@ void handle_controll(InputType type)
       }
       break;
 
-    case Screens::SOFT_MUTE:
-      if (type == InputType::ENC_LPUSH)
+    case Screens::SOFT_MUTE_TIME:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        DEBUG("Returning to main menu\n");
+        // DEBUG("Leaving soft mute time submenu\n");
         active_screen = Screens::MAIN_MENU;
-      }
-      else if (type == InputType::ENC_PUSH)
-      {
-        active_screen = soft_mute_menu_screens[soft_mute_menu_index];
-        DEBUG("Soft mute menu selected submenu: %d\n", active_screen);
       }
       else if (type == InputType::ENC_CW)
       {
-        if (soft_mute_menu_index < (number_of_soft_mute_menu_items - 1)) soft_mute_menu_index++;
-        else soft_mute_menu_index = 0;
+        // DEBUG("Increasing soft mute time\n");
+        preamp.incSoftMuteTime();
       }
       else if (type == InputType::ENC_CCW)
       {
-        if (soft_mute_menu_index > 0) soft_mute_menu_index--;
-        else soft_mute_menu_index = (number_of_soft_mute_menu_items - 1);
+        // DEBUG("Decreasing soft mute time\n");
+        preamp.decSoftMuteTime();
       }
       break;
 
@@ -737,37 +745,6 @@ void handle_controll(InputType type)
       }
       break;
 
-    case Screens::SOFT_MUTE_ENABLE:
-      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
-      {
-        // DEBUG("Leaving soft mute enable submenu\n");
-        active_screen = Screens::SOFT_MUTE;
-      }
-      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
-      {
-        // DEBUG("Switching soft mute enable\n");
-        preamp.switchSoftMute();
-      }
-      break;
-
-    case Screens::SOFT_MUTE_TIME:
-      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
-      {
-        // DEBUG("Leaving soft mute time submenu\n");
-        active_screen = Screens::SOFT_MUTE;
-      }
-      else if (type == InputType::ENC_CW)
-      {
-        // DEBUG("Increasing soft mute time\n");
-        preamp.incSoftMuteTime();
-      }
-      else if (type == InputType::ENC_CCW)
-      {
-        // DEBUG("Decreasing soft mute time\n");
-        preamp.decSoftMuteTime();
-      }
-      break;
-
     case Screens::MASTER_VOLUME:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
@@ -914,6 +891,10 @@ void handle_display()
   //////////////////
 
   // Main Menu
+  case Screens::INPUT_SWITCH:
+    input_selector();
+    break;
+
   case Screens::LOUDNESS:
     loudness_menu_selector(laudness_menu_index);
     break;
@@ -946,8 +927,8 @@ void handle_display()
     soft_steps_menu_selector(soft_steps_menu_index);
     break;
 
-  case Screens::SOFT_MUTE:
-    soft_mute_menu_selector(soft_mute_menu_index);
+  case Screens::SOFT_MUTE_TIME:
+    soft_mute_time_settings();
     break;
 
   case Screens::FACT_RESET:
@@ -1054,16 +1035,6 @@ void handle_display()
     soft_steps_sub_att_settings();
     break;
   //////////////////
-
-  // Soft mute menu
-  case Screens::SOFT_MUTE_ENABLE:
-    soft_mute_enable_settings();
-    break;
-
-  case Screens::SOFT_MUTE_TIME:
-    soft_mute_time_settings();
-    break;
-  /////////////////
 
   // Popups
   case Screens::MASTER_VOLUME:

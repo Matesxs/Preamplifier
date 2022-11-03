@@ -81,6 +81,14 @@ void bass_gain_settings()
   draw_amount_selector("Bass Gain", preamp.getBassGain(), -15, 15);
 }
 
+void input_selector()
+{
+  int inputIndex = preamp.getInput() + 1;
+
+  String inputString = (inputIndex != 4 ? String(inputIndex) : "BT");
+  draw_centered_desc_and_val("Input", inputString.c_str());
+}
+
 void loudness_menu_selector(int index)
 {
   draw_menu("Loudness", loudness_menu_names[index].c_str());
@@ -110,17 +118,17 @@ void attenuations_menu_selector(int index)
 
 void attenuation_left_settings()
 {
-  draw_amount_selector("Left Attenuation", preamp.getLeftAttenuation(), -80, 15);
+  draw_amount_selector("Left", preamp.getLeftAttenuation(), -80, 15);
 }
 
 void attenuation_right_setting()
 {
-  draw_amount_selector("Right Attenuation", preamp.getRightAttenuation(), -80, 15);
+  draw_amount_selector("Right", preamp.getRightAttenuation(), -80, 15);
 }
 
 void attenuation_sub_setting()
 {
-  draw_amount_selector("Sub Attenuation", preamp.getSubAttenuation(), -80, 15);
+  draw_amount_selector("Sub", preamp.getSubAttenuation(), -80, 15);
 }
 
 void bass_filter_menu_selector(int index)
@@ -223,16 +231,6 @@ void soft_steps_right_att_settings()
 void soft_steps_sub_att_settings()
 {
   draw_bool_selector("SS Att Sub", preamp.getSubSoftSteps());
-}
-
-void soft_mute_menu_selector(int index)
-{
-  draw_menu("Soft Mute", soft_mute_menu_names[index].c_str());
-}
-
-void soft_mute_enable_settings()
-{
-  draw_bool_selector("Soft Mute", preamp.getSoftMute());
 }
 
 void soft_mute_time_settings()
