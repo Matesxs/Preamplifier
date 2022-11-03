@@ -41,7 +41,7 @@ bool Preamp::begin()
   m_controller.setAtt_RF(m_attenuation.att_rf, ATT_FRONT_RIGHT_SOFT_STEP);
   m_controller.setAtt_SUB(m_attenuation.att_sub, ATT_SUB_SOFT_STEP);
   m_controller.setMix_Gain_Eff(MIXING_TO_LEFT_FRONT, MIXING_TO_RIGHT_FRONT, MIXING_ENABLE,  SUBWOOFER_ENABLE, GAIN_EFFECT_HPF);
-  m_controller.setSpektor(SA_FILTER_Q_FACTOR, RESET_MODE, SA_SOURCE, SA_RUN, RESET, CLOCK_SOURCE, COUPLING_MODE);
+  m_controller.setSpektor(SA_FILTER_Q_FACTOR, SA_RESET_MODE, SA_SOURCE, SA_RUN, SA_RESET, SA_CLOCK_SOURCE, SA_COUPLING_MODE);
 
   return true;
 }
@@ -633,4 +633,16 @@ void Preamp::loadFromMemory()
   m_attenuation.att_lf = m_attenuationEEPROM.getInt("att_lf", m_attenuation.att_lf);
   m_attenuation.att_rf = m_attenuationEEPROM.getInt("att_rf", m_attenuation.att_rf);
   m_attenuation.att_sub = m_attenuationEEPROM.getInt("att_sub", m_attenuation.att_sub);
+}
+
+void Preamp::resetMemory()
+{
+  m_inputSettingsEEPROM.clear();
+  m_loudnessSettingsEEPROM.clear();
+  m_volumeSettingsEEPROM.clear();
+  m_trebleFilterEEPROM.clear();
+  m_middleFilterEEPROM.clear();
+  m_bassFilterEEPROM.clear();
+  m_freqSettingsEEPROM.clear();
+  m_attenuationEEPROM.clear();
 }

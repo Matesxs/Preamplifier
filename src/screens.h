@@ -12,6 +12,7 @@ void bass_filter_menu_selector(int index);
 void middle_filter_menu_selector(int index);
 void treble_filter_menu_selector(int index);
 void sub_menu_selector(int index);
+void factory_reset_configmation();
 
 void input_gain_settings();
 void master_volume_settings();

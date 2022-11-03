@@ -39,6 +39,7 @@ typedef enum
   MIDDLE_FILTER,
   TREBLE_FILTER,
   SUBWOOFER,
+  FACT_RESET,
   /////////////
 
   // Loudness menu
@@ -75,11 +76,11 @@ typedef enum
 } Screens;
 
 #ifdef POT4
-const String main_menu_names[] = { "Loudness", "Attenuations", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer" };
-const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER};
+const String main_menu_names[] = { "Loudness", "Attenuations", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Reset" };
+const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::FACT_RESET};
 #else
-const String main_menu_names[] = { "Loudness", "Attenuations", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer" };
-const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER};
+const String main_menu_names[] = { "Loudness", "Attenuations", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Reset" };
+const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::FACT_RESET};
 #endif
 const int number_of_menu_items = sizeof(main_menu_names) / sizeof(main_menu_names[0]);
 

@@ -179,3 +179,8 @@ void sub_cutoff_freq_settings()
   String descString = freqIndex == 0 ? String("Flat") : String(String(sub_cutoff_freqs[freqIndex]) + String("Hz"));
   draw_value_selector("Cutoff Frequency", descString.c_str());
 }
+
+void factory_reset_configmation()
+{
+  draw_value_selector("Factory Reset", "Are you sure?");
+}

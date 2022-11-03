@@ -52,12 +52,12 @@
 
 // Spectrum analyzer / clock source / AC mode
 #define SA_FILTER_Q_FACTOR 0        // 0 - 1 (3.5, 1.75)
-#define RESET_MODE 0                // 0 - 1 (IIC, Auto)
+#define SA_RESET_MODE 0             // 0 - 1 (IIC, Auto)
 #define SA_SOURCE 0                 // 0 - 1 (Bass, In Gain)
 #define SA_RUN 0                    // 0 - 1 (on, off)
-#define RESET 0                     // 0 - 1 (on, off)
-#define CLOCK_SOURCE 0              // 0 - 1 (internal, external)
-#define COUPLING_MODE 0             // 0 - 3 (DC Coupling (without HPF), AC coupling after In gain, DC Coupling (with HPF), AC coupling after Bass)
+#define SA_RESET 0                  // 0 - 1 (on, off)
+#define SA_CLOCK_SOURCE 0           // 0 - 1 (internal, external)
+#define SA_COUPLING_MODE 0          // 0 - 3 (DC Coupling (without HPF), AC coupling after In gain, DC Coupling (with HPF), AC coupling after Bass)
 
 class Preamp
 {
@@ -225,6 +225,7 @@ public:
   void saveAttenuationSettings();
   void saveChanged();
   void loadFromMemory();
+  void resetMemory();
 
 private:
   InputSettings m_inputSettings;

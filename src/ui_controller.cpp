@@ -306,6 +306,21 @@ void handle_controll(InputType type)
       }
       break;
 
+    case Screens::FACT_RESET:
+      if (type == InputType::ENC_PUSH)
+      {
+        DEBUG("Factory reset\n");
+        preamp.resetMemory();
+        vTaskDelay(pdMS_TO_TICKS(50));
+        ESP.restart();
+      }
+      else if (type == InputType::ENC_LPUSH)
+      {
+        DEBUG("Returning to main menu\n");
+        active_screen = Screens::MAIN_MENU;
+      }
+      break;
+
     case Screens::LOUDNESS_ATT:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
@@ -720,6 +735,10 @@ void handle_display()
 
   case Screens::SUBWOOFER:
     sub_menu_selector(sub_menu_index);
+    break;
+
+  case Screens::FACT_RESET:
+    factory_reset_configmation();
     break;
   ////////////
 
