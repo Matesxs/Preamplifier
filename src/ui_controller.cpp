@@ -20,6 +20,7 @@ volatile int bass_filter_menu_index = 0;
 volatile int middle_filter_menu_index = 0;
 volatile int treble_filter_menu_index = 0;
 volatile int sub_menu_index = 0;
+volatile int soft_steps_menu_index = 0;
 
 void handle_controll(InputType type)
 {
@@ -154,6 +155,8 @@ void handle_controll(InputType type)
           treble_filter_menu_index = 0;
         else if (active_screen == Screens::SUBWOOFER)
           sub_menu_index = 0;
+        else if (active_screen == Screens::SOFT_STEPS)
+          soft_steps_menu_index = 0;
         /////////////////////////////
       }
       else if (type == InputType::ENC_CW)
@@ -306,6 +309,29 @@ void handle_controll(InputType type)
       }
       break;
 
+    case Screens::SOFT_STEPS:
+      if (type == InputType::ENC_LPUSH)
+      {
+        DEBUG("Returning to main menu\n");
+        active_screen = Screens::MAIN_MENU;
+      }
+      else if (type == InputType::ENC_PUSH)
+      {
+        active_screen = soft_steps_menu_screens[soft_steps_menu_index];
+        DEBUG("Soft steps menu selected submenu: %d\n", active_screen);
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        if (soft_steps_menu_index < (number_of_soft_steps_menu_items - 1)) soft_steps_menu_index++;
+        else soft_steps_menu_index = 0;
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        if (soft_steps_menu_index > 0) soft_steps_menu_index--;
+        else soft_steps_menu_index = (number_of_soft_steps_menu_items - 1);
+      }
+      break;
+
     case Screens::FACT_RESET:
       if (type == InputType::ENC_PUSH)
       {
@@ -367,6 +393,19 @@ void handle_controll(InputType type)
       {
         // DEBUG("Switching loudness high boost\n");
         preamp.switchLoudnessHighBoost();
+      }
+      break;
+
+    case Screens::LOUDNESS_SOFT_STEP:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+      {
+        // DEBUG("Leaving loudness soft step submenu\n");
+        active_screen = Screens::LOUDNESS;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        // DEBUG("Switching soft steps loudness\n");
+        preamp.switchLoudnessSoftStep();
       }
       break;
 
@@ -563,6 +602,115 @@ void handle_controll(InputType type)
       }
       break;
 
+    case Screens::SOFT_STEPS_TIME:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+      {
+        // DEBUG("Leaving soft steps time submenu\n");
+        active_screen = Screens::SOFT_STEPS;
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        // DEBUG("Increasing soft steps time\n");
+        preamp.incSoftStepsTime();
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        // DEBUG("Decreasing soft steps time\n");
+        preamp.decSoftStepsTime();
+      }
+      break;
+
+    case Screens::SOFT_STEPS_VOLUME:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+      {
+        // DEBUG("Leaving soft steps volume submenu\n");
+        active_screen = Screens::SOFT_STEPS;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        // DEBUG("Switching soft steps volume\n");
+        preamp.switchVolumeSoftStep();
+      }
+      break;
+
+    case Screens::SOFT_STEPS_LOUDNESS:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+      {
+        // DEBUG("Leaving soft steps loudness submenu\n");
+        active_screen = Screens::SOFT_STEPS;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        // DEBUG("Switching soft steps loudness\n");
+        preamp.switchLoudnessSoftStep();
+      }
+      break;
+
+    case Screens::SOFT_STEPS_MIDDLE:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+      {
+        // DEBUG("Leaving soft steps middle submenu\n");
+        active_screen = Screens::SOFT_STEPS;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        // DEBUG("Switching soft steps middle\n");
+        preamp.switchMiddleSoftStep();
+      }
+      break;
+
+    case Screens::SOFT_STEPS_BASS:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+      {
+        // DEBUG("Leaving soft steps bass submenu\n");
+        active_screen = Screens::SOFT_STEPS;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        // DEBUG("Switching soft steps bass\n");
+        preamp.switchBassSoftStep();
+      }
+      break;
+
+    case Screens::SOFT_STEPS_LEFT:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+      {
+        // DEBUG("Leaving soft steps left att submenu\n");
+        active_screen = Screens::SOFT_STEPS;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        // DEBUG("Switching soft steps left att\n");
+        preamp.switchLeftSoftSteps();
+      }
+      break;
+
+    case Screens::SOFT_STEPS_RIGHT:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+      {
+        // DEBUG("Leaving soft steps right att submenu\n");
+        active_screen = Screens::SOFT_STEPS;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        // DEBUG("Switching soft steps right att\n");
+        preamp.switchRightSoftSteps();
+      }
+      break;
+
+    case Screens::SOFT_STEPS_SUB:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+      {
+        // DEBUG("Leaving soft steps sub att submenu\n");
+        active_screen = Screens::SOFT_STEPS;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        // DEBUG("Switching soft steps sub att\n");
+        preamp.switchSubSoftSteps();
+      }
+      break;
+
     case Screens::MASTER_VOLUME:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
@@ -737,6 +885,10 @@ void handle_display()
     sub_menu_selector(sub_menu_index);
     break;
 
+  case Screens::SOFT_STEPS:
+    soft_steps_menu_selector(soft_steps_menu_index);
+    break;
+
   case Screens::FACT_RESET:
     factory_reset_configmation();
     break;
@@ -806,6 +958,41 @@ void handle_display()
     sub_cutoff_freq_settings();
     break;
   /////////////////
+
+  // Soft steps menu
+  case Screens::SOFT_STEPS_TIME:
+    soft_steps_time_settings();
+    break;
+
+  case Screens::SOFT_STEPS_VOLUME:
+    soft_steps_volume_settings();
+    break;
+
+  case Screens::LOUDNESS_SOFT_STEP:
+  case Screens::SOFT_STEPS_LOUDNESS:
+    soft_steps_loudness_settings();
+    break;
+
+  case Screens::SOFT_STEPS_MIDDLE:
+    soft_steps_middle_settings();
+    break;
+
+  case Screens::SOFT_STEPS_BASS:
+    soft_steps_bass_settings();
+    break;
+
+  case Screens::SOFT_STEPS_LEFT:
+    soft_steps_left_att_settings();
+    break;
+
+  case Screens::SOFT_STEPS_RIGHT:
+    soft_steps_right_att_settings();
+    break;
+
+  case Screens::SOFT_STEPS_SUB:
+    soft_steps_sub_att_settings();
+    break;
+  //////////////////
 
   // Popups
   case Screens::MASTER_VOLUME:

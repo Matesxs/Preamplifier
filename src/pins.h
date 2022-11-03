@@ -22,7 +22,6 @@
 #define POT1 32
 #define POT2 33
 #define POT3 13
-
 #define POT4 35
 
 #ifndef POT4

@@ -25,21 +25,22 @@ bool Preamp::begin()
   m_bassFilterEEPROM.begin("pa_bf", false);
   m_freqSettingsEEPROM.begin("pa_fs", false);
   m_attenuationEEPROM.begin("pa_a", false);
+  m_softMuteStepEEPROM.begin("pa_sms", false);
 
   loadFromMemory();
 
   m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, INPUT_AUTO_Z);
   m_controller.setInput2(INPUT2_SOURCE, INPUT2_GAIN, REAR_SPEAKER_SOURCE);
-  m_controller.setVolume(m_volumeSettings.volume, VOLUME_SOFT_STEP);
-  m_controller.setSoft(SOFT_MUTE, PIN_INFLUENCE_FOR_MUTE, SOFT_MUTE_TIME, SOFT_STEP_TIME, CLOCK_FAST_MODE);
+  m_controller.setVolume(m_volumeSettings.volume, m_volumeSettings.soft_step);
+  m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
   m_controller.setFilter_Treble(m_trebleFilter.gain, m_trebleFilter.center_freq, REFERENCE_OUTPUT_SELECT);
-  m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, MIDDLE_SOFT_STEP);
-  m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, BASS_SOFT_STEP);
+  m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, m_middleFilter.soft_step);
+  m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, m_bassFilter.soft_step);
   m_controller.setSub_M_B(m_freqSettings.sub_cutoff_freq, m_freqSettings.mid_center_freq, m_freqSettings.bass_center_freq, m_freqSettings.bass_dc, SMOOTHING_FILTER);
-  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, LAUDNESS_SOFT_STEP);
-  m_controller.setAtt_LF(m_attenuation.att_lf, ATT_FRONT_LEFT_SOFT_STEP);
-  m_controller.setAtt_RF(m_attenuation.att_rf, ATT_FRONT_RIGHT_SOFT_STEP);
-  m_controller.setAtt_SUB(m_attenuation.att_sub, ATT_SUB_SOFT_STEP);
+  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+  m_controller.setAtt_LF(m_attenuation.att_lf, m_attenuation.soft_steps_lf);
+  m_controller.setAtt_RF(m_attenuation.att_rf, m_attenuation.soft_steps_rf);
+  m_controller.setAtt_SUB(m_attenuation.att_sub, m_attenuation.soft_steps_sub);
   m_controller.setMix_Gain_Eff(MIXING_TO_LEFT_FRONT, MIXING_TO_RIGHT_FRONT, MIXING_ENABLE,  SUBWOOFER_ENABLE, GAIN_EFFECT_HPF);
   m_controller.setSpektor(SA_FILTER_Q_FACTOR, SA_RESET_MODE, SA_SOURCE, SA_RUN, SA_RESET, SA_CLOCK_SOURCE, SA_COUPLING_MODE);
 
@@ -111,7 +112,7 @@ void Preamp::setVolume(int val)
 
   m_volumeSettings.volume = val;
   m_volumeSettingsChanged = true;
-  m_controller.setVolume(m_volumeSettings.volume, VOLUME_SOFT_STEP);
+  m_controller.setVolume(m_volumeSettings.volume, m_volumeSettings.soft_step);
 }
 
 void Preamp::incVolume()
@@ -120,7 +121,7 @@ void Preamp::incVolume()
   
   m_volumeSettings.volume++;
   m_volumeSettingsChanged = true;
-  m_controller.setVolume(m_volumeSettings.volume, VOLUME_SOFT_STEP);
+  m_controller.setVolume(m_volumeSettings.volume, m_volumeSettings.soft_step);
 }
 
 void Preamp::decVolume()
@@ -129,7 +130,25 @@ void Preamp::decVolume()
   
   m_volumeSettings.volume--;
   m_volumeSettingsChanged = true;
-  m_controller.setVolume(m_volumeSettings.volume, VOLUME_SOFT_STEP);
+  m_controller.setVolume(m_volumeSettings.volume, m_volumeSettings.soft_step);
+}
+
+void Preamp::setVolumeSoftStep(int val)
+{
+  if (val < 0) val = 0;
+  if (val > 1) val = 1;
+  if (val == !m_volumeSettings.soft_step) return;
+
+  m_volumeSettings.soft_step = !val;
+  m_volumeSettingsChanged = true;
+  m_controller.setVolume(m_volumeSettings.volume, m_volumeSettings.soft_step);
+}
+
+void Preamp::switchVolumeSoftStep()
+{
+  m_volumeSettings.soft_step = !m_volumeSettings.soft_step;
+  m_volumeSettingsChanged = true;
+  m_controller.setVolume(m_volumeSettings.volume, m_volumeSettings.soft_step);
 }
 
 void Preamp::setTrebleGain(int val)
@@ -180,7 +199,7 @@ void Preamp::setMiddleGain(int val)
 
   m_middleFilter.gain = val;
   // m_middleFilterChanged = true;
-  m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, MIDDLE_SOFT_STEP);
+  m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, m_middleFilter.soft_step);
 }
 
 void Preamp::setMiddleQFactor(int val)
@@ -191,7 +210,7 @@ void Preamp::setMiddleQFactor(int val)
 
   m_middleFilter.qfactor = val;
   m_middleFilterChanged = true;
-  m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, MIDDLE_SOFT_STEP);
+  m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, m_middleFilter.soft_step);
 }
 
 void Preamp::incMiddleQFactor()
@@ -200,7 +219,7 @@ void Preamp::incMiddleQFactor()
 
   m_middleFilter.qfactor++;
   m_middleFilterChanged = true;
-  m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, MIDDLE_SOFT_STEP);
+  m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, m_middleFilter.soft_step);
 }
 
 void Preamp::decMiddleQFactor()
@@ -209,7 +228,25 @@ void Preamp::decMiddleQFactor()
 
   m_middleFilter.qfactor--;
   m_middleFilterChanged = true;
-  m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, MIDDLE_SOFT_STEP);
+  m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, m_middleFilter.soft_step);
+}
+
+void Preamp::setMiddleSoftStep(int val)
+{
+  if (val < 0) val = 0;
+  if (val > 1) val = 1;
+  if (val == !m_middleFilter.soft_step) return;
+
+  m_middleFilter.soft_step = !val;
+  m_middleFilterChanged = true;
+  m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, m_middleFilter.soft_step);
+}
+
+void Preamp::switchMiddleSoftStep()
+{
+  m_middleFilter.soft_step = !m_middleFilter.soft_step;
+  m_middleFilterChanged = true;
+  m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, m_middleFilter.soft_step);
 }
 
 void Preamp::setBassGain(int val)
@@ -220,7 +257,7 @@ void Preamp::setBassGain(int val)
 
   m_bassFilter.gain = val;
   // m_bassFilterChanged = true;
-  m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, BASS_SOFT_STEP);
+  m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, m_bassFilter.soft_step);
 }
 
 void Preamp::setBassQFactor(int val)
@@ -231,7 +268,7 @@ void Preamp::setBassQFactor(int val)
 
   m_bassFilter.qfactor = val;
   m_bassFilterChanged = true;
-  m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, BASS_SOFT_STEP);
+  m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, m_bassFilter.soft_step);
 }
 
 void Preamp::incBassQFactor()
@@ -240,7 +277,7 @@ void Preamp::incBassQFactor()
 
   m_bassFilter.qfactor++;
   m_bassFilterChanged = true;
-  m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, BASS_SOFT_STEP);
+  m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, m_bassFilter.soft_step);
 }
 
 void Preamp::decBassQFactor()
@@ -249,7 +286,25 @@ void Preamp::decBassQFactor()
 
   m_bassFilter.qfactor--;
   m_bassFilterChanged = true;
-  m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, BASS_SOFT_STEP);
+  m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, m_bassFilter.soft_step);
+}
+
+void Preamp::setBassSoftStep(int val)
+{
+  if (val < 0) val = 0;
+  if (val > 1) val = 1;
+  if (val == !m_bassFilter.soft_step) return;
+
+  m_bassFilter.soft_step = !val;
+  m_bassFilterChanged = true;
+  m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, m_bassFilter.soft_step);
+}
+
+void Preamp::switchBassSoftStep()
+{
+  m_bassFilter.soft_step = !m_bassFilter.soft_step;
+  m_bassFilterChanged = true;
+  m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, m_bassFilter.soft_step);
 }
 
 void Preamp::setLoudnessAttenuation(int val)
@@ -260,7 +315,7 @@ void Preamp::setLoudnessAttenuation(int val)
 
   m_loudnessSettings.attenuation = val;
   m_loudnessSettingsChanged = true;
-  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, LAUDNESS_SOFT_STEP);
+  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
 }
 
 void Preamp::incLoudnessAttenuation()
@@ -269,7 +324,7 @@ void Preamp::incLoudnessAttenuation()
 
   m_loudnessSettings.attenuation++;
   m_loudnessSettingsChanged = true;
-  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, LAUDNESS_SOFT_STEP);
+  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
 }
 
 void Preamp::decLoudnessAttenuation()
@@ -278,7 +333,7 @@ void Preamp::decLoudnessAttenuation()
 
   m_loudnessSettings.attenuation--;
   m_loudnessSettingsChanged = true;
-  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, LAUDNESS_SOFT_STEP);
+  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
 }
 
 void Preamp::setLoudnessCenterFreq(int val)
@@ -289,7 +344,7 @@ void Preamp::setLoudnessCenterFreq(int val)
 
   m_loudnessSettings.center_freq = val;
   m_loudnessSettingsChanged = true;
-  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, LAUDNESS_SOFT_STEP);
+  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
 }
 
 void Preamp::incLoudnessCenterFreq()
@@ -298,7 +353,7 @@ void Preamp::incLoudnessCenterFreq()
 
   m_loudnessSettings.center_freq++;
   m_loudnessSettingsChanged = true;
-  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, LAUDNESS_SOFT_STEP);
+  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
 }
 
 void Preamp::decLoudnessCenterFreq()
@@ -307,7 +362,7 @@ void Preamp::decLoudnessCenterFreq()
 
   m_loudnessSettings.center_freq--;
   m_loudnessSettingsChanged = true;
-  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, LAUDNESS_SOFT_STEP);
+  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
 }
 
 void Preamp::setLoudnessHighBoost(int val)
@@ -318,14 +373,32 @@ void Preamp::setLoudnessHighBoost(int val)
 
   m_loudnessSettings.high_boost = !val;
   m_loudnessSettingsChanged = true;
-  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, LAUDNESS_SOFT_STEP);
+  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
 }
 
 void Preamp::switchLoudnessHighBoost()
 {
   m_loudnessSettings.high_boost = !m_loudnessSettings.high_boost;
   m_loudnessSettingsChanged = true;
-  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, LAUDNESS_SOFT_STEP);
+  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+}
+
+void Preamp::setLoudnessSoftStep(int val)
+{
+  if (val < 0) val = 0;
+  if (val > 1) val = 1;
+  if (val == !m_loudnessSettings.soft_step) return;
+
+  m_loudnessSettings.soft_step = !val;
+  m_loudnessSettingsChanged = true;
+  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+}
+
+void Preamp::switchLoudnessSoftStep()
+{
+  m_loudnessSettings.soft_step = !m_loudnessSettings.soft_step;
+  m_loudnessSettingsChanged = true;
+  m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
 }
 
 void Preamp::setBassCenterFreq(int val)
@@ -441,7 +514,7 @@ void Preamp::setLeftAttenuation(int val)
 
   m_attenuation.att_lf = val;
   m_attenuationChanged = true;
-  m_controller.setAtt_LF(m_attenuation.att_lf, ATT_FRONT_LEFT_SOFT_STEP);
+  m_controller.setAtt_LF(m_attenuation.att_lf, m_attenuation.soft_steps_lf);
 }
 
 void Preamp::incLeftAttenuation()
@@ -450,7 +523,7 @@ void Preamp::incLeftAttenuation()
 
   m_attenuation.att_lf++;
   m_attenuationChanged = true;
-  m_controller.setAtt_LF(m_attenuation.att_lf, ATT_FRONT_LEFT_SOFT_STEP);
+  m_controller.setAtt_LF(m_attenuation.att_lf, m_attenuation.soft_steps_lf);
 }
 
 void Preamp::decLeftAttenuation()
@@ -459,7 +532,7 @@ void Preamp::decLeftAttenuation()
 
   m_attenuation.att_lf--;
   m_attenuationChanged = true;
-  m_controller.setAtt_LF(m_attenuation.att_lf, ATT_FRONT_LEFT_SOFT_STEP);
+  m_controller.setAtt_LF(m_attenuation.att_lf, m_attenuation.soft_steps_lf);
 }
 
 void Preamp::setRightAttenuation(int val)
@@ -470,7 +543,7 @@ void Preamp::setRightAttenuation(int val)
 
   m_attenuation.att_rf = val;
   m_attenuationChanged = true;
-  m_controller.setAtt_RF(m_attenuation.att_rf, ATT_FRONT_RIGHT_SOFT_STEP);
+  m_controller.setAtt_RF(m_attenuation.att_rf, m_attenuation.soft_steps_rf);
 }
 
 void Preamp::incRightAttenuation()
@@ -479,7 +552,7 @@ void Preamp::incRightAttenuation()
 
   m_attenuation.att_rf++;
   m_attenuationChanged = true;
-  m_controller.setAtt_RF(m_attenuation.att_rf, ATT_FRONT_RIGHT_SOFT_STEP);
+  m_controller.setAtt_RF(m_attenuation.att_rf, m_attenuation.soft_steps_rf);
 }
 
 void Preamp::decRightAttenuation()
@@ -488,7 +561,7 @@ void Preamp::decRightAttenuation()
 
   m_attenuation.att_rf--;
   m_attenuationChanged = true;
-  m_controller.setAtt_RF(m_attenuation.att_rf, ATT_FRONT_RIGHT_SOFT_STEP);
+  m_controller.setAtt_RF(m_attenuation.att_rf, m_attenuation.soft_steps_rf);
 }
 
 void Preamp::setSubAttenuation(int val)
@@ -499,7 +572,7 @@ void Preamp::setSubAttenuation(int val)
 
   m_attenuation.att_sub = val;
   m_attenuationChanged = true;
-  m_controller.setAtt_SUB(m_attenuation.att_sub, ATT_SUB_SOFT_STEP);
+  m_controller.setAtt_SUB(m_attenuation.att_sub, m_attenuation.soft_steps_sub);
 }
 
 void Preamp::incSubAttenuation()
@@ -508,7 +581,7 @@ void Preamp::incSubAttenuation()
 
   m_attenuation.att_sub++;
   m_attenuationChanged = true;
-  m_controller.setAtt_SUB(m_attenuation.att_sub, ATT_SUB_SOFT_STEP);
+  m_controller.setAtt_SUB(m_attenuation.att_sub, m_attenuation.soft_steps_sub);
 }
 
 void Preamp::decSubAttenuation()
@@ -517,7 +590,90 @@ void Preamp::decSubAttenuation()
 
   m_attenuation.att_sub--;
   m_attenuationChanged = true;
-  m_controller.setAtt_SUB(m_attenuation.att_sub, ATT_SUB_SOFT_STEP);
+  m_controller.setAtt_SUB(m_attenuation.att_sub, m_attenuation.soft_steps_sub);
+}
+
+void Preamp::setLeftSoftSteps(int val)
+{
+  if (val < 0) val = 0;
+  if (val > 1) val = 1;
+  if (val == !m_attenuation.soft_steps_lf) return;
+
+  m_attenuation.soft_steps_lf = !val;
+  m_attenuationChanged = true;
+  m_controller.setAtt_LF(m_attenuation.att_lf, m_attenuation.soft_steps_lf);
+}
+
+void Preamp::switchLeftSoftSteps()
+{
+  m_attenuation.soft_steps_lf = !m_attenuation.soft_steps_lf;
+  m_attenuationChanged = true;
+  m_controller.setAtt_LF(m_attenuation.att_lf, m_attenuation.soft_steps_lf);
+}
+
+void Preamp::setRightSoftSteps(int val)
+{
+  if (val < 0) val = 0;
+  if (val > 1) val = 1;
+  if (val == !m_attenuation.soft_steps_rf) return;
+
+  m_attenuation.soft_steps_rf = !val;
+  m_attenuationChanged = true;
+  m_controller.setAtt_RF(m_attenuation.att_rf, m_attenuation.soft_steps_rf);
+}
+
+void Preamp::switchRightSoftSteps()
+{
+  m_attenuation.soft_steps_rf = !m_attenuation.soft_steps_rf;
+  m_attenuationChanged = true;
+  m_controller.setAtt_RF(m_attenuation.att_rf, m_attenuation.soft_steps_rf);
+}
+
+void Preamp::setSubSoftSteps(int val)
+{
+  if (val < 0) val = 0;
+  if (val > 1) val = 1;
+  if (val == !m_attenuation.soft_steps_sub) return;
+
+  m_attenuation.soft_steps_sub = !val;
+  m_attenuationChanged = true;
+  m_controller.setAtt_SUB(m_attenuation.att_sub, m_attenuation.soft_steps_sub);
+}
+
+void Preamp::switchSubSoftSteps()
+{
+  m_attenuation.soft_steps_sub = !m_attenuation.soft_steps_sub;
+  m_attenuationChanged = true;
+  m_controller.setAtt_SUB(m_attenuation.att_sub, m_attenuation.soft_steps_sub);
+}
+
+void Preamp::setSoftStepsTime(int val)
+{
+  if (val < 0) val = 0;
+  if (val > 7) val = 7;
+  if (val == m_softMuteStep.soft_step_time) return;
+
+  m_softMuteStep.soft_step_time = val;
+  m_softMuteStepChanged = true;
+  m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
+}
+
+void Preamp::incSoftStepsTime()
+{
+  if (m_softMuteStep.soft_step_time >= 7) return;
+
+  m_softMuteStep.soft_step_time++;
+  m_softMuteStepChanged = true;
+  m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
+}
+
+void Preamp::decSoftStepsTime()
+{
+  if (m_softMuteStep.soft_step_time <= 0) return;
+
+  m_softMuteStep.soft_step_time--;
+  m_softMuteStepChanged = true;
+  m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
 }
 
 void Preamp::mute() 
@@ -536,6 +692,8 @@ void Preamp::saveInputSettings()
 #ifndef POT4
   m_inputSettingsEEPROM.putInt("gain", m_inputSettings.gain);
 #endif
+
+  m_inputSettingsChanged = false;
 }
 
 void Preamp::saveLoudnessSettings()
@@ -543,29 +701,43 @@ void Preamp::saveLoudnessSettings()
   m_loudnessSettingsEEPROM.putInt("att", m_loudnessSettings.attenuation);
   m_loudnessSettingsEEPROM.putInt("cf", m_loudnessSettings.center_freq);
   m_loudnessSettingsEEPROM.putInt("hb", m_loudnessSettings.high_boost);
+  m_loudnessSettingsEEPROM.putInt("ss", m_loudnessSettings.soft_step);
+
+  m_loudnessSettingsChanged = false;
 }
 
 void Preamp::saveVolume()
 {
   m_volumeSettingsEEPROM.putInt("vol", m_volumeSettings.volume);
+  m_volumeSettingsEEPROM.putInt("ss", m_volumeSettings.soft_step);
+
+  m_volumeSettingsChanged = false;
 }
 
 void Preamp::saveTrebleSettings()
 {
   // m_trebleFilterEEPROM.putInt("gain", m_trebleFilter.gain);
   m_trebleFilterEEPROM.putInt("cf", m_trebleFilter.center_freq);
+
+  m_trebleFilterChanged = false;
 }
 
 void Preamp::saveMiddleSettings()
 {
   // m_middleFilterEEPROM.putInt("gain", m_middleFilter.gain);
   m_middleFilterEEPROM.putInt("qf", m_middleFilter.qfactor);
+  m_middleFilterEEPROM.putInt("ss", m_middleFilter.soft_step);
+
+  m_middleFilterChanged = false;
 }
 
 void Preamp::saveBassSettings()
 {
   // m_bassFilterEEPROM.putInt("gain", m_bassFilter.gain);
   m_bassFilterEEPROM.putInt("qf", m_bassFilter.qfactor);
+  m_bassFilterEEPROM.putInt("ss", m_bassFilter.soft_step);
+
+  m_bassFilterChanged = false;
 }
 
 void Preamp::saveFreqSettings()
@@ -574,6 +746,8 @@ void Preamp::saveFreqSettings()
   m_freqSettingsEEPROM.putInt("mcf", m_freqSettings.mid_center_freq);
   m_freqSettingsEEPROM.putInt("bcf", m_freqSettings.bass_center_freq);
   m_freqSettingsEEPROM.putInt("bdc", m_freqSettings.bass_dc);
+
+  m_freqSettingsChanged = false;
 }
 
 void Preamp::saveAttenuationSettings()
@@ -581,6 +755,20 @@ void Preamp::saveAttenuationSettings()
   m_attenuationEEPROM.putInt("att_lf", m_attenuation.att_lf);
   m_attenuationEEPROM.putInt("att_rf", m_attenuation.att_rf);
   m_attenuationEEPROM.putInt("att_sub", m_attenuation.att_sub);
+  m_attenuationEEPROM.putInt("ss_lf", m_attenuation.soft_steps_lf);
+  m_attenuationEEPROM.putInt("ss_rf", m_attenuation.soft_steps_rf);
+  m_attenuationEEPROM.putInt("ss_sub", m_attenuation.soft_steps_sub);
+
+  m_attenuationChanged = false;
+}
+
+void Preamp::saveSoftMuteStep()
+{
+  m_softMuteStepEEPROM.putInt("sm", m_softMuteStep.soft_mute);
+  m_softMuteStepEEPROM.putInt("smt", m_softMuteStep.soft_mute_time);
+  m_softMuteStepEEPROM.putInt("sst", m_softMuteStep.soft_step_time);
+
+  m_softMuteStepChanged = false;
 }
 
 void Preamp::saveChanged()
@@ -601,6 +789,8 @@ void Preamp::saveChanged()
     saveFreqSettings();
   if (m_attenuationChanged)
     saveAttenuationSettings();
+  if (m_softMuteStepChanged)
+    saveSoftMuteStep();
 }
 
 void Preamp::loadFromMemory()
@@ -613,17 +803,21 @@ void Preamp::loadFromMemory()
   m_loudnessSettings.attenuation = m_loudnessSettingsEEPROM.getInt("att", m_loudnessSettings.attenuation);
   m_loudnessSettings.center_freq = m_loudnessSettingsEEPROM.getInt("cf", m_loudnessSettings.center_freq);
   m_loudnessSettings.high_boost = m_loudnessSettingsEEPROM.getInt("hb", m_loudnessSettings.high_boost);
+  m_loudnessSettings.soft_step = m_loudnessSettingsEEPROM.getInt("ss", m_loudnessSettings.soft_step);
 
   m_volumeSettings.volume = m_volumeSettingsEEPROM.getInt("vol", m_volumeSettings.volume);
+  m_volumeSettings.soft_step = m_volumeSettingsEEPROM.getInt("ss", m_volumeSettings.soft_step);
 
   // m_trebleFilter.gain = m_trebleFilterEEPROM.getInt("gain", m_trebleFilter.gain);
   m_trebleFilter.center_freq = m_trebleFilterEEPROM.getInt("cf", m_trebleFilter.center_freq);
 
   // m_middleFilter.gain = m_middleFilterEEPROM.getInt("gain", m_middleFilter.gain);
   m_middleFilter.qfactor = m_middleFilterEEPROM.getInt("qf", m_middleFilter.qfactor);
+  m_middleFilter.soft_step = m_middleFilterEEPROM.getInt("ss", m_middleFilter.soft_step);
 
   // m_bassFilter.gain = m_bassFilterEEPROM.getInt("gain", m_bassFilter.gain);
   m_bassFilter.qfactor = m_bassFilterEEPROM.getInt("qf", m_bassFilter.qfactor);
+  m_bassFilter.soft_step = m_bassFilterEEPROM.getInt("ss", m_bassFilter.soft_step);
 
   m_freqSettings.sub_cutoff_freq = m_freqSettingsEEPROM.getInt("scf", m_freqSettings.sub_cutoff_freq);
   m_freqSettings.mid_center_freq = m_freqSettingsEEPROM.getInt("mcf", m_freqSettings.mid_center_freq);
@@ -633,6 +827,13 @@ void Preamp::loadFromMemory()
   m_attenuation.att_lf = m_attenuationEEPROM.getInt("att_lf", m_attenuation.att_lf);
   m_attenuation.att_rf = m_attenuationEEPROM.getInt("att_rf", m_attenuation.att_rf);
   m_attenuation.att_sub = m_attenuationEEPROM.getInt("att_sub", m_attenuation.att_sub);
+  m_attenuation.soft_steps_lf = m_attenuationEEPROM.getInt("ss_lf", m_attenuation.soft_steps_lf);
+  m_attenuation.soft_steps_rf = m_attenuationEEPROM.getInt("ss_rf", m_attenuation.soft_steps_rf);
+  m_attenuation.soft_steps_sub = m_attenuationEEPROM.getInt("ss_sub", m_attenuation.soft_steps_sub);
+
+  m_softMuteStep.soft_mute = m_softMuteStepEEPROM.getInt("sm", m_softMuteStep.soft_mute);
+  m_softMuteStep.soft_mute_time = m_softMuteStepEEPROM.getInt("smt", m_softMuteStep.soft_mute_time);
+  m_softMuteStep.soft_step_time = m_softMuteStepEEPROM.getInt("sst", m_softMuteStep.soft_step_time);
 }
 
 void Preamp::resetMemory()
@@ -645,4 +846,5 @@ void Preamp::resetMemory()
   m_bassFilterEEPROM.clear();
   m_freqSettingsEEPROM.clear();
   m_attenuationEEPROM.clear();
+  m_softMuteStepEEPROM.clear();
 }

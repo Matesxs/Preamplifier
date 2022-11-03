@@ -180,6 +180,51 @@ void sub_cutoff_freq_settings()
   draw_centered_desc_and_val("Cutoff Frequency", descString.c_str());
 }
 
+void soft_steps_menu_selector(int index)
+{
+  draw_menu("Soft Steps", soft_steps_menu_names[index].c_str());
+}
+
+void soft_steps_time_settings()
+{
+  draw_centered_desc_and_val("Soft Step Time", String(String(soft_step_times[preamp.getSoftStepsTime()], 3) + "ms").c_str());
+}
+
+void soft_steps_volume_settings()
+{
+  draw_bool_selector("SS Volume", preamp.getVolumeSoftStep());
+}
+
+void soft_steps_loudness_settings()
+{
+  draw_bool_selector("SS Loudness", preamp.getLoudnessSoftStep());
+}
+
+void soft_steps_middle_settings()
+{
+  draw_bool_selector("SS Middle", preamp.getMiddleSoftStep());
+}
+
+void soft_steps_bass_settings()
+{
+  draw_bool_selector("SS Bass", preamp.getBassSoftStep());
+}
+
+void soft_steps_left_att_settings()
+{
+  draw_bool_selector("SS Att Left", preamp.getLeftSoftSteps());
+}
+
+void soft_steps_right_att_settings()
+{
+  draw_bool_selector("SS Att Right", preamp.getRightSoftSteps());
+}
+
+void soft_steps_sub_att_settings()
+{
+  draw_bool_selector("SS Att Sub", preamp.getSubSoftSteps());
+}
+
 void factory_reset_configmation()
 {
   draw_centered_desc_and_val("Factory Reset", "Are you sure?");
