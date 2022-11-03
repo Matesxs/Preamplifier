@@ -676,6 +676,53 @@ void Preamp::decSoftStepsTime()
   m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
 }
 
+void Preamp::setSoftMute(int val)
+{
+  if (val < 0) val = 0;
+  if (val > 1) val = 1;
+  if (val == !m_softMuteStep.soft_mute) return;
+
+  m_softMuteStep.soft_mute = !val;
+  m_softMuteStepChanged = true;
+  m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
+}
+
+void Preamp::switchSoftMute()
+{
+  m_softMuteStep.soft_mute = !m_softMuteStep.soft_mute;
+  m_softMuteStepChanged = true;
+  m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
+}
+
+void Preamp::setSoftMuteTime(int val)
+{
+  if (val < 0) val = 0;
+  if (val > 2) val = 2;
+  if (val == m_softMuteStep.soft_mute_time) return;
+
+  m_softMuteStep.soft_mute_time = val;
+  m_softMuteStepChanged = true;
+  m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
+}
+
+void Preamp::incSoftMuteTime()
+{
+  if (m_softMuteStep.soft_mute_time >= 2) return;
+
+  m_softMuteStep.soft_mute_time++;
+  m_softMuteStepChanged = true;
+  m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
+}
+
+void Preamp::decSoftMuteTime()
+{
+  if (m_softMuteStep.soft_mute_time <= 0) return;
+
+  m_softMuteStep.soft_mute_time--;
+  m_softMuteStepChanged = true;
+  m_controller.setSoft(m_softMuteStep.soft_mute, PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, CLOCK_FAST_MODE);
+}
+
 void Preamp::mute() 
 { 
   m_controller.setInput(5, 0, INPUT_AUTO_Z); 

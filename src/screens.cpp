@@ -225,6 +225,21 @@ void soft_steps_sub_att_settings()
   draw_bool_selector("SS Att Sub", preamp.getSubSoftSteps());
 }
 
+void soft_mute_menu_selector(int index)
+{
+  draw_menu("Soft Mute", soft_mute_menu_names[index].c_str());
+}
+
+void soft_mute_enable_settings()
+{
+  draw_bool_selector("Soft Mute", preamp.getSoftMute());
+}
+
+void soft_mute_time_settings()
+{
+  draw_centered_desc_and_val("Soft Mute Time", String(String(soft_mute_times[preamp.getSoftMuteTime()], 2) + "ms").c_str());
+}
+
 void factory_reset_configmation()
 {
   draw_centered_desc_and_val("Factory Reset", "Are you sure?");

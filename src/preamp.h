@@ -102,7 +102,7 @@ class Preamp
   typedef struct
   {
     int soft_mute = 0;              // 0 - 1 (on, off)
-    int soft_mute_time = 0;         // 0 - 3 (0.48ms, 0.96ms, 123ms)
+    int soft_mute_time = 0;         // 0 - 2 (0.48ms, 0.96ms, 123ms)
     int soft_step_time = 0;         // 0 - 7 (0.160ms, 0.321ms, 0.642ms, 1.28ms, 2.56ms, 5.12ms, 10.24ms, 20.48ms)
   } SoftMuteStep;
 
@@ -237,6 +237,15 @@ public:
   void setSoftStepsTime(int val);
   void incSoftStepsTime();
   void decSoftStepsTime();
+
+  int getSoftMute() const { return !m_softMuteStep.soft_mute; }
+  void setSoftMute(int val);
+  void switchSoftMute();
+
+  int getSoftMuteTime() const { return m_softMuteStep.soft_mute_time; }
+  void setSoftMuteTime(int val);
+  void incSoftMuteTime();
+  void decSoftMuteTime();
 
   // Mic
   void mute();

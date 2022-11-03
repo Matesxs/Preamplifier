@@ -40,6 +40,7 @@ typedef enum
   TREBLE_FILTER,
   SUBWOOFER,
   SOFT_STEPS,
+  SOFT_MUTE,
   FACT_RESET,
   /////////////
 
@@ -86,14 +87,19 @@ typedef enum
   SOFT_STEPS_RIGHT,
   SOFT_STEPS_SUB,
   /////////////
+
+  // Soft Mute
+  SOFT_MUTE_ENABLE,
+  SOFT_MUTE_TIME,
+  ////////////
 } Screens;
 
 #ifdef POT4
-const String main_menu_names[] = { "Loudness", "Attenuations", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Reset" };
-const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::FACT_RESET};
+const String main_menu_names[] = { "Loudness", "Attenuations", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute", "Reset" };
+const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE, Screens::FACT_RESET};
 #else
-const String main_menu_names[] = { "Loudness", "Attenuations", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Reset" };
-const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::FACT_RESET};
+const String main_menu_names[] = { "Loudness", "Attenuations", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute", "Reset" };
+const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE, Screens::FACT_RESET};
 #endif
 const int number_of_menu_items = sizeof(main_menu_names) / sizeof(main_menu_names[0]);
 
@@ -128,7 +134,12 @@ const int number_of_sub_menu_items = sizeof(sub_menu_names) / sizeof(sub_menu_na
 const Screens sub_menu_screens[] = { Screens::SUB_CUTOFF_FREQ, Screens::SUB_ATT };
 const int sub_cutoff_freqs[] = { 0, 80, 120, 160 };
 
-const String soft_steps_menu_names[] = { "Soft Step Time", "Volume", "Loudness", "Middle", "Bass", "Left Att", "Right Att", "Sub Att" };
+const String soft_steps_menu_names[] = { "Step Time", "Volume", "Loudness", "Middle", "Bass", "Left Att", "Right Att", "Sub Att" };
 const int number_of_soft_steps_menu_items = sizeof(soft_steps_menu_names) / sizeof(soft_steps_menu_names[0]);
 const Screens soft_steps_menu_screens[] = { Screens::SOFT_STEPS_TIME, Screens::SOFT_STEPS_VOLUME, Screens::SOFT_STEPS_LOUDNESS, Screens::SOFT_STEPS_MIDDLE, Screens::SOFT_STEPS_BASS, Screens::SOFT_STEPS_LEFT, Screens::SOFT_STEPS_RIGHT, Screens::SOFT_STEPS_SUB };
 const float soft_step_times[] = {0.160f, 0.321f, 0.642f, 1.28f, 2.56f, 5.12f, 10.24f, 20.48f};
+
+const String soft_mute_menu_names[] = { "Enable", "Time" };
+const int number_of_soft_mute_menu_items = sizeof(soft_mute_menu_names) / sizeof(soft_mute_menu_names[0]);
+const Screens soft_mute_menu_screens[] = { Screens::SOFT_MUTE_ENABLE, Screens::SOFT_MUTE_TIME };
+const float soft_mute_times[] = { 0.48f, 0.96f, 123.0f };
