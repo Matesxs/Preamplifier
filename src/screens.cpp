@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 #include "global_objects.h"
+#include "temperature_reader.h"
 #include "display_handler.h"
 #include "settings.h"
 #include "spectrum_analyzer.h"
@@ -43,14 +44,13 @@ void spectrum()
     int spectrumIndex = i / SPECTRUM_DIVISOR;
     int offset = i % SPECTRUM_DIVISOR;
 
-    uint16_t avgHeight = processSpectrum(spectrumIndex, offset, SpectrumAnalyzer::spectrum);
+    uint16_t avgHeight = max(processSpectrum(spectrumIndex, offset, SpectrumAnalyzer::spectrum), (uint16_t)1);
     uint16_t rawHeight = processSpectrum(spectrumIndex, offset, SpectrumAnalyzer::spectrumRaw);
 
-    if (avgHeight > 0)
-      display.drawFrame(i * freqWidth, display.getDisplayHeight() - avgHeight - 1, freqWidth, avgHeight);
+    display.drawFrame(i * freqWidth, display.getDisplayHeight() - avgHeight, freqWidth, avgHeight);
 
     if (rawHeight > 0)
-      display.drawBox(i * freqWidth, display.getDisplayHeight() - rawHeight - 1, freqWidth, rawHeight);
+      display.drawBox(i * freqWidth, display.getDisplayHeight() - rawHeight, freqWidth, rawHeight);
   }
 }
 
@@ -60,8 +60,6 @@ void main_screen()
   int selectedInput = preamp.getInput() + 1;
   display_draw_center(String(String("INPUT ") + (selectedInput != 4 ? String(selectedInput) : "BT")).c_str(), 0);
   
-  String temp1Str = String(String(temps_store[0], 1) + String("C"));
-  String temp2Str = String(String(temps_store[1], 1) + String("C"));
   String volumeString = String(String("VOL: ") + String(preamp.getVolume()));
   String gainString = String(String("GAIN: ") + String(preamp.getGain()));
 
@@ -73,8 +71,26 @@ void main_screen()
 
   display.setFont(u8g2_font_ncenB10_tr);
 
+#ifdef ENABLE_TEMPERATURE_MONITORING
+  String temp1Str = String(String(TemperatureReader::temperatures[0], 1) + String("C"));
+  String temp2Str = String(String(TemperatureReader::temperatures[1], 1) + String("C"));
   display.drawStr(0, 0, temp1Str.c_str());
   display.drawStr(display.getDisplayWidth() - display.getStrWidth(temp2Str.c_str()), 0, temp2Str.c_str());
+#endif
+
+#ifdef SPECTRUM_CLIPPING_DETECTION_ON_MAIN
+  for (auto& val : SpectrumAnalyzer::spectrumRaw)
+  {
+    if (val >= 4095)
+    {
+      display.setDrawColor(2);
+      display.setFont(u8g2_font_ncenB18_tr);
+      display_draw_center("Clipping");
+      display.setDrawColor(1);
+      break;
+    }
+  }
+#endif
 }
 
 void mute_screen()
@@ -84,11 +100,12 @@ void mute_screen()
 
   display.setFont(u8g2_font_ncenB10_tr);
 
-  String temp1Str = String(String(temps_store[0], 1) + String("C"));
-  String temp2Str = String(String(temps_store[1], 1) + String("C"));
-
+#ifdef ENABLE_TEMPERATURE_MONITORING
+  String temp1Str = String(String(TemperatureReader::temperatures[0], 1) + String("C"));
+  String temp2Str = String(String(TemperatureReader::temperatures[1], 1) + String("C"));
   display.drawStr(0, 0, temp1Str.c_str());
   display.drawStr(display.getDisplayWidth() - display.getStrWidth(temp2Str.c_str()), 0, temp2Str.c_str());
+#endif
 }
 
 void main_menu_selector(int index)

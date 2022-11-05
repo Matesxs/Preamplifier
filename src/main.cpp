@@ -50,10 +50,13 @@ void setup()
   delay(100);
 
   xTaskCreateUniversal(encoder_task, "enc", 2048, NULL, 1, NULL, 1);
+  xTaskCreateUniversal(buttons_task, "btns", 2048, NULL, 1, NULL, 1);
   xTaskCreateUniversal(handle_potentiometer_task, "pot", 2048, NULL, 1, NULL, 1);
   xTaskCreateUniversal(display_draw_task, "disp", 2048, NULL, 2, NULL, 0);
   xTaskCreateUniversal(auto_saver_task, "save", 2048, NULL, 1, NULL, 0);
-  xTaskCreateUniversal(temperature_task, "temp", 2048, NULL, 1, NULL, 0);
+#ifdef ENABLE_TEMPERATURE_MONITORING
+  xTaskCreateUniversal(TemperatureReader::temperature_task, "temp", 2048, NULL, 1, NULL, 0);
+#endif
 #ifdef ENABLE_SPECTRUM_ANALYZER
   xTaskCreateUniversal(SpectrumAnalyzer::updateSpectrumTask, "sa", 2048, NULL, 1, NULL, 1);
 #endif

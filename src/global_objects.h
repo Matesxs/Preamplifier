@@ -15,7 +15,6 @@ extern U8G2_SH1122_256X64_F_4W_HW_SPI display;
 
 extern volatile Screens active_screen;
 
-extern volatile float temps_store[];
 extern volatile uint16_t potentiomater_values[];
 
 extern bool shortPush;

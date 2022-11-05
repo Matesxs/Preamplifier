@@ -6,9 +6,9 @@
 #include "debug.h"
 #include "pins.h"
 
-Button encoder_button(ROT_PUSH, 50, false, false);
+Button encoder_button(ROT_PUSH, DEBOUNCE_BUTTONS_MS, false, false);
 #ifdef CHANNEL_SW_BTN
-Button channel_switch_button(CHANNEL_SW_BTN, 50, true, true);
+Button channel_switch_button(CHANNEL_SW_BTN, DEBOUNCE_BUTTONS_MS, true, true);
 #endif
 RotaryEncoder encoder(ROT_A, ROT_B, RotaryEncoder::LatchMode::FOUR3);
 
@@ -96,14 +96,28 @@ void handle_buttons()
 
 void encoder_task(void*)
 {
-  encoder_button.read();
-
   while (true)
   {
     handle_encoder();
+
+    vTaskDelay(pdMS_TO_TICKS(ENCODER_PULLING_RATE_MS));
+  }
+
+  vTaskDelete(NULL);
+}
+
+void buttons_task(void *)
+{
+  encoder_button.read();
+#ifdef CHANNEL_SW_BTN
+  channel_switch_button.read();
+#endif
+
+  while (true)
+  {
     handle_buttons();
 
-    vTaskDelay(pdMS_TO_TICKS(5));
+    vTaskDelay(pdMS_TO_TICKS(BUTTONS_PULLING_RATE_MS));
   }
 
   vTaskDelete(NULL);

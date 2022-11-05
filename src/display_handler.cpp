@@ -9,6 +9,7 @@ void prepare_display()
   display.setFont(u8g2_font_ncenB14_tr);
   display.setFontRefHeightExtendedText();
   display.setDrawColor(1);
+  display.setFontMode(1);
   display.setFontPosTop();
   display.setFontDirection(0);
 }
