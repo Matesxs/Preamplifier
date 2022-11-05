@@ -24,12 +24,6 @@
 #define POT3 13
 #define POT4 35
 
-#ifndef POT4
-#define POT_COUNT 3
-#else
-#define POT_COUNT 4
-#endif
-
 // Spectrum analyzer
 #define SA_CLK 12
 #define SA_DATA 34

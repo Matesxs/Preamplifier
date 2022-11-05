@@ -6,40 +6,40 @@
 #include "TDA7419.h"
 
 // Input
-#define INPUT_AUTO_Z 1              // 0 - 1 (on, off)
+#define PREAMP_INPUT_AUTO_Z 1              // 0 - 1 (on, off)
 
 // Input2
-#define INPUT2_SOURCE 5             // 0 - 5 (5 - mute)
-#define INPUT2_GAIN 0               // 0 - 15
-#define REAR_SPEAKER_SOURCE 0       // 0 - 1 (main, secondary)
+#define PREAMP_INPUT2_SOURCE 5             // 0 - 5 (5 - mute)
+#define PREAMP_INPUT2_GAIN 0               // 0 - 15
+#define PREAMP_REAR_SPEAKER_SOURCE 0       // 0 - 1 (main, secondary)
 
 // Soft-mute/clock generator
-#define PIN_INFLUENCE_FOR_MUTE 1    // 0 - 1 (PIN and IIC, IIC)
-#define CLOCK_FAST_MODE 0           // 0 - 1 (on, off)
+#define PREAMP_PIN_INFLUENCE_FOR_MUTE 1    // 0 - 1 (PIN and IIC, IIC)
+#define PREAMP_CLOCK_FAST_MODE 0           // 0 - 1 (on, off)
 
 // Treble Filter
-#define REFERENCE_OUTPUT_SELECT 1   // 0 - 1 (external, internal)
+#define PREAMP_REFERENCE_OUTPUT_SELECT 1   // 0 - 1 (external, internal)
 
 // Freq settings
-#define SMOOTHING_FILTER 0          // 0 - 1 (on, off)
+#define PREAMP_SMOOTHING_FILTER 0          // 0 - 1 (on, off)
 
 // Mixing / gain effect
-#define MIXING_TO_LEFT_FRONT 1      // 0 - 1 (on, off)
-#define MIXING_TO_RIGHT_FRONT 1     // 0 - 1 (on, off)
-#define MIXING_ENABLE 1             // 0 - 1 (on, off)
-#define SUBWOOFER_ENABLE 0          // 0 - 1 (on, off)
-#define GAIN_EFFECT_HPF 0           // 0 - 10 (4, 6 ... 22, 0)
+#define PREAMP_MIXING_TO_LEFT_FRONT 1      // 0 - 1 (on, off)
+#define PREAMP_MIXING_TO_RIGHT_FRONT 1     // 0 - 1 (on, off)
+#define PREAMP_MIXING_ENABLE 1             // 0 - 1 (on, off)
+#define PREAMP_SUBWOOFER_ENABLE 0          // 0 - 1 (on, off)
+#define PREAMP_GAIN_EFFECT_HPF 0           // 0 - 10 (4, 6 ... 22, 0)
 
 // Spectrum analyzer / clock source / AC mode
-#define SA_FILTER_Q_FACTOR 1        // 0 - 1 (3.5, 1.75)
-#define SA_RESET_MODE 1             // 0 - 1 (IIC, Auto)
-#define SA_SOURCE 1                 // 0 - 1 (Bass, In Gain)
-#define SA_RUN 0                    // 0 - 1 (on, off)
-#define SA_RESET 0                  // 0 - 1 (on, off)
-#define SA_CLOCK_SOURCE 0           // 0 - 1 (internal, external)
-#define SA_COUPLING_MODE 0          // 0 - 3 (DC Coupling (without HPF), AC coupling after In gain, DC Coupling (with HPF), AC coupling after Bass)
+#define PREAMP_SA_FILTER_Q_FACTOR 1        // 0 - 1 (3.5, 1.75)
+#define PREAMP_SA_RESET_MODE 1             // 0 - 1 (IIC, Auto)
+#define PREAMP_SA_SOURCE 1                 // 0 - 1 (Bass, In Gain)
+#define PREAMP_SA_RUN 0                    // 0 - 1 (on, off)
+#define PREAMP_SA_RESET 0                  // 0 - 1 (on, off)
+#define PREAMP_SA_CLOCK_SOURCE 0           // 0 - 1 (internal, external)
+#define PREAMP_SA_COUPLING_MODE 0          // 0 - 3 (DC Coupling (without HPF), AC coupling after In gain, DC Coupling (with HPF), AC coupling after Bass)
 
-class Preamp
+namespace Preamp
 {
   typedef struct
   {
@@ -106,136 +106,140 @@ class Preamp
     int soft_step_time = 0;         // 0 - 7 (0.160ms, 0.321ms, 0.642ms, 1.28ms, 2.56ms, 5.12ms, 10.24ms, 20.48ms)
   } SoftMuteStep;
 
-public:
-  Preamp();
-  bool begin();
+  void init();
 
   // Input settings
-  int getInput() const { return m_inputSettings.selected_input; }
+  int getInput();
   void setInput(int val);
   void rotateInput();
   void incInput();
   void decInput();
 
-  int getGain() const { return m_inputSettings.gain; }
+  int getInputGain();
   void setInputGain(int val);
-  void incGain();
-  void decGain();
+  void incInputGain();
+  void decInputGain();
 
   // Laudness settings
-  int getLoudnessAttenuation() const { return m_loudnessSettings.attenuation; }
+  int getLoudnessAttenuation();
   void setLoudnessAttenuation(int val);
   void incLoudnessAttenuation();
   void decLoudnessAttenuation();
 
-  int getLoudnessCenterFreq() const { return m_loudnessSettings.center_freq; }
+  int getLoudnessCenterFreq();
   void setLoudnessCenterFreq(int val);
   void incLoudnessCenterFreq();
   void decLoudnessCenterFreq();
 
-  int getLoudnessHighBoost() const { return !m_loudnessSettings.high_boost; }
+  int getLoudnessHighBoost();
   void setLoudnessHighBoost(int val);
   void switchLoudnessHighBoost();
 
-  int getLoudnessSoftStep() const { return !m_loudnessSettings.soft_step; }
+  int getLoudnessSoftStep();
   void setLoudnessSoftStep(int val);
   void switchLoudnessSoftStep();
 
   // Volume settings
-  int getVolume() const { return m_volumeSettings.volume; }
+  int getVolume();
   void setVolume(int val);
   void incVolume();
   void decVolume();
 
-  int getVolumeSoftStep() const { return !m_volumeSettings.soft_step; }
+  int getVolumeSoftStep();
   void setVolumeSoftStep(int val);
   void switchVolumeSoftStep();
 
   // Treble settings
-  int getTrebleGain() const { return m_trebleFilter.gain; }
+  int getTrebleGain();
   void setTrebleGain(int val);
+  void incTrebleGain();
+  void decTrebleGain();
 
-  int getTrebleCenterFreq() const { return m_trebleFilter.center_freq; }
+  int getTrebleCenterFreq();
   void setTrebleCenterFreq(int val);
   void incTrebleCenterFreq();
   void decTrebleCenterFreq();
 
   // Middle settings
-  int getMiddleGain() const { return m_middleFilter.gain; }
+  int getMiddleGain();
   void setMiddleGain(int val);
+  void incMiddleGain();
+  void decMiddleGain();
 
-  int getMiddleQFactor() const { return m_middleFilter.qfactor; }
+  int getMiddleQFactor();
   void setMiddleQFactor(int val);
   void incMiddleQFactor();
   void decMiddleQFactor();
 
-  int getMiddleSoftStep() const { return !m_middleFilter.soft_step; }
+  int getMiddleSoftStep();
   void setMiddleSoftStep(int val);
   void switchMiddleSoftStep();
 
   // Bass settings
-  int getBassGain() const { return m_bassFilter.gain; }
+  int getBassGain();
   void setBassGain(int val);
+  void incBassGain();
+  void decBassGain();
 
-  int getBassQFactor() const { return m_bassFilter.qfactor; }
+  int getBassQFactor();
   void setBassQFactor(int val);
   void incBassQFactor();
   void decBassQFactor();
 
-  int getBassSoftStep() const { return !m_bassFilter.soft_step; }
+  int getBassSoftStep();
   void setBassSoftStep(int val);
   void switchBassSoftStep();
 
   // Freq settings
-  int getBassCenterFreq() const { return m_freqSettings.bass_center_freq; }
+  int getBassCenterFreq();
   void setBassCenterFreq(int val);
   void incBassCenterFreq();
   void decBassCenterFreq();
 
-  int getBassDC() const { return !m_freqSettings.bass_dc; }
+  int getBassDC();
   void setBassDC(int val);
   void switchBassDC();
 
-  int getMiddleCenterFreq() const { return m_freqSettings.mid_center_freq; }
+  int getMiddleCenterFreq();
   void setMiddleCenterFreq(int val);
   void incMiddleCenterFreq();
   void decMiddleCenterFreq();
 
-  int getSubCutoffFreq() const { return m_freqSettings.sub_cutoff_freq; }
+  int getSubCutoffFreq();
   void setSubCutoffFreq(int val);
   void incSubCutoffFreq();
   void decSubCutoffFreq();
 
   // Attenuations
-  int getLeftAttenuation() const { return m_attenuation.att_lf; }
+  int getLeftAttenuation();
   void setLeftAttenuation(int val);
   void incLeftAttenuation();
   void decLeftAttenuation();
 
-  int getRightAttenuation() const { return m_attenuation.att_rf; }
+  int getRightAttenuation();
   void setRightAttenuation(int val);
   void incRightAttenuation();
   void decRightAttenuation();
 
-  int getSubAttenuation() const { return m_attenuation.att_sub; }
+  int getSubAttenuation();
   void setSubAttenuation(int val);
   void incSubAttenuation();
   void decSubAttenuation();
 
-  int getLeftSoftSteps() const { return !m_attenuation.soft_steps_lf; }
+  int getLeftSoftSteps();
   void setLeftSoftSteps(int val);
   void switchLeftSoftSteps();
 
-  int getRightSoftSteps() const { return !m_attenuation.soft_steps_rf; }
+  int getRightSoftSteps();
   void setRightSoftSteps(int val);
   void switchRightSoftSteps();
 
-  int getSubSoftSteps() const { return !m_attenuation.soft_steps_sub; }
+  int getSubSoftSteps();
   void setSubSoftSteps(int val);
   void switchSubSoftSteps();
 
   // SoftMuteStep settings
-  int getSoftStepsTime() const { return m_softMuteStep.soft_step_time; }
+  int getSoftStepsTime();
   void setSoftStepsTime(int val);
   void incSoftStepsTime();
   void decSoftStepsTime();
@@ -243,7 +247,7 @@ public:
   void setSoftMute(int val);
   void switchSoftMute();
 
-  int getSoftMuteTime() const { return m_softMuteStep.soft_mute_time; }
+  int getSoftMuteTime();
   void setSoftMuteTime(int val);
   void incSoftMuteTime();
   void decSoftMuteTime();
@@ -265,44 +269,4 @@ public:
   void saveChanged();
   void loadFromMemory();
   void resetMemory();
-
-private:
-  InputSettings m_inputSettings;
-  bool m_inputSettingsChanged = false;
-
-  LoudnessSettings m_loudnessSettings;
-  bool m_loudnessSettingsChanged = false;
-
-  VolumeSettings m_volumeSettings;
-  bool m_volumeSettingsChanged = false;
-
-  TrebleFilter m_trebleFilter;
-  bool m_trebleFilterChanged = false;
-
-  MiddleFilter m_middleFilter;
-  bool m_middleFilterChanged = false;
-
-  BassFilter m_bassFilter;
-  bool m_bassFilterChanged = false;
-
-  FreqSettings m_freqSettings;
-  bool m_freqSettingsChanged = false;
-
-  Attenuation m_attenuation;
-  bool m_attenuationChanged = false;
-
-  SoftMuteStep m_softMuteStep;
-  bool m_softMuteStepChanged = false;
-
-  Preferences m_inputSettingsEEPROM;
-  Preferences m_loudnessSettingsEEPROM;
-  Preferences m_volumeSettingsEEPROM;
-  Preferences m_trebleFilterEEPROM;
-  Preferences m_middleFilterEEPROM;
-  Preferences m_bassFilterEEPROM;
-  Preferences m_freqSettingsEEPROM;
-  Preferences m_attenuationEEPROM;
-  Preferences m_softMuteStepEEPROM;
-
-  TDA7419 m_controller;
 };

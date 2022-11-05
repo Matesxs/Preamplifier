@@ -2,6 +2,10 @@
 
 #include <Arduino.h>
 
-void IRAM_ATTR update_encoder();
-void encoder_task(void*);
-void buttons_task(void *);
+namespace InputHandling
+{
+  void init();
+
+  extern bool shortPush;
+  extern bool longPush;
+};

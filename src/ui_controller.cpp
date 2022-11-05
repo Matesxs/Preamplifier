@@ -9,6 +9,7 @@
 #include "display_handler.h"
 #include "screens.h"
 #include "global_objects.h"
+#include "potentiometer_handling.h"
 #include "preamp.h"
 #include "helpers.h"
 
@@ -29,68 +30,68 @@ void handle_controll(InputType type)
 
   if (type == InputType::POT1_CH)
   {
-    // DEBUG("POT1 val: %d\n", potentiomater_values[0]);
+    // DEBUG("POT1 val: %d\n", PotentiometerHandling::values[0]);
 
-    int newGain = (int)map(potentiomater_values[0], 0, 4095, -15, 15);
+    int newGain = (int)map(PotentiometerHandling::values[0], 0, 4095, -15, 15);
 
-    if (newGain != preamp.getTrebleGain())
+    if (newGain != Preamp::getTrebleGain())
     {
       // DEBUG("Mapped treble gain: %d\n", newGain);
       restartStopwatch();
       
       active_screen = Screens::TREBLE_GAIN;
-      preamp.setTrebleGain(newGain);
+      Preamp::setTrebleGain(newGain);
     }
   }
   else if (type == InputType::POT2_CH)
   {
-    // DEBUG("POT2 val: %d\n", potentiomater_values[1]);
+    // DEBUG("POT2 val: %d\n", PotentiometerHandling::values[1]);
 
-    int newGain = (int)map(potentiomater_values[1], 0, 4095, -15, 15);
+    int newGain = (int)map(PotentiometerHandling::values[1], 0, 4095, -15, 15);
 
-    if (newGain != preamp.getMiddleGain())
+    if (newGain != Preamp::getMiddleGain())
     {
       // DEBUG("Mapped middle gain: %d\n", newGain);
       restartStopwatch();
       
       active_screen = Screens::MIDDLE_GAIN;
-      preamp.setMiddleGain(newGain);
+      Preamp::setMiddleGain(newGain);
     }
   }
   else if (type == InputType::POT3_CH)
   {
-    // DEBUG("POT3 val: %d\n", potentiomater_values[2]);
+    // DEBUG("POT3 val: %d\n", PotentiometerHandling::values[2]);
 
-    int newGain = (int)map(potentiomater_values[2], 0, 4095, -15, 15);
+    int newGain = (int)map(PotentiometerHandling::values[2], 0, 4095, -15, 15);
 
-    if (newGain != preamp.getBassGain())
+    if (newGain != Preamp::getBassGain())
     {
       // DEBUG("Mapped bass gain: %d\n", newGain);
       restartStopwatch();
       
       active_screen = Screens::BASS_GAIN;
-      preamp.setBassGain(newGain);
+      Preamp::setBassGain(newGain);
     }
   }
   else if (type == InputType::POT4_CH)
   {
-    // DEBUG("POT4 val: %d\n", potentiomater_values[3]);
+    // DEBUG("POT4 val: %d\n", PotentiometerHandling::values[3]);
 
-    int newInputGain = (int)map(potentiomater_values[3], 0, 4095, 0, 15);
+    int newInputGain = (int)map(PotentiometerHandling::values[3], 0, 4095, 0, 15);
 
-    if (newInputGain != preamp.getGain())
+    if (newInputGain != Preamp::getInputGain())
     {
       // DEBUG("Mapped input gain: %d\n", newInputGain);
       restartStopwatch();
       
       active_screen = Screens::INPUT_GAIN;
-      preamp.setInputGain(newInputGain);
+      Preamp::setInputGain(newInputGain);
     }
   }
   else if (type == InputType::CH_SW_PUSH)
   {
-    preamp.rotateInput();
-    DEBUG("Switching input to %d\n", preamp.getInput() + 1);
+    Preamp::rotateInput();
+    DEBUG("Switching input to %d\n", Preamp::getInput() + 1);
   }
   else
   {
@@ -103,7 +104,7 @@ void handle_controll(InputType type)
       {
         DEBUG("Unmutting\n");
         active_screen = Screens::MAIN_SCREEN;
-        preamp.unmute();
+        Preamp::unmute();
       }
       break;
 
@@ -118,7 +119,7 @@ void handle_controll(InputType type)
       {
         DEBUG("Mutting\n");
         active_screen = Screens::MUTE_SCREEN;
-        preamp.mute();
+        Preamp::mute();
       }
       else if (type == InputType::ENC_CW)
       {
@@ -180,11 +181,11 @@ void handle_controll(InputType type)
       }
       else if (type == InputType::ENC_CW)
       {
-        preamp.incInput();
+        Preamp::incInput();
       }
       else if (type == InputType::ENC_CCW)
       {
-        preamp.decInput();
+        Preamp::decInput();
       }
       break;
 
@@ -371,12 +372,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing soft mute time\n");
-        preamp.incSoftMuteTime();
+        Preamp::incSoftMuteTime();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing soft mute time\n");
-        preamp.decSoftMuteTime();
+        Preamp::decSoftMuteTime();
       }
       break;
 
@@ -384,7 +385,7 @@ void handle_controll(InputType type)
       if (type == InputType::ENC_PUSH)
       {
         DEBUG("Factory reset\n");
-        preamp.resetMemory();
+        Preamp::resetMemory();
         vTaskDelay(pdMS_TO_TICKS(50));
         ESP.restart();
       }
@@ -404,12 +405,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing loudness attenuation\n");
-        preamp.incLoudnessAttenuation();
+        Preamp::incLoudnessAttenuation();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing loudness attenuation\n");
-        preamp.decLoudnessAttenuation();
+        Preamp::decLoudnessAttenuation();
       }
       break;
 
@@ -422,12 +423,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing loudness center freq\n");
-        preamp.incLoudnessCenterFreq();
+        Preamp::incLoudnessCenterFreq();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing loudness center freq\n");
-        preamp.decLoudnessCenterFreq();
+        Preamp::decLoudnessCenterFreq();
       }
       break;
 
@@ -440,20 +441,7 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
         // DEBUG("Switching loudness high boost\n");
-        preamp.switchLoudnessHighBoost();
-      }
-      break;
-
-    case Screens::LOUDNESS_SOFT_STEP:
-      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
-      {
-        // DEBUG("Leaving loudness soft step submenu\n");
-        active_screen = Screens::LOUDNESS;
-      }
-      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
-      {
-        // DEBUG("Switching soft steps loudness\n");
-        preamp.switchLoudnessSoftStep();
+        Preamp::switchLoudnessHighBoost();
       }
       break;
 
@@ -466,12 +454,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing attenuation left\n");
-        preamp.incLeftAttenuation();
+        Preamp::incLeftAttenuation();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing attenuation left\n");
-        preamp.decLeftAttenuation();
+        Preamp::decLeftAttenuation();
       }
       break;
 
@@ -484,12 +472,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing attenuation right\n");
-        preamp.incRightAttenuation();
+        Preamp::incRightAttenuation();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing attenuation right\n");
-        preamp.decRightAttenuation();
+        Preamp::decRightAttenuation();
       }
       break;
 
@@ -502,12 +490,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing attenuation sub\n");
-        preamp.incSubAttenuation();
+        Preamp::incSubAttenuation();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing attenuation sub\n");
-        preamp.decSubAttenuation();
+        Preamp::decSubAttenuation();
       }
       break;
 
@@ -520,12 +508,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing bass q factor\n");
-        preamp.incBassQFactor();
+        Preamp::incBassQFactor();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing bass q factor\n");
-        preamp.decBassQFactor();
+        Preamp::decBassQFactor();
       }
       break;
 
@@ -538,12 +526,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing bass center freq\n");
-        preamp.incBassCenterFreq();
+        Preamp::incBassCenterFreq();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing bass center freq\n");
-        preamp.decBassCenterFreq();
+        Preamp::decBassCenterFreq();
       }
       break;
 
@@ -556,7 +544,7 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
         // DEBUG("Switching bass dc\n");
-        preamp.switchBassDC();
+        Preamp::switchBassDC();
       }
       break;
 
@@ -569,12 +557,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing middle q factor\n");
-        preamp.incMiddleQFactor();
+        Preamp::incMiddleQFactor();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing middle q factor\n");
-        preamp.decMiddleQFactor();
+        Preamp::decMiddleQFactor();
       }
       break;
 
@@ -587,12 +575,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing middle center freq\n");
-        preamp.incMiddleCenterFreq();
+        Preamp::incMiddleCenterFreq();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing middle center freq\n");
-        preamp.decMiddleCenterFreq();
+        Preamp::decMiddleCenterFreq();
       }
       break;
 
@@ -605,12 +593,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing treble center freq\n");
-        preamp.incTrebleCenterFreq();
+        Preamp::incTrebleCenterFreq();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing treble center freq\n");
-        preamp.decTrebleCenterFreq();
+        Preamp::decTrebleCenterFreq();
       }
       break;
 
@@ -623,12 +611,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing sub cutoff freq\n");
-        preamp.incSubCutoffFreq();
+        Preamp::incSubCutoffFreq();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing sub cutoff freq\n");
-        preamp.decSubCutoffFreq();
+        Preamp::decSubCutoffFreq();
       }
       break;
 
@@ -641,12 +629,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing sub attenuation\n");
-        preamp.incSubAttenuation();
+        Preamp::incSubAttenuation();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing sub attenuation\n");
-        preamp.decSubAttenuation();
+        Preamp::decSubAttenuation();
       }
       break;
 
@@ -659,12 +647,12 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing soft steps time\n");
-        preamp.incSoftStepsTime();
+        Preamp::incSoftStepsTime();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing soft steps time\n");
-        preamp.decSoftStepsTime();
+        Preamp::decSoftStepsTime();
       }
       break;
 
@@ -677,7 +665,7 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
         // DEBUG("Switching soft steps volume\n");
-        preamp.switchVolumeSoftStep();
+        Preamp::switchVolumeSoftStep();
       }
       break;
 
@@ -690,7 +678,7 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
         // DEBUG("Switching soft steps loudness\n");
-        preamp.switchLoudnessSoftStep();
+        Preamp::switchLoudnessSoftStep();
       }
       break;
 
@@ -703,7 +691,7 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
         // DEBUG("Switching soft steps middle\n");
-        preamp.switchMiddleSoftStep();
+        Preamp::switchMiddleSoftStep();
       }
       break;
 
@@ -716,7 +704,7 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
         // DEBUG("Switching soft steps bass\n");
-        preamp.switchBassSoftStep();
+        Preamp::switchBassSoftStep();
       }
       break;
 
@@ -729,7 +717,7 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
         // DEBUG("Switching soft steps left att\n");
-        preamp.switchLeftSoftSteps();
+        Preamp::switchLeftSoftSteps();
       }
       break;
 
@@ -742,7 +730,7 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
         // DEBUG("Switching soft steps right att\n");
-        preamp.switchRightSoftSteps();
+        Preamp::switchRightSoftSteps();
       }
       break;
 
@@ -755,7 +743,7 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
         // DEBUG("Switching soft steps sub att\n");
-        preamp.switchSubSoftSteps();
+        Preamp::switchSubSoftSteps();
       }
       break;
 
@@ -768,41 +756,86 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CW)
       {
         // DEBUG("Increasing master volume\n");
-        preamp.incVolume();
+        Preamp::incVolume();
       }
       else if (type == InputType::ENC_CCW)
       {
         // DEBUG("Decreasing master volume\n");
-        preamp.decVolume();
+        Preamp::decVolume();
       }
       break;
 
+    // Potentiometer popups
     case Screens::INPUT_GAIN:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
-#ifndef POT4
-        active_screen = Screens::MAIN_MENU;
-#else
+#ifdef INPUT_GAIN_POTENTIOMETER
         active_screen = Screens::MAIN_SCREEN;
+#else
+        active_screen = Screens::MAIN_MENU;
 #endif
-#ifndef POT4
+#ifndef INPUT_GAIN_POTENTIOMETER
       else if (type == InputType::ENC_CW)
-        preamp.incGain();
+        Preamp::incInputGain();
       else if (type == InputType::ENC_CCW)
-        preamp.decGain();
+        Preamp::decInputGain();
 #else
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
         active_screen = Screens::MASTER_VOLUME;
 #endif
       break;
 
-    // Potentiometer popups
     case Screens::TREBLE_GAIN:
-    case Screens::MIDDLE_GAIN:
-    case Screens::BASS_GAIN:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+#ifdef TREBLE_GAIN_POTENTIOMETER
         active_screen = Screens::MAIN_SCREEN;
+#else
+        active_screen = Screens::MAIN_MENU;
+#endif
+#ifndef TREBLE_GAIN_POTENTIOMETER
+      else if (type == InputType::ENC_CW)
+        Preamp::incTrebleGain();
+      else if (type == InputType::ENC_CCW)
+        Preamp::decTrebleGain();
+#else
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
         active_screen = Screens::MASTER_VOLUME;
+#endif
+      break;
+
+    case Screens::MIDDLE_GAIN:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+#ifdef MIDDLE_GAIN_POTENTIOMETER
+        active_screen = Screens::MAIN_SCREEN;
+#else
+        active_screen = Screens::MAIN_MENU;
+#endif
+#ifndef MIDDLE_GAIN_POTENTIOMETER
+      else if (type == InputType::ENC_CW)
+        Preamp::incMiddleGain();
+      else if (type == InputType::ENC_CCW)
+        Preamp::decMiddleGain();
+#else
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+        active_screen = Screens::MASTER_VOLUME;
+#endif
+      break;
+
+    case Screens::BASS_GAIN:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+#ifdef BASS_GAIN_POTENTIOMETER
+        active_screen = Screens::MAIN_SCREEN;
+#else
+        active_screen = Screens::MAIN_MENU;
+#endif
+#ifndef BASS_GAIN_POTENTIOMETER
+      else if (type == InputType::ENC_CW)
+        Preamp::incBassGain();
+      else if (type == InputType::ENC_CCW)
+        Preamp::decBassGain();
+#else
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+        active_screen = Screens::MASTER_VOLUME;
+#endif
       break;
     ///////////////////////
 
@@ -855,12 +888,18 @@ void check_timeouts()
     break;
 
   // Popups timeout
-#ifdef POT4
+#ifdef INPUT_GAIN_POTENTIOMETER
   case Screens::INPUT_GAIN:
 #endif
+#ifdef TREBLE_GAIN_POTENTIOMETER
   case Screens::TREBLE_GAIN:
+#endif
+#ifdef MIDDLE_GAIN_POTENTIOMETER
   case Screens::MIDDLE_GAIN:
+#endif
+#ifdef BASS_GAIN_POTENTIOMETER
   case Screens::BASS_GAIN:
+#endif
   case Screens::MASTER_VOLUME:
     if (current_stopwatch_time > BACK_TO_MAIN_SCREEN_POPUP_TIMEOUT_S)
     {
@@ -925,10 +964,6 @@ void handle_display()
 
   case Screens::ATTENUATION:
     attenuations_menu_selector(attenuations_menu_index);
-    break;
-
-  case Screens::INPUT_GAIN:
-    input_gain_settings();
     break;
 
   case Screens::BASS_FILTER:
@@ -1034,7 +1069,6 @@ void handle_display()
     soft_steps_volume_settings();
     break;
 
-  case Screens::LOUDNESS_SOFT_STEP:
   case Screens::SOFT_STEPS_LOUDNESS:
     soft_steps_loudness_settings();
     break;
@@ -1063,6 +1097,10 @@ void handle_display()
   // Popups
   case Screens::MASTER_VOLUME:
     master_volume_settings();
+    break;
+
+  case Screens::INPUT_GAIN:
+    input_gain_settings();
     break;
 
   case Screens::TREBLE_GAIN:
@@ -1115,7 +1153,7 @@ void auto_saver_task(void*)
 {
   while (true)
   {
-    preamp.saveChanged();
+    Preamp::saveChanged();
 
     vTaskDelay(pdMS_TO_TICKS(SETTING_SAVE_INTERVAL_MS));
   }
