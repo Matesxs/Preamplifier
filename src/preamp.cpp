@@ -2,7 +2,7 @@
 
 #include <Wire.h>
 
-#include "settings.h"
+#include "debug.h"
 #include "pins.h"
 
 const int input_mapping[] = { 1, 2, 0, 3 };

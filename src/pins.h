@@ -16,7 +16,7 @@
 #define DISPLAY_DATA_PIN 23
 
 // Channel switch
-#define CHANNEL_SW_BTN 26
+#define CHANNEL_SW_BTN 36
 
 // Potentiometers
 #define POT1 32
@@ -29,3 +29,7 @@
 #else
 #define POT_COUNT 4
 #endif
+
+// Spectrum analyzer
+#define SA_CLK 12
+#define SA_DATA 34

@@ -6,7 +6,7 @@
 #include <U8g2lib.h>
 
 #include "preamp.h"
-#include "defines.h"
+#include "screen_definitions.h"
 
 extern Button encoder_button;
 extern Button channel_switch_button;

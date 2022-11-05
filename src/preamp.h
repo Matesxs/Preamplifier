@@ -31,8 +31,8 @@
 #define GAIN_EFFECT_HPF 0           // 0 - 10 (4, 6 ... 22, 0)
 
 // Spectrum analyzer / clock source / AC mode
-#define SA_FILTER_Q_FACTOR 0        // 0 - 1 (3.5, 1.75)
-#define SA_RESET_MODE 0             // 0 - 1 (IIC, Auto)
+#define SA_FILTER_Q_FACTOR 1        // 0 - 1 (3.5, 1.75)
+#define SA_RESET_MODE 1             // 0 - 1 (IIC, Auto)
 #define SA_SOURCE 1                 // 0 - 1 (Bass, In Gain)
 #define SA_RUN 0                    // 0 - 1 (on, off)
 #define SA_RESET 0                  // 0 - 1 (on, off)

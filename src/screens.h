@@ -4,6 +4,7 @@ void push_indicator();
 
 void main_screen();
 void mute_screen();
+void spectrum();
 
 void main_menu_selector(int index);
 

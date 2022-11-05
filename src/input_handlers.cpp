@@ -3,6 +3,7 @@
 #include "global_objects.h"
 #include "ui_controller.h"
 #include "settings.h"
+#include "debug.h"
 #include "pins.h"
 
 Button encoder_button(ROT_PUSH, 50, false, false);

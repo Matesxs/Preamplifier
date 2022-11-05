@@ -5,6 +5,7 @@
 #include <stopWatch.h>
 
 #include "settings.h"
+#include "debug.h"
 #include "display_handler.h"
 #include "screens.h"
 #include "global_objects.h"
@@ -184,6 +185,19 @@ void handle_controll(InputType type)
       else if (type == InputType::ENC_CCW)
       {
         preamp.decInput();
+      }
+      break;
+
+    case Screens::SPECTRUM:
+      if (type == InputType::ENC_PUSH)
+      {
+        DEBUG("Returning to main menu\n");
+        active_screen = Screens::MAIN_MENU;
+      }
+      else if (type == InputType::ENC_LPUSH)
+      {
+        DEBUG("Returning to main screen\n");
+        active_screen = Screens::MAIN_SCREEN;
       }
       break;
 
@@ -799,7 +813,9 @@ void handle_controll(InputType type)
       else
         active_screen = Screens::MAIN_SCREEN;
 
+#ifndef SPECTRUM_AS_SCREEN_SAVER
       display.setPowerSave(false);
+#endif
 
       DEBUG("Screen saver: OFF\n");
       break;
@@ -821,7 +837,10 @@ void check_timeouts()
     if (current_stopwatch_time > SCREEN_SAVER_TIMEOUT_S)
     {
       active_screen = Screens::SCREEN_SAVER;
+
+#ifndef SPECTRUM_AS_SCREEN_SAVER
       display.setPowerSave(true);
+#endif
       
       restartStopwatch();
 
@@ -830,6 +849,7 @@ void check_timeouts()
 #endif
     break;
 
+  case Screens::SPECTRUM:
   case Screens::SCREEN_SAVER:
     // No timeouts for screen saver
     break;
@@ -893,6 +913,10 @@ void handle_display()
   // Main Menu
   case Screens::INPUT_SWITCH:
     input_selector();
+    break;
+
+  case Screens::SPECTRUM:
+    spectrum();
     break;
 
   case Screens::LOUDNESS:
@@ -1055,7 +1079,9 @@ void handle_display()
   /////////
 
   case Screens::SCREEN_SAVER:
-    // Empty because nothing will be displayed
+#ifdef SPECTRUM_AS_SCREEN_SAVER
+    spectrum();
+#endif
     break;
 
   default:

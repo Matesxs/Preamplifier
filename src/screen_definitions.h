@@ -7,19 +7,6 @@
 
 typedef enum
 {
-  ENC_CW,
-  ENC_CCW,
-  ENC_PUSH,
-  ENC_LPUSH,
-  POT1_CH,
-  POT2_CH,
-  POT3_CH,
-  POT4_CH,
-  CH_SW_PUSH,
-} InputType;
-
-typedef enum
-{
   SCREEN_SAVER,
   MAIN_SCREEN,
   MAIN_MENU,
@@ -34,6 +21,7 @@ typedef enum
 
   // MAIN MENU
   INPUT_SWITCH,
+  SPECTRUM,
   LOUDNESS,
   ATTENUATION,
   INPUT_GAIN,
@@ -93,19 +81,39 @@ typedef enum
 
 #ifdef POT4
   #ifndef INPUT_SWITCH_IN_MENU
-  const String main_menu_names[] = { "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
-  const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+    #ifdef SPECTRUM_IN_MENU
+      const String main_menu_names[] = { "Spectrum", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
+      const Screens main_menu_index_to_screen[] = { Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+    #else
+      const String main_menu_names[] = { "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
+      const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+    #endif
   #else
-  const String main_menu_names[] = { "Input", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
-  const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+    #ifdef SPECTRUM_IN_MENU
+      const String main_menu_names[] = { "Input", "Spectrum", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
+      const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+    #else
+      const String main_menu_names[] = { "Input", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
+      const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+    #endif
   #endif
 #else
   #ifndef INPUT_SWITCH_IN_MENU
-  const String main_menu_names[] = { "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
-  const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+    #ifdef SPECTRUM_IN_MENU
+      const String main_menu_names[] = { "Spectrum", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
+      const Screens main_menu_index_to_screen[] = {Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+    #else
+      const String main_menu_names[] = { "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
+      const Screens main_menu_index_to_screen[] = {Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+    #endif
   #else
-  const String main_menu_names[] = { "Input", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
-  const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+    #ifdef SPECTRUM_IN_MENU
+      const String main_menu_names[] = { "Input", "Spectrum", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
+      const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+    #else
+      const String main_menu_names[] = { "Input", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Reset" };
+      const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::FACT_RESET};
+    #endif
   #endif
 #endif
 const int number_of_menu_items = sizeof(main_menu_names) / sizeof(main_menu_names[0]);

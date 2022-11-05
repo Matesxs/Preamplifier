@@ -1,8 +1,14 @@
 #include "screens.h"
 
+#include <Arduino.h>
+
 #include "global_objects.h"
 #include "display_handler.h"
 #include "settings.h"
+#include "spectrum_analyzer.h"
+#include "debug.h"
+
+const uint16_t spectrumBands = SA_BANDS_NUMBER * SPECTRUM_DIVISOR - (SPECTRUM_DIVISOR - 1);
 
 void push_indicator()
 {
@@ -12,6 +18,40 @@ void push_indicator()
     display.drawLine(screenCenter - LONG_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1, screenCenter + LONG_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1);
   else if (shortPush)
     display.drawLine(screenCenter - SHORT_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1, screenCenter + SHORT_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1);
+}
+
+uint16_t processSpectrum(int index, int offset, uint16_t spectrum[])
+{
+  uint16_t height;
+  if (offset == 0)
+    height = (uint16_t)map(spectrum[index], 0, SPECTRUM_MAX_VAL, 0, display.getDisplayHeight() - 1);
+  else
+  {
+    uint16_t interpolatedValue = map(offset, 0, SPECTRUM_DIVISOR, spectrum[index], spectrum[index + 1]);
+    height = (uint16_t)map(interpolatedValue, 0, SPECTRUM_MAX_VAL, 0, display.getDisplayHeight() - 1);
+  }
+
+  return (uint16_t)max((uint16_t)0, min(height, (uint16_t)(display.getDisplayHeight() - 1)));
+}
+
+void spectrum()
+{
+  static const uint16_t freqWidth = display.getDisplayWidth() / spectrumBands;
+
+  for (int i = 0; i < spectrumBands; i++)
+  {
+    int spectrumIndex = i / SPECTRUM_DIVISOR;
+    int offset = i % SPECTRUM_DIVISOR;
+
+    uint16_t avgHeight = processSpectrum(spectrumIndex, offset, SpectrumAnalyzer::spectrum);
+    uint16_t rawHeight = processSpectrum(spectrumIndex, offset, SpectrumAnalyzer::spectrumRaw);
+
+    if (avgHeight > 0)
+      display.drawFrame(i * freqWidth, display.getDisplayHeight() - avgHeight - 1, freqWidth, avgHeight);
+
+    if (rawHeight > 0)
+      display.drawBox(i * freqWidth, display.getDisplayHeight() - rawHeight - 1, freqWidth, rawHeight);
+  }
 }
 
 void main_screen()

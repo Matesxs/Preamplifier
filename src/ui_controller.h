@@ -1,6 +1,6 @@
 #pragma once
 
-#include "defines.h"
+#include "interactions.h"
 
 void handle_controll(InputType type);
 
