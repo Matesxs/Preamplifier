@@ -8,9 +8,15 @@
 
 namespace InputHandling
 {
-  Button encoder_button(ROT_PUSH, DEBOUNCE_BUTTONS_MS, false, false);
-#ifdef CHANNEL_SW_BTN
-  Button channel_switch_button(CHANNEL_SW_BTN, DEBOUNCE_BUTTONS_MS, true, true);
+  Button encoder_button(ENCODER_BUTTON, DEBOUNCE_BUTTONS_MS, false, false);
+#ifdef CHANNEL_SWITCH_BUTTON
+  Button channel_switch_button(CHANNEL_SWITCH_BUTTON, DEBOUNCE_BUTTONS_MS, true, true);
+#endif
+#ifdef CHANNEL_ROTARY_SWITCH
+  Button channel1_switch(ROTARY_CHANNEL1_PIN, DEBOUNCE_ROTARY_SWITCH, true, true);
+  Button channel2_switch(ROTARY_CHANNEL2_PIN, DEBOUNCE_ROTARY_SWITCH, true, true);
+  Button channel3_switch(ROTARY_CHANNEL3_PIN, DEBOUNCE_ROTARY_SWITCH, true, true);
+  Button channel4_switch(ROTARY_CHANNEL4_PIN, DEBOUNCE_ROTARY_SWITCH, true, true);
 #endif
   RotaryEncoder encoder(ROT_A, ROT_B, RotaryEncoder::LatchMode::FOUR3);
 
@@ -24,9 +30,16 @@ namespace InputHandling
   void init()
   {
     encoder_button.begin();
-#ifdef CHANNEL_SW_BTN
+#ifdef CHANNEL_SWITCH_BUTTON
     channel_switch_button.begin();
 #endif
+#ifdef CHANNEL_ROTARY_SWITCH
+    channel1_switch.begin();
+    channel2_switch.begin();
+    channel3_switch.begin();
+    channel4_switch.begin();
+#endif
+
     attachInterrupt(ROT_A, update_encoder, FALLING);
     attachInterrupt(ROT_B, update_encoder, FALLING);
 
@@ -64,6 +77,30 @@ namespace InputHandling
     handle_controll(InputType::CH_SW_PUSH);
   }
 
+  void handle_switch_to_chan_1()
+  {
+    DEBUG("Channel1 switch Push\n");
+    handle_controll(InputType::SW_CH1);
+  }
+
+  void handle_switch_to_chan_2()
+  {
+    DEBUG("Channel2 switch Push\n");
+    handle_controll(InputType::SW_CH2);
+  }
+
+  void handle_switch_to_chan_3()
+  {
+    DEBUG("Channel3 switch Push\n");
+    handle_controll(InputType::SW_CH3);
+  }
+
+  void handle_switch_to_chan_4()
+  {
+    DEBUG("Channel4 switch Push\n");
+    handle_controll(InputType::SW_CH4);
+  }
+
   void handle_encoder()
   {
     static long pos = 0;
@@ -87,13 +124,20 @@ namespace InputHandling
   void handle_buttons()
   {
     encoder_button.read();
-#ifdef CHANNEL_SW_BTN
+#ifdef CHANNEL_SWITCH_BUTTON
     channel_switch_button.read();
 #endif
 
-    if (encoder_button.pressedFor(LONG_CLICK_DUR_MS))
+#ifdef CHANNEL_ROTARY_SWITCH
+    channel1_switch.read();
+    channel2_switch.read();
+    channel3_switch.read();
+    channel4_switch.read();
+#endif
+
+    if (encoder_button.pressedFor(ENCODER_LONG_CLICK_DUR_MS))
       longPush = true;
-    else if (encoder_button.pressedFor(SHORT_CLICK_DUR_MS))
+    else if (encoder_button.pressedFor(ENCODER_SHORT_CLICK_DUR_MS))
       shortPush = true;
 
     if (encoder_button.wasReleased())
@@ -107,9 +151,23 @@ namespace InputHandling
       shortPush = false;
     }
 
-#ifdef CHANNEL_SW_BTN
+#ifdef CHANNEL_SWITCH_BUTTON
     if (channel_switch_button.wasPressed())
       handle_channel_switch_push();
+#endif
+
+#ifdef CHANNEL_ROTARY_SWITCH
+    if (channel1_switch.wasPressed())
+      handle_switch_to_chan_1();
+
+    if (channel2_switch.wasPressed())
+      handle_switch_to_chan_2();
+
+    if (channel3_switch.wasPressed())
+      handle_switch_to_chan_3();
+
+    if (channel4_switch.wasPressed())
+      handle_switch_to_chan_4();
 #endif
   }
 
@@ -128,8 +186,36 @@ namespace InputHandling
   void buttons_task(void*)
   {
     encoder_button.read();
-#ifdef CHANNEL_SW_BTN
+#ifdef CHANNEL_SWITCH_BUTTON
     channel_switch_button.read();
+#endif
+#ifdef CHANNEL_ROTARY_SWITCH
+    channel1_switch.read();
+    channel2_switch.read();
+    channel3_switch.read();
+    channel4_switch.read();
+
+    switch (number_of_channels)
+    {
+    case 4:
+      if (!digitalRead(ROTARY_CHANNEL4_PIN))
+        Preamp::setInput(3);
+
+    case 3:
+      if (!digitalRead(ROTARY_CHANNEL3_PIN))
+        Preamp::setInput(2);
+
+    case 2:
+      if (!digitalRead(ROTARY_CHANNEL2_PIN))
+        Preamp::setInput(1);
+
+    case 1:
+      if (!digitalRead(ROTARY_CHANNEL1_PIN))
+        Preamp::setInput(0);
+    
+    default:
+      break;
+    }
 #endif
 
     while (true)

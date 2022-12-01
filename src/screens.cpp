@@ -18,9 +18,9 @@ void push_indicator()
   uint16_t screenCenter = display.getDisplayWidth() / 2;
 
   if (InputHandling::longPush)
-    display.drawLine(screenCenter - LONG_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1, screenCenter + LONG_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1);
+    display.drawLine(screenCenter - ENCODER_LONG_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1, screenCenter + ENCODER_LONG_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1);
   else if (InputHandling::shortPush)
-    display.drawLine(screenCenter - SHORT_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1, screenCenter + SHORT_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1);
+    display.drawLine(screenCenter - ENCODER_SHORT_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1, screenCenter + ENCODER_SHORT_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1);
 }
 
 uint16_t processSpectrum(int index, int offset, uint16_t spectrum[])
@@ -59,8 +59,8 @@ void spectrum()
 void main_screen()
 {
   display.setFont(u8g2_font_ncenB14_tr);
-  int selectedInput = Preamp::getInput() + 1;
-  display_draw_center(String(String("INPUT ") + (selectedInput != 4 ? String(selectedInput) : "BT")).c_str(), 0);
+  if (number_of_channels > 1)
+    display_draw_center(String(String("INPUT ") + String(channel_names[Preamp::getInput()])).c_str(), 0);
   
   String volumeString = String(String("VOL: ") + String(Preamp::getVolume()));
   String gainString = String(String("GAIN: ") + String(Preamp::getInputGain()));
@@ -142,10 +142,7 @@ void bass_gain_settings()
 
 void input_selector()
 {
-  int inputIndex = Preamp::getInput() + 1;
-
-  String inputString = (inputIndex != 4 ? String(inputIndex) : "BT");
-  draw_centered_desc_and_val("Input", inputString.c_str());
+  draw_centered_desc_and_val("Input", String(channel_names[Preamp::getInput()]).c_str());
 }
 
 void loudness_menu_selector(int index)

@@ -11,4 +11,8 @@ typedef enum
   POT3_CH,
   POT4_CH,
   CH_SW_PUSH,
+  SW_CH1,
+  SW_CH2,
+  SW_CH3,
+  SW_CH4
 } InputType;

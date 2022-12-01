@@ -25,6 +25,8 @@ void setup()
   // DEBUG("Display bus clock: %d\n", display.getBusClock());
   prepare_display();
 
+  Preamp::init();
+
   InputHandling::init();
   PotentiometerHandling::init();
 
@@ -32,7 +34,6 @@ void setup()
   SpectrumAnalyzer::init();
 #endif
 
-  Preamp::init();
   delay(100);
 
   xTaskCreateUniversal(PotentiometerHandling::handle_potentiometer_task, "pot", 2048, NULL, 1, NULL, 1);

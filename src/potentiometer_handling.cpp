@@ -1,6 +1,7 @@
 #include "potentiometer_handling.h"
 
 #include <Arduino.h>
+#include <MovingAverage.h>
 
 #include "global_objects.h"
 #include "preamp.h"
@@ -11,6 +12,19 @@
 namespace PotentiometerHandling
 {
   volatile uint16_t values[4];
+
+#ifdef TREBLE_GAIN_POTENTIOMETER
+  MovingAverage<uint16_t, POT_FILTER_SAMPLES> trebleFilter;
+#endif
+#ifdef MIDDLE_GAIN_POTENTIOMETER
+  MovingAverage<uint16_t, POT_FILTER_SAMPLES> middleFilter;
+#endif
+#ifdef BASS_GAIN_POTENTIOMETER
+  MovingAverage<uint16_t, POT_FILTER_SAMPLES> bassFilter;
+#endif
+#ifdef INPUT_GAIN_POTENTIOMETER
+  MovingAverage<uint16_t, POT_FILTER_SAMPLES> inputGainFilter;
+#endif
 
   void init()
   {
@@ -31,23 +45,23 @@ namespace PotentiometerHandling
   void handle_potentiometer_task(void *)
   {
 #ifdef TREBLE_GAIN_POTENTIOMETER
-    values[0] = analogRead(TREBLE_GAIN_POTENTIOMETER);
-    Preamp::setTrebleGain((int)map(values[0], 0, 4095, -15, 15));
+    values[0] = trebleFilter.add(analogRead(TREBLE_GAIN_POTENTIOMETER));
+    Preamp::setTrebleGain((int)map(values[0], POT_MIN_VAL, POT_MAX_VAL, -15, 15));
 #endif
 
 #ifdef MIDDLE_GAIN_POTENTIOMETER
-    values[1] = analogRead(MIDDLE_GAIN_POTENTIOMETER);
-    Preamp::setMiddleGain((int)map(values[1], 0, 4095, -15, 15));
+    values[1] = middleFilter.add(analogRead(MIDDLE_GAIN_POTENTIOMETER));
+    Preamp::setMiddleGain((int)map(values[1], POT_MIN_VAL, POT_MAX_VAL, -15, 15));
 #endif
 
 #ifdef BASS_GAIN_POTENTIOMETER
-    values[2] = analogRead(BASS_GAIN_POTENTIOMETER);
-    Preamp::setBassGain((int)map(values[2], 0, 4095, -15, 15));
+    values[2] = bassFilter.add(analogRead(BASS_GAIN_POTENTIOMETER));
+    Preamp::setBassGain((int)map(values[2], POT_MIN_VAL, POT_MAX_VAL, -15, 15));
 #endif
 
 #ifdef INPUT_GAIN_POTENTIOMETER
-    values[3] = analogRead(INPUT_GAIN_POTENTIOMETER);
-    Preamp::setInputGain((int)map(values[3], 0, 4095, 0, 15));
+    values[3] = inputGainFilter.add(analogRead(INPUT_GAIN_POTENTIOMETER));
+    Preamp::setInputGain((int)map(values[3], POT_MIN_VAL, POT_MAX_VAL, 0, 15));
 #endif
 
     uint16_t tmp;
@@ -56,7 +70,7 @@ namespace PotentiometerHandling
     while (true)
     {
 #ifdef TREBLE_GAIN_POTENTIOMETER
-      tmp = analogRead(TREBLE_GAIN_POTENTIOMETER);
+      tmp = trebleFilter.add(analogRead(TREBLE_GAIN_POTENTIOMETER));
       diff = (uint16_t)abs((int32_t)tmp - (int32_t)values[0]);
       if (diff > POTENTIOMETER_MIN_CHANGE)
       {
@@ -66,7 +80,7 @@ namespace PotentiometerHandling
 #endif
 
 #ifdef MIDDLE_GAIN_POTENTIOMETER
-      tmp = analogRead(MIDDLE_GAIN_POTENTIOMETER);
+      tmp = middleFilter.add(analogRead(MIDDLE_GAIN_POTENTIOMETER));
       diff = (uint16_t)abs((int32_t)tmp - (int32_t)values[1]);
       if (diff > POTENTIOMETER_MIN_CHANGE)
       {
@@ -76,7 +90,7 @@ namespace PotentiometerHandling
 #endif
 
 #ifdef BASS_GAIN_POTENTIOMETER
-      tmp = analogRead(BASS_GAIN_POTENTIOMETER);
+      tmp = bassFilter.add(analogRead(BASS_GAIN_POTENTIOMETER));
       diff = (uint16_t)abs((int32_t)tmp - (int32_t)values[2]);
       if (diff > POTENTIOMETER_MIN_CHANGE)
       {
@@ -86,7 +100,7 @@ namespace PotentiometerHandling
 #endif
 
 #ifdef INPUT_GAIN_POTENTIOMETER
-      tmp = analogRead(INPUT_GAIN_POTENTIOMETER);
+      tmp = inputGainFilter.add(analogRead(INPUT_GAIN_POTENTIOMETER));
       diff = (uint16_t)abs((int32_t)tmp - (int32_t)values[3]);
       if (diff > POTENTIOMETER_MIN_CHANGE)
       {

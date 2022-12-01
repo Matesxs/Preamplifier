@@ -5,8 +5,6 @@
 #include "debug.h"
 #include "pins.h"
 
-const int input_mapping[] = { 1, 2, 0, 3 };
-
 namespace Preamp
 {
   InputSettings m_inputSettings;
@@ -71,7 +69,7 @@ namespace Preamp
 
     loadFromMemory();
 
-    m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, PREAMP_INPUT_AUTO_Z);
+    m_controller.setInput(input_mapping[m_inputSettings.selected_input], getInputGain(), PREAMP_INPUT_AUTO_Z);
     m_controller.setInput2(PREAMP_INPUT2_SOURCE, PREAMP_INPUT2_GAIN, PREAMP_REAR_SPEAKER_SOURCE);
     m_controller.setVolume(m_volumeSettings.volume, m_volumeSettings.soft_step);
     m_controller.setSoft(1, PREAMP_PIN_INFLUENCE_FOR_MUTE, m_softMuteStep.soft_mute_time, m_softMuteStep.soft_step_time, PREAMP_CLOCK_FAST_MODE);
@@ -92,78 +90,122 @@ namespace Preamp
   void setInput(int val)
   {
     if (val < 0) val = 0;
-    if (val > 3) val = 3;
+    if (val > (number_of_channels - 1)) val = number_of_channels - 1;
     if (val == m_inputSettings.selected_input) return;
 
     m_inputSettings.selected_input = val;
     m_inputSettingsChanged = true;
-    m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, PREAMP_INPUT_AUTO_Z);
+    m_controller.setInput(input_mapping[m_inputSettings.selected_input], getInputGain(), PREAMP_INPUT_AUTO_Z);
   }
 
   void rotateInput()
   {
+    if (number_of_channels == 1) return;
+
     m_inputSettings.selected_input++;
 
-    if (m_inputSettings.selected_input > 3)
+    if (m_inputSettings.selected_input > (number_of_channels - 1))
       m_inputSettings.selected_input = 0;
 
     m_inputSettingsChanged = true;
-    m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, PREAMP_INPUT_AUTO_Z);
+    m_controller.setInput(input_mapping[m_inputSettings.selected_input], getInputGain(), PREAMP_INPUT_AUTO_Z);
   }
 
   void incInput()
   {
-    if (m_inputSettings.selected_input >= 3) return;
+    if (number_of_channels == 1) return;
+
+    if (m_inputSettings.selected_input >= (number_of_channels - 1)) return;
 
     m_inputSettings.selected_input++;
     m_inputSettingsChanged = true;
-    m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, PREAMP_INPUT_AUTO_Z);
+    m_controller.setInput(input_mapping[m_inputSettings.selected_input], getInputGain(), PREAMP_INPUT_AUTO_Z);
   }
 
   void decInput()
   {
+    if (number_of_channels == 1) return;
+
     if (m_inputSettings.selected_input <= 0) return;
 
     m_inputSettings.selected_input--;
     m_inputSettingsChanged = true;
-    m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, PREAMP_INPUT_AUTO_Z);
+    m_controller.setInput(input_mapping[m_inputSettings.selected_input], getInputGain(), PREAMP_INPUT_AUTO_Z);
   }
 
-  int getInputGain() { return m_inputSettings.gain; }
+  int getInputGain() 
+  { 
+  #ifdef INPUT_GAIN_POTENTIOMETER
+    return m_inputSettings.gain1;
+  #else
+    switch (m_inputSettings.selected_input)
+    {
+    case 0:
+      return m_inputSettings.gain1;
+
+    case 1:
+      return m_inputSettings.gain2;
+
+    case 2:
+      return m_inputSettings.gain3;
+
+    case 3:
+      return m_inputSettings.gain4;
+    
+    default:
+      DEBUG("[WARNING] Detected invalid input (%d) for getting input gain\n", m_inputSettings.selected_input);
+      return m_inputSettings.gain1;
+    }
+  #endif
+  }
 
   void setInputGain(int val)
   {
     if (val < 0) val = 0;
     if (val > 15) val = 15;
-    if (val == m_inputSettings.gain) return;
+    if (val == getInputGain()) return;
 
-    m_inputSettings.gain = val;
   #ifndef INPUT_GAIN_POTENTIOMETER
+    switch (m_inputSettings.selected_input)
+    {
+    case 0:
+      m_inputSettings.gain1 = val;
+      break;
+
+    case 1:
+      m_inputSettings.gain2 = val;
+      break;
+
+    case 2:
+      m_inputSettings.gain3 = val;
+      break;
+
+    case 3:
+      m_inputSettings.gain4 = val;
+      break;
+    
+    default:
+      DEBUG("[WARNING] Detected invalid input (%d) for setting input gain\n", m_inputSettings.selected_input);
+      m_inputSettings.gain1 = val;
+      break;
+    }
+
     m_inputSettingsChanged = true;
+  #else
+    m_inputSettings.gain1 = val;
   #endif
-    m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, PREAMP_INPUT_AUTO_Z);
+
+    m_controller.setInput(input_mapping[m_inputSettings.selected_input], getInputGain(), PREAMP_INPUT_AUTO_Z);
   }
 
   void incInputGain()
   {
-    if (m_inputSettings.gain >= 15) return;
-
-    m_inputSettings.gain++;
-  #ifndef INPUT_GAIN_POTENTIOMETER
-    m_inputSettingsChanged = true;
-  #endif
-    m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, PREAMP_INPUT_AUTO_Z);
+    setInputGain(getInputGain() + 1);
   }
 
   void decInputGain()
   {
-    if (m_inputSettings.gain <= 0) return;
-
-    m_inputSettings.gain--;
-  #ifndef INPUT_GAIN_POTENTIOMETER
-    m_inputSettingsChanged = true;
-  #endif
-    m_controller.setInput(input_mapping[m_inputSettings.selected_input], m_inputSettings.gain, PREAMP_INPUT_AUTO_Z);
+    setInputGain(getInputGain() - 1);
   }
 
   int getLoudnessAttenuation() { return m_loudnessSettings.attenuation; }
@@ -921,7 +963,10 @@ namespace Preamp
   {
     m_inputSettingsEEPROM.putInt("sel_inp", m_inputSettings.selected_input);
   #ifndef INPUT_GAIN_POTENTIOMETER
-    m_inputSettingsEEPROM.putInt("gain", m_inputSettings.gain);
+    m_inputSettingsEEPROM.putInt("gain1", m_inputSettings.gain1);
+    m_inputSettingsEEPROM.putInt("gain2", m_inputSettings.gain2);
+    m_inputSettingsEEPROM.putInt("gain3", m_inputSettings.gain3);
+    m_inputSettingsEEPROM.putInt("gain4", m_inputSettings.gain4);
   #endif
 
     m_inputSettingsChanged = false;
@@ -1033,7 +1078,10 @@ namespace Preamp
   {
     m_inputSettings.selected_input = m_inputSettingsEEPROM.getInt("sel_inp", m_inputSettings.selected_input);
   #ifndef INPUT_GAIN_POTENTIOMETER
-    m_inputSettings.gain = m_inputSettingsEEPROM.getInt("gain", m_inputSettings.gain);
+    m_inputSettings.gain1 = m_inputSettingsEEPROM.getInt("gain1", m_inputSettings.gain1);
+    m_inputSettings.gain2 = m_inputSettingsEEPROM.getInt("gain2", m_inputSettings.gain2);
+    m_inputSettings.gain3 = m_inputSettingsEEPROM.getInt("gain3", m_inputSettings.gain3);
+    m_inputSettings.gain4 = m_inputSettingsEEPROM.getInt("gain4", m_inputSettings.gain4);
   #endif
 
     m_loudnessSettings.attenuation = m_loudnessSettingsEEPROM.getInt("att", m_loudnessSettings.attenuation);

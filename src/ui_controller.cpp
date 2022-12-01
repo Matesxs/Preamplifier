@@ -32,9 +32,11 @@ void handle_controll(InputType type)
   {
     // DEBUG("POT1 val: %d\n", PotentiometerHandling::values[0]);
 
-    int newGain = (int)map(PotentiometerHandling::values[0], 0, 4095, -15, 15);
+    int newGain = (int)map(PotentiometerHandling::values[0], POT_MIN_VAL, POT_MAX_VAL, -15, 15);
+    int settingDiff = abs(newGain - Preamp::getTrebleGain());
 
-    if (newGain != Preamp::getTrebleGain())
+    if ((settingDiff >= POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP && active_screen != Screens::TREBLE_GAIN) ||
+        (settingDiff > 0 && active_screen == Screens::TREBLE_GAIN))
     {
       // DEBUG("Mapped treble gain: %d\n", newGain);
       restartStopwatch();
@@ -47,9 +49,11 @@ void handle_controll(InputType type)
   {
     // DEBUG("POT2 val: %d\n", PotentiometerHandling::values[1]);
 
-    int newGain = (int)map(PotentiometerHandling::values[1], 0, 4095, -15, 15);
+    int newGain = (int)map(PotentiometerHandling::values[1], POT_MIN_VAL, POT_MAX_VAL, -15, 15);
+    int settingDiff = abs(newGain - Preamp::getMiddleGain());
 
-    if (newGain != Preamp::getMiddleGain())
+    if ((settingDiff >= POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP && active_screen != Screens::MIDDLE_GAIN) ||
+        (settingDiff > 0 && active_screen == Screens::MIDDLE_GAIN))
     {
       // DEBUG("Mapped middle gain: %d\n", newGain);
       restartStopwatch();
@@ -62,9 +66,11 @@ void handle_controll(InputType type)
   {
     // DEBUG("POT3 val: %d\n", PotentiometerHandling::values[2]);
 
-    int newGain = (int)map(PotentiometerHandling::values[2], 0, 4095, -15, 15);
+    int newGain = (int)map(PotentiometerHandling::values[2], POT_MIN_VAL, POT_MAX_VAL, -15, 15);
+    int settingDiff = abs(newGain - Preamp::getBassGain());
 
-    if (newGain != Preamp::getBassGain())
+    if ((settingDiff >= POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP && active_screen != Screens::BASS_GAIN) ||
+        (settingDiff > 0 && active_screen == Screens::BASS_GAIN))
     {
       // DEBUG("Mapped bass gain: %d\n", newGain);
       restartStopwatch();
@@ -77,9 +83,11 @@ void handle_controll(InputType type)
   {
     // DEBUG("POT4 val: %d\n", PotentiometerHandling::values[3]);
 
-    int newInputGain = (int)map(PotentiometerHandling::values[3], 0, 4095, 0, 15);
+    int newInputGain = (int)map(PotentiometerHandling::values[3], POT_MIN_VAL, POT_MAX_VAL, 0, 15);
+    int settingDiff = abs(newInputGain - Preamp::getInputGain());
 
-    if (newInputGain != Preamp::getInputGain())
+    if ((settingDiff >= POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP && active_screen != Screens::INPUT_GAIN) ||
+        (settingDiff > 0 && active_screen == Screens::INPUT_GAIN))
     {
       // DEBUG("Mapped input gain: %d\n", newInputGain);
       restartStopwatch();
@@ -91,7 +99,27 @@ void handle_controll(InputType type)
   else if (type == InputType::CH_SW_PUSH)
   {
     Preamp::rotateInput();
-    DEBUG("Switching input to %d\n", Preamp::getInput() + 1);
+    DEBUG("Switching input to %s\n", String(channel_names[Preamp::getInput()]).c_str());
+  }
+  else if (type == InputType::SW_CH1)
+  {
+    Preamp::setInput(0);
+    DEBUG("Switching input to %s\n", String(channel_names[Preamp::getInput()]).c_str());
+  }
+  else if (type == InputType::SW_CH2)
+  {
+    Preamp::setInput(1);
+    DEBUG("Switching input to %s\n", String(channel_names[Preamp::getInput()]).c_str());
+  }
+  else if (type == InputType::SW_CH3)
+  {
+    Preamp::setInput(2);
+    DEBUG("Switching input to %s\n", String(channel_names[Preamp::getInput()]).c_str());
+  }
+  else if (type == InputType::SW_CH4)
+  {
+    Preamp::setInput(3);
+    DEBUG("Switching input to %s\n", String(channel_names[Preamp::getInput()]).c_str());
   }
   else
   {
@@ -927,7 +955,7 @@ void handle_display()
 {
   // DEBUG("Handling display %d\n", active_screen);
 
-#ifdef ENABLE_PUSH_LENGTH_INDICATOR
+#ifdef ENABLE_ENCODER_PUSH_LENGTH_INDICATOR
   push_indicator();
 #endif
 

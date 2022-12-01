@@ -3,7 +3,6 @@
 // Rotary encoder
 #define ROT_A 2
 #define ROT_B 4
-#define ROT_PUSH 15
 
 // Temperature probe
 #define ONE_WIRE_BUS 19
@@ -15,8 +14,15 @@
 #define DISPLAY_CLOCK_PIN 18
 #define DISPLAY_DATA_PIN 23
 
-// Channel switch
-#define CHANNEL_SW_BTN 36
+// Buttons
+#define ENCODER_BUTTON 15
+#define BUTTON1 36
+
+// Rotary switch
+#define ROT1_PIN 36
+#define ROT2_PIN 39
+#define ROT3_PIN 25
+#define ROT4_PIN 26
 
 // Potentiometers
 #define POT1 32

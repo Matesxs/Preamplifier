@@ -44,7 +44,10 @@ namespace Preamp
   typedef struct
   {
     int selected_input = 0;         // 0 - 3
-    int gain = 0;                   // 0 - 15
+    int gain1 = 0;                  // 0 - 15
+    int gain2 = 0;                  // 0 - 15
+    int gain3 = 0;                  // 0 - 15
+    int gain4 = 0;                  // 0 - 15
   } InputSettings;
 
   typedef struct
