@@ -63,13 +63,8 @@ const int number_of_channels = max((int)(sizeof(input_mapping) / sizeof(input_ma
 #define SETTING_SAVE_INTERVAL_MS 5000
 
 // Spectrum analyzer settings
-#define ENABLE_SPECTRUM_ANALYZER
-
-#ifdef ENABLE_SPECTRUM_ANALYZER
-  #define SPECTRUM_IN_MENU
-  #define SPECTRUM_AS_SCREEN_SAVER
-  #define SPECTRUM_CLIPPING_DETECTION_ON_MAIN
-#endif
+#define SPECTRUM_AS_SCREEN_SAVER
+#define SPECTRUM_CLIPPING_DETECTION_ON_MAIN
 
 #define SPECTRUM_AVG_BUFFER 8 // 2, 4, 8, 16, 32, 64 ...
 #define SPECTRUM_DIVISOR 3
