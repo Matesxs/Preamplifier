@@ -1,16 +1,20 @@
 #include "input_handlers.h"
 
+#include <JC_Button.h>
+#include <RotaryEncoder.h>
+
 #include "global_objects.h"
-#include "ui_controller.h"
+#include "display/ui_controller.h"
 #include "settings.h"
 #include "debug.h"
 #include "pins.h"
+#include "preamp.h"
 
 namespace InputHandling
 {
   Button encoder_button(ENCODER_BUTTON, DEBOUNCE_BUTTONS_MS, false, false);
 #ifdef CHANNEL_SWITCH_BUTTON
-  Button channel_switch_button(CHANNEL_SWITCH_BUTTON, DEBOUNCE_BUTTONS_MS, true, true);
+  Button channel_switch_button(INPUT_SWITCH_BUTTON, DEBOUNCE_BUTTONS_MS, true, true);
 #endif
 #ifdef CHANNEL_ROTARY_SWITCH
   Button channel1_switch(ROTARY_CHANNEL1_PIN, DEBOUNCE_ROTARY_SWITCH, true, true);

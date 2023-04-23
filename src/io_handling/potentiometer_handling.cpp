@@ -7,7 +7,7 @@
 #include "preamp.h"
 #include "settings.h"
 #include "pins.h"
-#include "ui_controller.h"
+#include "display/ui_controller.h"
 
 namespace PotentiometerHandling
 {

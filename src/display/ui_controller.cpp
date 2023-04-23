@@ -9,7 +9,7 @@
 #include "display_handler.h"
 #include "screens.h"
 #include "global_objects.h"
-#include "potentiometer_handling.h"
+#include "io_handling/potentiometer_handling.h"
 #include "preamp.h"
 #include "helpers.h"
 
@@ -1171,7 +1171,7 @@ void display_draw_task(void*)
       handle_display();
     } while (display.nextPage());
 
-    vTaskDelay(pdMS_TO_TICKS(2));
+    vTaskDelay(pdMS_TO_TICKS(DISPLAY_UPDATE_INTERVAL_MS));
   }
 
   vTaskDelete(NULL);

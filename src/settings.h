@@ -9,6 +9,8 @@
 #define UPDATE_TEMP_INTERVAL_MS 2000
 
 // Display settings
+#define DISPLAY_UPDATE_INTERVAL_MS 10
+
 #define ENABLE_SCREEN_SAVER
 #define SCREEN_SAVER_TIMEOUT_S 300
 
@@ -20,19 +22,23 @@ const int input_mapping[] = { 1, 2, 0, 3 }; // There must be always atlast one i
 const int number_of_channels = max((int)(sizeof(input_mapping) / sizeof(input_mapping[0])), 1);
 
 // Input settings
-// #define INPUT_SWITCH_IN_MENU
-
 #define ENCODER_PULLING_RATE_MS 10
 
 #define DEBOUNCE_BUTTONS_MS 60
 #define BUTTONS_PULLING_RATE_MS 10
+
 #define ENCODER_SHORT_CLICK_DUR_MS 70
 #define ENCODER_LONG_CLICK_DUR_MS 500
+
 #define ENABLE_ENCODER_PUSH_LENGTH_INDICATOR
 #define ENCODER_SHORT_PUSH_INDICATOR_LENGTH 8
 #define ENCODER_LONG_PUSH_INDICATOR_LENGTH 16
-// #define CHANNEL_SWITCH_BUTTON BUTTON1
-#define CHANNEL_ROTARY_SWITCH
+
+//////////////////////////////// SELECT /////////////////////////////////////
+// #define INPUT_SWITCH_IN_MENU
+// #define INPUT_SWITCH_BUTTON BUTTON1
+#define CHANNEL_ROTARY_SWITCH // Dont combina with the other input switching methods
+/////////////////////////////////////////////////////////////////////////////
 
 #ifdef CHANNEL_ROTARY_SWITCH
   #define DEBOUNCE_ROTARY_SWITCH 300
@@ -44,7 +50,7 @@ const int number_of_channels = max((int)(sizeof(input_mapping) / sizeof(input_ma
 
 // #define INPUT_GAIN_POTENTIOMETER POT4
 #define POT_MIN_VAL 100
-#define POT_MAX_VAL 3995
+#define POT_MAX_VAL 3950
 #define POT_FILTER_SAMPLES 4
 #define BASS_GAIN_POTENTIOMETER POT1
 #define MIDDLE_GAIN_POTENTIOMETER POT2

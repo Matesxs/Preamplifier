@@ -4,11 +4,11 @@
 
 #include "global_objects.h"
 #include "preamp.h"
-#include "input_handlers.h"
-#include "temperature_reader.h"
+#include "io_handling/input_handlers.h"
+#include "io_handling/temperature_reader.h"
 #include "display_handler.h"
 #include "settings.h"
-#include "spectrum_analyzer.h"
+#include "io_handling/spectrum_analyzer.h"
 #include "debug.h"
 
 const uint16_t spectrumBands = SA_BANDS_NUMBER * SPECTRUM_DIVISOR - (SPECTRUM_DIVISOR - 1);
