@@ -2,11 +2,11 @@
 
 #include <Arduino.h>
 
-#define ENABLE_DEBUG
-
 // Temperature
-// #define ENABLE_TEMPERATURE_MONITORING
+// PS. Max number of sensors for individual values is 3!
+#define ENABLE_TEMPERATURE_MONITORING
 #define UPDATE_TEMP_INTERVAL_MS 2000
+// #define ONLY_MAX_TEMPERATURE
 
 // Display settings
 #define DISPLAY_UPDATE_INTERVAL_MS 10
@@ -38,6 +38,7 @@ const int number_of_channels = max((int)(sizeof(input_mapping) / sizeof(input_ma
 // #define INPUT_SWITCH_IN_MENU
 // #define INPUT_SWITCH_BUTTON BUTTON1
 #define CHANNEL_ROTARY_SWITCH // Dont combina with the other input switching methods
+#define AUTO_SWITCHING // TODO: Implement // Dont combine with rotary switch
 /////////////////////////////////////////////////////////////////////////////
 
 #ifdef CHANNEL_ROTARY_SWITCH
@@ -51,12 +52,12 @@ const int number_of_channels = max((int)(sizeof(input_mapping) / sizeof(input_ma
 // #define INPUT_GAIN_POTENTIOMETER POT4
 #define POT_MIN_VAL 100
 #define POT_MAX_VAL 3950
-#define POT_FILTER_SAMPLES 4
+#define POT_FILTER_SAMPLES 8 // 2, 4, 8, 16, 32, 64 ...
 #define BASS_GAIN_POTENTIOMETER POT1
 #define MIDDLE_GAIN_POTENTIOMETER POT2
 #define TREBLE_GAIN_POTENTIOMETER POT3
-#define POTENTIOMETER_PULLING_RATE_MS 50
-#define POTENTIOMETER_MIN_CHANGE 50
+#define POTENTIOMETER_PULLING_RATE_MS 20
+#define POTENTIOMETER_MIN_CHANGE 70
 #define POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP 2
 
 // Settings saving
@@ -65,6 +66,7 @@ const int number_of_channels = max((int)(sizeof(input_mapping) / sizeof(input_ma
 // Spectrum analyzer settings
 #define SPECTRUM_AS_SCREEN_SAVER
 #define SPECTRUM_CLIPPING_DETECTION_ON_MAIN
+#define SPECTRUM_MINIMALISTIC_CLIPPING_DETECTION // TODO: Implement
 
 #define SPECTRUM_AVG_BUFFER 8 // 2, 4, 8, 16, 32, 64 ...
 #define SPECTRUM_DIVISOR 3

@@ -2,6 +2,8 @@
 
 namespace TemperatureReader
 {
-  extern float temperatures[2];
-  void temperature_task(void*); 
+  extern float* temperatures;
+  void temperature_task(void*);
+  uint8_t getSensorCount();
+  float maxTemp();
 }

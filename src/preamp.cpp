@@ -4,6 +4,7 @@
 
 #include "debug.h"
 #include "pins.h"
+#include "settings.h"
 
 namespace Preamp
 {

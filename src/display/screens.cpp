@@ -74,10 +74,30 @@ void main_screen()
   display.setFont(u8g2_font_ncenB10_tr);
 
 #ifdef ENABLE_TEMPERATURE_MONITORING
-  String temp1Str = String(String(TemperatureReader::temperatures[0], 1) + String("C"));
-  String temp2Str = String(String(TemperatureReader::temperatures[1], 1) + String("C"));
-  display.drawStr(0, 0, temp1Str.c_str());
-  display.drawStr(display.getDisplayWidth() - display.getStrWidth(temp2Str.c_str()), 0, temp2Str.c_str());
+#ifndef ONLY_MAX_TEMPERATURE
+  uint8_t sensor_count = TemperatureReader::getSensorCount();
+  if (sensor_count >= 1)
+  {
+    String tempStr = String(String(TemperatureReader::temperatures[0], 1) + String("C"));
+    display.drawStr(0, 0, tempStr.c_str());
+  }
+  if (sensor_count >= 3)
+  {
+    String tem1Str = String(String(TemperatureReader::temperatures[1], 1) + String("C"));
+    display.drawStr(display.getDisplayWidth() / 2 - display.getStrWidth(tem1Str.c_str()) / 2, 0, tem1Str.c_str());
+
+    String temp2Str = String(String(TemperatureReader::temperatures[2], 1) + String("C"));
+    display.drawStr(display.getDisplayWidth() - display.getStrWidth(temp2Str.c_str()), 0, temp2Str.c_str());
+  }
+  else if (sensor_count >= 2)
+  {
+    String tempStr = String(String(TemperatureReader::temperatures[1], 1) + String("C"));
+    display.drawStr(display.getDisplayWidth() - display.getStrWidth(tempStr.c_str()), 0, tempStr.c_str());
+  }
+#else
+  String tempStr = String(String(TemperatureReader::maxTemp(), 1) + String("C"));
+  display.drawStr(display.getDisplayWidth() / 2 - display.getStrWidth(tempStr.c_str()) / 2, 0, tempStr.c_str());
+#endif
 #endif
 
 #ifdef SPECTRUM_CLIPPING_DETECTION_ON_MAIN

@@ -38,7 +38,7 @@ void handle_controll(InputType type)
     if ((settingDiff >= POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP && active_screen != Screens::TREBLE_GAIN) ||
         (settingDiff > 0 && active_screen == Screens::TREBLE_GAIN))
     {
-      // DEBUG("Mapped treble gain: %d\n", newGain);
+      DEBUG("Mapped treble gain: %d\n", newGain);
       restartStopwatch();
       
       active_screen = Screens::TREBLE_GAIN;
@@ -55,7 +55,7 @@ void handle_controll(InputType type)
     if ((settingDiff >= POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP && active_screen != Screens::MIDDLE_GAIN) ||
         (settingDiff > 0 && active_screen == Screens::MIDDLE_GAIN))
     {
-      // DEBUG("Mapped middle gain: %d\n", newGain);
+      DEBUG("Mapped middle gain: %d\n", newGain);
       restartStopwatch();
       
       active_screen = Screens::MIDDLE_GAIN;
@@ -72,7 +72,7 @@ void handle_controll(InputType type)
     if ((settingDiff >= POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP && active_screen != Screens::BASS_GAIN) ||
         (settingDiff > 0 && active_screen == Screens::BASS_GAIN))
     {
-      // DEBUG("Mapped bass gain: %d\n", newGain);
+      DEBUG("Mapped bass gain: %d\n", newGain);
       restartStopwatch();
       
       active_screen = Screens::BASS_GAIN;
@@ -89,7 +89,7 @@ void handle_controll(InputType type)
     if ((settingDiff >= POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP && active_screen != Screens::INPUT_GAIN) ||
         (settingDiff > 0 && active_screen == Screens::INPUT_GAIN))
     {
-      // DEBUG("Mapped input gain: %d\n", newInputGain);
+      DEBUG("Mapped input gain: %d\n", newInputGain);
       restartStopwatch();
       
       active_screen = Screens::INPUT_GAIN;
@@ -394,17 +394,17 @@ void handle_controll(InputType type)
     case Screens::SOFT_MUTE_TIME:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving soft mute time submenu\n");
+        DEBUG("Leaving soft mute time submenu\n");
         active_screen = Screens::MAIN_MENU;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing soft mute time\n");
+        DEBUG("Increasing soft mute time\n");
         Preamp::incSoftMuteTime();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing soft mute time\n");
+        DEBUG("Decreasing soft mute time\n");
         Preamp::decSoftMuteTime();
       }
       break;
@@ -427,17 +427,17 @@ void handle_controll(InputType type)
     case Screens::LOUDNESS_ATT:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving loudness att submenu\n");
+        DEBUG("Leaving loudness att submenu\n");
         active_screen = Screens::LOUDNESS;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing loudness attenuation\n");
+        DEBUG("Increasing loudness attenuation\n");
         Preamp::incLoudnessAttenuation();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing loudness attenuation\n");
+        DEBUG("Decreasing loudness attenuation\n");
         Preamp::decLoudnessAttenuation();
       }
       break;
@@ -445,17 +445,17 @@ void handle_controll(InputType type)
     case Screens::LOUDNESS_FREQ:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving loudness center freq submenu\n");
+        DEBUG("Leaving loudness center freq submenu\n");
         active_screen = Screens::LOUDNESS;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing loudness center freq\n");
+        DEBUG("Increasing loudness center freq\n");
         Preamp::incLoudnessCenterFreq();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing loudness center freq\n");
+        DEBUG("Decreasing loudness center freq\n");
         Preamp::decLoudnessCenterFreq();
       }
       break;
@@ -463,12 +463,12 @@ void handle_controll(InputType type)
     case Screens::LOUDNESS_HIGH_BOOST:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving loudness high boost submenu\n");
+        DEBUG("Leaving loudness high boost submenu\n");
         active_screen = Screens::LOUDNESS;
       }
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
-        // DEBUG("Switching loudness high boost\n");
+        DEBUG("Switching loudness high boost\n");
         Preamp::switchLoudnessHighBoost();
       }
       break;
@@ -476,17 +476,17 @@ void handle_controll(InputType type)
     case Screens::ATTENUATION_LEFT:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving attenuation left submenu\n");
+        DEBUG("Leaving attenuation left submenu\n");
         active_screen = Screens::ATTENUATION;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing attenuation left\n");
+        DEBUG("Increasing attenuation left\n");
         Preamp::incLeftAttenuation();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing attenuation left\n");
+        DEBUG("Decreasing attenuation left\n");
         Preamp::decLeftAttenuation();
       }
       break;
@@ -494,17 +494,17 @@ void handle_controll(InputType type)
     case Screens::ATTENUATION_RIGHT:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving attenuation right submenu\n");
+        DEBUG("Leaving attenuation right submenu\n");
         active_screen = Screens::ATTENUATION;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing attenuation right\n");
+        DEBUG("Increasing attenuation right\n");
         Preamp::incRightAttenuation();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing attenuation right\n");
+        DEBUG("Decreasing attenuation right\n");
         Preamp::decRightAttenuation();
       }
       break;
@@ -512,17 +512,17 @@ void handle_controll(InputType type)
     case Screens::ATTENUATION_SUB:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving attenuation sub submenu\n");
+        DEBUG("Leaving attenuation sub submenu\n");
         active_screen = Screens::ATTENUATION;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing attenuation sub\n");
+        DEBUG("Increasing attenuation sub\n");
         Preamp::incSubAttenuation();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing attenuation sub\n");
+        DEBUG("Decreasing attenuation sub\n");
         Preamp::decSubAttenuation();
       }
       break;
@@ -530,17 +530,17 @@ void handle_controll(InputType type)
     case Screens::BASS_QFACTOR:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving bass q factor submenu\n");
+        DEBUG("Leaving bass q factor submenu\n");
         active_screen = Screens::BASS_FILTER;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing bass q factor\n");
+        DEBUG("Increasing bass q factor\n");
         Preamp::incBassQFactor();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing bass q factor\n");
+        DEBUG("Decreasing bass q factor\n");
         Preamp::decBassQFactor();
       }
       break;
@@ -548,17 +548,17 @@ void handle_controll(InputType type)
     case Screens::BASS_FREQ:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving bass center freq submenu\n");
+        DEBUG("Leaving bass center freq submenu\n");
         active_screen = Screens::BASS_FILTER;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing bass center freq\n");
+        DEBUG("Increasing bass center freq\n");
         Preamp::incBassCenterFreq();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing bass center freq\n");
+        DEBUG("Decreasing bass center freq\n");
         Preamp::decBassCenterFreq();
       }
       break;
@@ -566,12 +566,12 @@ void handle_controll(InputType type)
     case Screens::BASS_DC_MODE:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving bass dc submenu\n");
+        DEBUG("Leaving bass dc submenu\n");
         active_screen = Screens::BASS_FILTER;
       }
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
-        // DEBUG("Switching bass dc\n");
+        DEBUG("Switching bass dc\n");
         Preamp::switchBassDC();
       }
       break;
@@ -579,17 +579,17 @@ void handle_controll(InputType type)
     case Screens::MIDDLE_QFACTOR:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving middle q factor submenu\n");
+        DEBUG("Leaving middle q factor submenu\n");
         active_screen = Screens::MIDDLE_FILTER;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing middle q factor\n");
+        DEBUG("Increasing middle q factor\n");
         Preamp::incMiddleQFactor();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing middle q factor\n");
+        DEBUG("Decreasing middle q factor\n");
         Preamp::decMiddleQFactor();
       }
       break;
@@ -597,17 +597,17 @@ void handle_controll(InputType type)
     case Screens::MIDDLE_FREQ:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving middle center freq submenu\n");
+        DEBUG("Leaving middle center freq submenu\n");
         active_screen = Screens::MIDDLE_FILTER;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing middle center freq\n");
+        DEBUG("Increasing middle center freq\n");
         Preamp::incMiddleCenterFreq();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing middle center freq\n");
+        DEBUG("Decreasing middle center freq\n");
         Preamp::decMiddleCenterFreq();
       }
       break;
@@ -615,17 +615,17 @@ void handle_controll(InputType type)
     case Screens::TREBLE_FREQ:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving treble center freq submenu\n");
+        DEBUG("Leaving treble center freq submenu\n");
         active_screen = Screens::TREBLE_FILTER;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing treble center freq\n");
+        DEBUG("Increasing treble center freq\n");
         Preamp::incTrebleCenterFreq();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing treble center freq\n");
+        DEBUG("Decreasing treble center freq\n");
         Preamp::decTrebleCenterFreq();
       }
       break;
@@ -633,17 +633,17 @@ void handle_controll(InputType type)
     case Screens::SUB_CUTOFF_FREQ:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving sub cutoff freq submenu\n");
+        DEBUG("Leaving sub cutoff freq submenu\n");
         active_screen = Screens::SUBWOOFER;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing sub cutoff freq\n");
+        DEBUG("Increasing sub cutoff freq\n");
         Preamp::incSubCutoffFreq();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing sub cutoff freq\n");
+        DEBUG("Decreasing sub cutoff freq\n");
         Preamp::decSubCutoffFreq();
       }
       break;
@@ -651,17 +651,17 @@ void handle_controll(InputType type)
     case Screens::SUB_ATT:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving sub attenuation submenu\n");
+        DEBUG("Leaving sub attenuation submenu\n");
         active_screen = Screens::SUBWOOFER;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing sub attenuation\n");
+        DEBUG("Increasing sub attenuation\n");
         Preamp::incSubAttenuation();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing sub attenuation\n");
+        DEBUG("Decreasing sub attenuation\n");
         Preamp::decSubAttenuation();
       }
       break;
@@ -669,17 +669,17 @@ void handle_controll(InputType type)
     case Screens::SOFT_STEPS_TIME:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving soft steps time submenu\n");
+        DEBUG("Leaving soft steps time submenu\n");
         active_screen = Screens::SOFT_STEPS;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing soft steps time\n");
+        DEBUG("Increasing soft steps time\n");
         Preamp::incSoftStepsTime();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing soft steps time\n");
+        DEBUG("Decreasing soft steps time\n");
         Preamp::decSoftStepsTime();
       }
       break;
@@ -687,12 +687,12 @@ void handle_controll(InputType type)
     case Screens::SOFT_STEPS_VOLUME:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving soft steps volume submenu\n");
+        DEBUG("Leaving soft steps volume submenu\n");
         active_screen = Screens::SOFT_STEPS;
       }
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
-        // DEBUG("Switching soft steps volume\n");
+        DEBUG("Switching soft steps volume\n");
         Preamp::switchVolumeSoftStep();
       }
       break;
@@ -700,12 +700,12 @@ void handle_controll(InputType type)
     case Screens::SOFT_STEPS_LOUDNESS:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving soft steps loudness submenu\n");
+        DEBUG("Leaving soft steps loudness submenu\n");
         active_screen = Screens::SOFT_STEPS;
       }
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
-        // DEBUG("Switching soft steps loudness\n");
+        DEBUG("Switching soft steps loudness\n");
         Preamp::switchLoudnessSoftStep();
       }
       break;
@@ -713,12 +713,12 @@ void handle_controll(InputType type)
     case Screens::SOFT_STEPS_MIDDLE:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving soft steps middle submenu\n");
+        DEBUG("Leaving soft steps middle submenu\n");
         active_screen = Screens::SOFT_STEPS;
       }
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
-        // DEBUG("Switching soft steps middle\n");
+        DEBUG("Switching soft steps middle\n");
         Preamp::switchMiddleSoftStep();
       }
       break;
@@ -726,12 +726,12 @@ void handle_controll(InputType type)
     case Screens::SOFT_STEPS_BASS:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving soft steps bass submenu\n");
+        DEBUG("Leaving soft steps bass submenu\n");
         active_screen = Screens::SOFT_STEPS;
       }
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
-        // DEBUG("Switching soft steps bass\n");
+        DEBUG("Switching soft steps bass\n");
         Preamp::switchBassSoftStep();
       }
       break;
@@ -739,12 +739,12 @@ void handle_controll(InputType type)
     case Screens::SOFT_STEPS_LEFT:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving soft steps left att submenu\n");
+        DEBUG("Leaving soft steps left att submenu\n");
         active_screen = Screens::SOFT_STEPS;
       }
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
-        // DEBUG("Switching soft steps left att\n");
+        DEBUG("Switching soft steps left att\n");
         Preamp::switchLeftSoftSteps();
       }
       break;
@@ -752,12 +752,12 @@ void handle_controll(InputType type)
     case Screens::SOFT_STEPS_RIGHT:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving soft steps right att submenu\n");
+        DEBUG("Leaving soft steps right att submenu\n");
         active_screen = Screens::SOFT_STEPS;
       }
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
-        // DEBUG("Switching soft steps right att\n");
+        DEBUG("Switching soft steps right att\n");
         Preamp::switchRightSoftSteps();
       }
       break;
@@ -765,12 +765,12 @@ void handle_controll(InputType type)
     case Screens::SOFT_STEPS_SUB:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving soft steps sub att submenu\n");
+        DEBUG("Leaving soft steps sub att submenu\n");
         active_screen = Screens::SOFT_STEPS;
       }
       else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
       {
-        // DEBUG("Switching soft steps sub att\n");
+        DEBUG("Switching soft steps sub att\n");
         Preamp::switchSubSoftSteps();
       }
       break;
@@ -778,17 +778,17 @@ void handle_controll(InputType type)
     case Screens::MASTER_VOLUME:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
-        // DEBUG("Leaving master volume\n");
+        DEBUG("Leaving master volume\n");
         active_screen = Screens::MAIN_SCREEN;
       }
       else if (type == InputType::ENC_CW)
       {
-        // DEBUG("Increasing master volume\n");
+        DEBUG("Increasing master volume\n");
         Preamp::incVolume();
       }
       else if (type == InputType::ENC_CCW)
       {
-        // DEBUG("Decreasing master volume\n");
+        DEBUG("Decreasing master volume\n");
         Preamp::decVolume();
       }
       break;

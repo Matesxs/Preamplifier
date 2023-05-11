@@ -2,10 +2,17 @@
 
 #include <U8g2lib.h>
 
-#include "global_objects.h"
+#include "pins.h"
+
+U8G2_SH1122_256X64_F_4W_HW_SPI display(U8G2_R0, DISPLAY_CS_PIN, DISPLAY_DATA_COMMAND_PIN, DISPLAY_RESET_PIN);
 
 void prepare_display()
 {
+  display.begin();
+  display.setBusClock(20000000);
+
+  // DEBUG("Display bus clock: %d\n", display.getBusClock());
+
   display.setFont(u8g2_font_ncenB14_tr);
   display.setFontRefHeightExtendedText();
   display.setDrawColor(1);

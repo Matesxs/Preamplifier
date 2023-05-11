@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include <U8g2lib.h>
-#include <Preferences.h>
 
 #include "preamp.h"
 #include "pins.h"
@@ -14,9 +13,6 @@
 #include "io_handling/potentiometer_handling.h"
 #include "io_handling/spectrum_analyzer.h"
 
-// U8G2_SH1122_256X64_F_4W_SW_SPI display(U8G2_R0, DISPLAY_CLOCK_PIN, DISPLAY_DATA_PIN, DISPLAY_CS_PIN, DISPLAY_DATA_COMMAND_PIN, DISPLAY_RESET_PIN);
-U8G2_SH1122_256X64_F_4W_HW_SPI display(U8G2_R0, DISPLAY_CS_PIN, DISPLAY_DATA_COMMAND_PIN, DISPLAY_RESET_PIN);
-
 void setup()
 {
   Serial.begin(115200);
@@ -24,9 +20,6 @@ void setup()
 
   Preamp::init();
 
-  display.begin();
-  display.setBusClock(20000000);
-  // DEBUG("Display bus clock: %d\n", display.getBusClock());
   prepare_display();
 
   InputHandling::init();

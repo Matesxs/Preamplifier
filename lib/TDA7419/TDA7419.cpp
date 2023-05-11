@@ -485,6 +485,6 @@ void TDA7419::writeWire(char a, char b){
   Wire.write (a);
   Wire.write (b);
   uint8_t error = Wire.endTransmission();
-  if (error != 0)
-    Serial.printf("TDA7419 Command error: %d\n", error);
+  // if (error != 0)
+  //   Serial.printf("TDA7419 Command error: %d\n", error);
 }
