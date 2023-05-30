@@ -12,6 +12,8 @@
 #include "io_handling/potentiometer_handling.h"
 #include "preamp.h"
 #include "helpers.h"
+#include "io_handling/temperature_reader.h"
+#include "ledstrip/led_strip_controller.h"
 
 volatile Screens active_screen = Screens::MAIN_SCREEN;
 
@@ -23,6 +25,9 @@ volatile int middle_filter_menu_index = 0;
 volatile int treble_filter_menu_index = 0;
 volatile int sub_menu_index = 0;
 volatile int soft_steps_menu_index = 0;
+volatile int led_strip_menu_index = 0;
+volatile int led_strip_effect_menu_index = 0;
+volatile int led_strip_color_menu_index = 0;
 
 void handle_controll(InputType type)
 {
@@ -187,6 +192,8 @@ void handle_controll(InputType type)
           sub_menu_index = 0;
         else if (active_screen == Screens::SOFT_STEPS)
           soft_steps_menu_index = 0;
+        else if (active_screen == Screens::LED_STRIP)
+          led_strip_menu_index = 0;
         /////////////////////////////
       }
       else if (type == InputType::ENC_CW)
@@ -406,6 +413,32 @@ void handle_controll(InputType type)
       {
         DEBUG("Decreasing soft mute time\n");
         Preamp::decSoftMuteTime();
+      }
+      break;
+
+    case Screens::LED_STRIP:
+      if (type == InputType::ENC_LPUSH)
+      {
+        DEBUG("Returning to main menu\n");
+        active_screen = Screens::MAIN_MENU;
+      }
+      else if (type == InputType::ENC_PUSH)
+      {
+        active_screen = led_strip_menu_screens[led_strip_menu_index];
+        DEBUG("Led strip menu selected submenu: %d\n", active_screen);
+
+        if (active_screen == Screens::LED_STRIP_EFFECT)
+          led_strip_effect_menu_index = static_cast<int>(LedStrip::getEffectIdx());
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        if (led_strip_menu_index < (number_of_led_strip_menu_items - 1)) led_strip_menu_index++;
+        else led_strip_menu_index = 0;
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        if (led_strip_menu_index > 0) led_strip_menu_index--;
+        else led_strip_menu_index = (number_of_led_strip_menu_items - 1);
       }
       break;
 
@@ -775,6 +808,153 @@ void handle_controll(InputType type)
       }
       break;
 
+    case Screens::LED_STRIP_EFFECT:
+      if (type == InputType::ENC_LPUSH)
+      {
+        DEBUG("Leaving led strip effects submenu\n");
+        active_screen = Screens::LED_STRIP;
+        led_strip_effect_menu_index = 0;
+      }
+      else if (type == InputType::ENC_PUSH)
+      {
+        DEBUG("Led strip setting effect %d\n", led_strip_effect_menu_index);
+        LedStrip::setEffectIdx(led_strip_effect_menu_index);
+        LedStrip::applyEffect();
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        if (led_strip_effect_menu_index < (number_of_led_strip_effect_menu_items - 1)) led_strip_effect_menu_index++;
+        else led_strip_effect_menu_index = 0;
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        if (led_strip_effect_menu_index > 0) led_strip_effect_menu_index--;
+        else led_strip_effect_menu_index = (number_of_led_strip_effect_menu_items - 1);
+      }
+      break;
+
+    case Screens::LED_STRIP_COLOR:
+      if (type == InputType::ENC_LPUSH)
+      {
+        DEBUG("Leaving led color submenu\n");
+        active_screen = Screens::LED_STRIP;
+        led_strip_color_menu_index = 0;
+      }
+      else if (type == InputType::ENC_PUSH)
+      {
+        active_screen = led_strip_color_menu_screens[led_strip_color_menu_index];
+        DEBUG("Led strip color menu selected submenu: %d\n", active_screen);
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        if (led_strip_color_menu_index < (number_of_led_strip_color_menu_items - 1)) led_strip_color_menu_index++;
+        else led_strip_color_menu_index = 0;
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        if (led_strip_color_menu_index > 0) led_strip_color_menu_index--;
+        else led_strip_color_menu_index = (number_of_led_strip_color_menu_items - 1);
+      }
+      break;
+
+    case Screens::LED_STRIP_COLOR_RED:
+      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
+      {
+        DEBUG("Leaving led color red settings\n");
+        active_screen = Screens::LED_STRIP_COLOR;
+        LedStrip::applyEffect();
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        RgbColor color = LedStrip::getColor();
+        if (color.R < 255)
+        {
+          color.R++;
+          LedStrip::setColor(color);
+        }
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        RgbColor color = LedStrip::getColor();
+        if (color.R > 0)
+        {
+          color.R--;
+          LedStrip::setColor(color);
+        }
+      }
+      break;
+
+    case Screens::LED_STRIP_COLOR_GREEN:
+      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
+      {
+        DEBUG("Leaving led color green settings\n");
+        active_screen = Screens::LED_STRIP_COLOR;
+        LedStrip::applyEffect();
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        RgbColor color = LedStrip::getColor();
+        if (color.G < 255)
+        {
+          color.G++;
+          LedStrip::setColor(color);
+        }
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        RgbColor color = LedStrip::getColor();
+        if (color.G > 0)
+        {
+          color.G--;
+          LedStrip::setColor(color);
+        }
+      }
+      break;
+
+    case Screens::LED_STRIP_COLOR_BLUE:
+      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
+      {
+        DEBUG("Leaving led color blue settings\n");
+        active_screen = Screens::LED_STRIP_COLOR;
+        LedStrip::applyEffect();
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        RgbColor color = LedStrip::getColor();
+        if (color.B < 255)
+        {
+          color.B++;
+          LedStrip::setColor(color);
+        }
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        RgbColor color = LedStrip::getColor();
+        if (color.B > 0)
+        {
+          color.B--;
+          LedStrip::setColor(color);
+        }
+      }
+      break;
+
+    case Screens::LED_STRIP_COLOR_BRIGHTNESS:
+      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
+      {
+        DEBUG("Leaving led color brightness settings\n");
+        active_screen = Screens::LED_STRIP_COLOR;
+        LedStrip::applyEffect();
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        LedStrip::incBrightness();
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        LedStrip::decBrightness();
+      }
+      break;
+
     case Screens::MASTER_VOLUME:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
@@ -1018,6 +1198,10 @@ void handle_display()
     soft_mute_time_settings();
     break;
 
+  case Screens::LED_STRIP:
+    led_strip_menu_selector(led_strip_menu_index);
+    break;
+
   case Screens::FACT_RESET:
     factory_reset_configmation();
     break;
@@ -1122,6 +1306,32 @@ void handle_display()
     break;
   //////////////////
 
+  // LED Strip menu
+  case Screens::LED_STRIP_EFFECT:
+    led_strip_effect_menu_selector(led_strip_effect_menu_index);
+    break;
+
+  case Screens::LED_STRIP_COLOR:
+    led_strip_color_menu_selector(led_strip_color_menu_index);
+    break;
+
+  case Screens::LED_STRIP_COLOR_RED:
+    led_strip_color_red_settings();
+    break;
+
+  case Screens::LED_STRIP_COLOR_GREEN:
+    led_strip_color_green_settings();
+    break;
+
+  case Screens::LED_STRIP_COLOR_BLUE:
+    led_strip_color_blue_settings();
+    break;
+
+  case Screens::LED_STRIP_COLOR_BRIGHTNESS:
+    led_strip_color_brightness_settings();
+    break;
+  /////////////////
+
   // Popups
   case Screens::MASTER_VOLUME:
     master_volume_settings();
@@ -1158,12 +1368,32 @@ void handle_display()
   }
 }
 
+bool hightTempWarning = false;
 void display_draw_task(void*)
 {
   startStopwatch(1000000);
 
   while (true)
   {
+#ifdef ENABLE_TEMPERATURE_MONITORING
+#ifdef OVERTEMPERATURE_PROTECTION
+    if (TemperatureReader::maxTemp() >= OVERTEMPERATURE_MAX_TEMP_C)
+    {
+      if (active_screen != Screens::MUTE_SCREEN && !hightTempWarning)
+      {
+        DEBUG("Too high temperature\n");
+        active_screen = Screens::MUTE_SCREEN;
+        Preamp::mute();
+        hightTempWarning = true;
+      }
+    }
+    else
+    {
+      hightTempWarning = false;
+    }
+#endif
+#endif
+
     display.firstPage();
 
     do

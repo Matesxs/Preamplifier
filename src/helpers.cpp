@@ -1,4 +1,5 @@
 #include "helpers.h"
+#include "settings.h"
 
 float mapfloat(float x, float in_min, float in_max, float out_min, float out_max)
 {
@@ -39,4 +40,9 @@ String format_string(const char *format, ...)
   if (temp != loc_buf)
     free(temp);
   return String(temp);
+}
+
+float temperatureToHue(float temperature)
+{
+  return mapfloat(temperature, 35.0f, OVERTEMPERATURE_MAX_TEMP_C, static_cast<float>(115.0 / 360.0), static_cast<float>(0.0 / 360.0));
 }

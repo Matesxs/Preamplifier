@@ -3,8 +3,10 @@
 #include <Arduino.h>
 
 // Temperature
-// PS. Max number of sensors for individual values is 3!
+// PS. Max number of sensors for individual values is 2!
 #define ENABLE_TEMPERATURE_MONITORING
+#define OVERTEMPERATURE_PROTECTION
+#define OVERTEMPERATURE_MAX_TEMP_C 90
 #define UPDATE_TEMP_INTERVAL_MS 2000
 // #define ONLY_MAX_TEMPERATURE
 
@@ -18,7 +20,7 @@
 #define BACK_TO_MAIN_SCREEN_POPUP_TIMEOUT_S 5
 
 const String channel_names[] = { "1", "2", "3", "BT" }; // Need to be same length as input mapings!
-const int input_mapping[] = { 1, 2, 0, 3 }; // There must be always atlast one input! Number of channels is determined from this!
+const int input_mapping[] = { 2, 3, 0, 1 }; // There must be always atlast one input! Number of channels is determined from this!
 const int number_of_channels = max((int)(sizeof(input_mapping) / sizeof(input_mapping[0])), 1);
 
 // Input settings
@@ -68,7 +70,13 @@ const int number_of_channels = max((int)(sizeof(input_mapping) / sizeof(input_ma
 #define SPECTRUM_CLIPPING_DETECTION_ON_MAIN
 #define SPECTRUM_MINIMALISTIC_CLIPPING_DETECTION // TODO: Implement
 
+#define SPECTRUM_ADC_ADDRESS 0x48
 #define SPECTRUM_AVG_BUFFER 8 // 2, 4, 8, 16, 32, 64 ...
-#define SPECTRUM_DIVISOR 3
 #define SPECTRUM_MAX_VAL 4095
 #define SPECTRUM_UPDATE_INTERVAL_MS 10
+#define SPECTRUM_DISPLAY_BANDS 19
+
+// Led strip
+#define ENABLE_LED_STRIP
+#define LED_SEGMENT_COUNT 4
+#define EFFECTS_SPECTRUM_GAIN 2

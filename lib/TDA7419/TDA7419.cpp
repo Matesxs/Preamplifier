@@ -2,8 +2,11 @@
 #include <Wire.h>
 #include "TDA7419.h"
 
-TDA7419::TDA7419(){
-	Wire.begin();
+TDA7419::TDA7419() {}
+
+TDA7419::TDA7419(TwoWire *wire)
+{
+  m_wire = wire;
 }
 
 void TDA7419::setInput(int input, int gain, int auto_z){
@@ -481,10 +484,10 @@ void TDA7419::setSpektor(int spek_q, int spek_res, int spek_an_s, int spek_an_r,
 }
 
 void TDA7419::writeWire(char a, char b){
-  Wire.beginTransmission(TDA7419_address);
-  Wire.write (a);
-  Wire.write (b);
-  uint8_t error = Wire.endTransmission();
+  m_wire->beginTransmission(TDA7419_address);
+  m_wire->write(a);
+  m_wire->write(b);
+  uint8_t error = m_wire->endTransmission();
   // if (error != 0)
   //   Serial.printf("TDA7419 Command error: %d\n", error);
 }

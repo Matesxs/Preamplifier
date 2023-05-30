@@ -21,8 +21,8 @@
 // Rotary switch
 #define ROT1_PIN 36
 #define ROT2_PIN 39
-#define ROT3_PIN 25
-#define ROT4_PIN 26
+#define ROT3_PIN 34
+#define ROT4_PIN 35
 
 // Potentiometers
 #define POT1 32
@@ -32,4 +32,6 @@
 
 // Spectrum analyzer
 #define SA_CLK 12
-#define SA_DATA 34
+
+// Led strip
+#define LED_STRIP_PIN 25

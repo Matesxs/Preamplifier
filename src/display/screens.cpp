@@ -9,9 +9,14 @@
 #include "display_handler.h"
 #include "settings.h"
 #include "io_handling/spectrum_analyzer.h"
+#include "ledstrip/led_strip_controller.h"
 #include "debug.h"
+#include "interpolator.h"
 
-const uint16_t spectrumBands = SA_BANDS_NUMBER * SPECTRUM_DIVISOR - (SPECTRUM_DIVISOR - 1);
+Interpolator<uint16_t, SA_BANDS_NUMBER, SPECTRUM_DISPLAY_BANDS> rawInterpolatedSpectrum;
+Interpolator<uint16_t, SA_BANDS_NUMBER, SPECTRUM_DISPLAY_BANDS> avgInterpolatedSpectrum;
+
+bool overtemperature = false;
 
 void push_indicator()
 {
@@ -23,31 +28,20 @@ void push_indicator()
     display.drawLine(screenCenter - ENCODER_SHORT_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1, screenCenter + ENCODER_SHORT_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1);
 }
 
-uint16_t processSpectrum(int index, int offset, uint16_t spectrum[])
-{
-  uint16_t height;
-  if (offset == 0)
-    height = (uint16_t)map(spectrum[index], 0, SPECTRUM_MAX_VAL, 0, display.getDisplayHeight() - 1);
-  else
-  {
-    uint16_t interpolatedValue = map(offset, 0, SPECTRUM_DIVISOR, spectrum[index], spectrum[index + 1]);
-    height = (uint16_t)map(interpolatedValue, 0, SPECTRUM_MAX_VAL, 0, display.getDisplayHeight() - 1);
-  }
-
-  return (uint16_t)max((uint16_t)0, min(height, (uint16_t)(display.getDisplayHeight() - 1)));
-}
-
 void spectrum()
 {
-  static const uint16_t freqWidth = display.getDisplayWidth() / spectrumBands;
+  static const uint16_t freqWidth = display.getDisplayWidth() / SPECTRUM_DISPLAY_BANDS;
 
-  for (int i = 0; i < spectrumBands; i++)
+  rawInterpolatedSpectrum.SetData(SpectrumAnalyzer::spectrumRaw);
+  avgInterpolatedSpectrum.SetData(SpectrumAnalyzer::spectrum);
+
+  rawInterpolatedSpectrum.Interpolate();
+  avgInterpolatedSpectrum.Interpolate();
+
+  for (int i = 0; i < SPECTRUM_DISPLAY_BANDS; i++)
   {
-    int spectrumIndex = i / SPECTRUM_DIVISOR;
-    int offset = i % SPECTRUM_DIVISOR;
-
-    uint16_t avgHeight = max(processSpectrum(spectrumIndex, offset, SpectrumAnalyzer::spectrum), (uint16_t)1);
-    uint16_t rawHeight = processSpectrum(spectrumIndex, offset, SpectrumAnalyzer::spectrumRaw);
+    uint16_t avgHeight = max((uint16_t)max((uint16_t)0, min((uint16_t)map(avgInterpolatedSpectrum[i], 0, SPECTRUM_MAX_VAL, 0, display.getDisplayHeight() - 1), (uint16_t)(display.getDisplayHeight() - 1))), (uint16_t)1);
+    uint16_t rawHeight = max((uint16_t)0, min((uint16_t)map(rawInterpolatedSpectrum[i], 0, SPECTRUM_MAX_VAL, 0, display.getDisplayHeight() - 1), (uint16_t)(display.getDisplayHeight() - 1)));
 
     display.drawFrame(i * freqWidth, display.getDisplayHeight() - avgHeight, freqWidth, avgHeight);
 
@@ -79,24 +73,16 @@ void main_screen()
   if (sensor_count >= 1)
   {
     String tempStr = String(String(TemperatureReader::temperatures[0], 1) + String("C"));
-    display.drawStr(0, 0, tempStr.c_str());
+    display.drawStr(5, 0, tempStr.c_str());
   }
-  if (sensor_count >= 3)
-  {
-    String tem1Str = String(String(TemperatureReader::temperatures[1], 1) + String("C"));
-    display.drawStr(display.getDisplayWidth() / 2 - display.getStrWidth(tem1Str.c_str()) / 2, 0, tem1Str.c_str());
-
-    String temp2Str = String(String(TemperatureReader::temperatures[2], 1) + String("C"));
-    display.drawStr(display.getDisplayWidth() - display.getStrWidth(temp2Str.c_str()), 0, temp2Str.c_str());
-  }
-  else if (sensor_count >= 2)
+  if (sensor_count >= 2)
   {
     String tempStr = String(String(TemperatureReader::temperatures[1], 1) + String("C"));
-    display.drawStr(display.getDisplayWidth() - display.getStrWidth(tempStr.c_str()), 0, tempStr.c_str());
+    display.drawStr(display.getDisplayWidth() - (display.getStrWidth(tempStr.c_str()) + 5), 0, tempStr.c_str());
   }
 #else
   String tempStr = String(String(TemperatureReader::maxTemp(), 1) + String("C"));
-  display.drawStr(display.getDisplayWidth() / 2 - display.getStrWidth(tempStr.c_str()) / 2, 0, tempStr.c_str());
+  display.drawStr(0, 0, tempStr.c_str());
 #endif
 #endif
 
@@ -118,7 +104,25 @@ void main_screen()
 void mute_screen()
 {
   display.setFont(u8g2_font_ncenB18_tr);
+#ifdef ENABLE_TEMPERATURE_MONITORING
+#ifdef OVERTEMPERATURE_PROTECTION
+  if (TemperatureReader::maxTemp() >= OVERTEMPERATURE_MAX_TEMP_C)
+  {
+    display.setDrawColor(2);
+    display.setFont(u8g2_font_ncenB18_tr);
+    display_draw_center("High temperature!");
+    display.setDrawColor(1);
+  }
+  else
+  {
+    display_draw_center("MUTED");
+  }
+#else
   display_draw_center("MUTED");
+#endif
+#else
+  display_draw_center("MUTED");
+#endif
 
   display.setFont(u8g2_font_ncenB10_tr);
 
@@ -317,4 +321,49 @@ void soft_mute_time_settings()
 void factory_reset_configmation()
 {
   draw_centered_desc_and_val("Factory Reset", "Are you sure?");
+}
+
+void led_strip_menu_selector(int index)
+{
+  draw_menu("LED Strip", led_strip_menu_names[index].c_str());
+}
+
+void led_strip_effect_menu_selector(int index)
+{
+  uint32_t currentEffect = LedStrip::getEffectIdx();
+
+  display.setFont(u8g2_font_ncenB14_tr);
+  display_draw_center("Effect", 0);
+  display.drawLine(0, display.getMaxCharHeight(), display.getDisplayWidth(), display.getMaxCharHeight());
+
+  if (currentEffect == index)
+    display.setFont(u8g2_font_lubBI18_tf);
+  else
+    display.setFont(u8g2_font_ncenB18_tr);
+  display_draw_center(led_strip_effect_menu_names[index].c_str(), display.getDisplayHeight() - display.getMaxCharHeight() - 5);
+}
+
+void led_strip_color_menu_selector(int index)
+{
+  draw_menu("Color", led_strip_color_menu_names[index].c_str());
+}
+
+void led_strip_color_red_settings()
+{
+  draw_amount_selector("Red", static_cast<int>(LedStrip::getColor().R), 0, 255);
+}
+
+void led_strip_color_green_settings()
+{
+  draw_amount_selector("Green", static_cast<int>(LedStrip::getColor().G), 0, 255);
+}
+
+void led_strip_color_blue_settings()
+{
+  draw_amount_selector("Blue", static_cast<int>(LedStrip::getColor().B), 0, 255);
+}
+
+void led_strip_color_brightness_settings()
+{
+  draw_amount_selector("Brightness", static_cast<int>(LedStrip::getBrightness()), 0, 255);
 }

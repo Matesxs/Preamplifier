@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <Preferences.h>
+#include <Wire.h>
 
 #include "TDA7419.h"
 
@@ -109,7 +110,7 @@ namespace Preamp
     int soft_step_time = 0;         // 0 - 7 (0.160ms, 0.321ms, 0.642ms, 1.28ms, 2.56ms, 5.12ms, 10.24ms, 20.48ms)
   } SoftMuteStep;
 
-  void init();
+  void init(TwoWire *wire);
 
   // Input settings
   int getInput();

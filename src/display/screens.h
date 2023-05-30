@@ -16,6 +16,7 @@ void middle_filter_menu_selector(int index);
 void treble_filter_menu_selector(int index);
 void sub_menu_selector(int index);
 void soft_steps_menu_selector(int index);
+void led_strip_menu_selector(int index);
 void factory_reset_configmation();
 
 void input_gain_settings();
@@ -53,3 +54,10 @@ void soft_steps_right_att_settings();
 void soft_steps_sub_att_settings();
 
 void soft_mute_time_settings();
+
+void led_strip_effect_menu_selector(int index);
+void led_strip_color_menu_selector(int index);
+void led_strip_color_red_settings();
+void led_strip_color_green_settings();
+void led_strip_color_blue_settings();
+void led_strip_color_brightness_settings();

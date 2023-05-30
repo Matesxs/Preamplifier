@@ -1,7 +1,5 @@
 #include "preamp.h"
 
-#include <Wire.h>
-
 #include "debug.h"
 #include "pins.h"
 #include "settings.h"
@@ -47,16 +45,16 @@ namespace Preamp
 
   TDA7419 m_controller;
 
-  void init()
+  void init(TwoWire *wire)
   {
-    Wire.beginTransmission(TDA7419_address);
-    uint8_t error = Wire.endTransmission();
+    wire->beginTransmission(TDA7419_address);
+    uint8_t error = wire->endTransmission();
     if (error != 0)
       DEBUG("Failed to connect to TDA7419: %d\n", error);
     else
       DEBUG("TDA7419 connected\n");
 
-    m_controller = TDA7419();
+    m_controller = TDA7419(wire);
 
     m_inputSettingsEEPROM.begin("pa_in", false);
     m_loudnessSettingsEEPROM.begin("pa_loud", false);

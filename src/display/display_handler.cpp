@@ -60,10 +60,10 @@ void draw_amount_selector(const char* description, int value, const int min_val,
   if (value > max_val)
     value = max_val;
 
-  int max_delta = max_val - min_val;
+  float max_delta = static_cast<float>(max_val - min_val);
   float coef = 100.0f / max_delta;
-  int offsetValue = value - min_val;
-  draw_amount_selector(description, String(value).c_str(), (long)offsetValue * coef);
+  float offsetValue = static_cast<float>(value - min_val);
+  draw_amount_selector(description, String(value).c_str(), static_cast<long>(offsetValue * coef));
 }
 
 void draw_amount_selector(const char* description, float value, const float min_val, const float max_val)
@@ -77,7 +77,7 @@ void draw_amount_selector(const char* description, float value, const float min_
   float max_delta = max_val - min_val;
   float coef = 100.0f / max_delta;
   float offsetValue = value - min_val;
-  draw_amount_selector(description, String(value, 1).c_str(),(long)offsetValue * coef);
+  draw_amount_selector(description, String(value, 1).c_str(),static_cast<long>(offsetValue * coef));
 }
 
 void draw_amount_selector(const char* description, double value, const double min_val, const double max_val)
@@ -91,7 +91,7 @@ void draw_amount_selector(const char* description, double value, const double mi
   double max_delta = max_val - min_val;
   double coef = 100.0f / max_delta;
   double offsetValue = value - min_val;
-  draw_amount_selector(description, String(value, 1).c_str(), (long)offsetValue * coef);
+  draw_amount_selector(description, String(value, 1).c_str(), static_cast<long>(offsetValue * coef));
 }
 
 void draw_menu(const char* description, const char* item)

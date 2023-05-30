@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include <U8g2lib.h>
+#include <Wire.h>
+#include <NeoPixelBus.h>
 
 #include "preamp.h"
 #include "pins.h"
@@ -12,19 +14,26 @@
 #include "io_handling/temperature_reader.h"
 #include "io_handling/potentiometer_handling.h"
 #include "io_handling/spectrum_analyzer.h"
+#include "ledstrip/led_strip_controller.h"
 
 void setup()
 {
   Serial.begin(115200);
   while(!Serial);
 
-  Preamp::init();
+#ifdef ENABLE_LED_STRIP
+  LedStrip::begin();
+#endif
+
+  Wire.begin();
+
+  Preamp::init(&Wire);
 
   prepare_display();
 
   InputHandling::init();
   PotentiometerHandling::init();
-  SpectrumAnalyzer::init();
+  SpectrumAnalyzer::init(&Wire);
   delay(100);
 
   xTaskCreateUniversal(PotentiometerHandling::handle_potentiometer_task, "pot", 2048, NULL, 1, NULL, 1);

@@ -33,6 +33,7 @@ class TDA7419
 {
   public:
     TDA7419();
+    TDA7419(TwoWire *wire);
      /// Main Source Selector ///             
         void setInput(int input, int gain, int auto_z); // int (Source Selector, Input Gain, Auto Zero)  
         //Source Selector:      0...5 (QD/SE: QD, SE1, SE2, SE3, QD/SE: SE, mute)

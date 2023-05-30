@@ -32,6 +32,8 @@ namespace TemperatureReader
       vTaskDelete(NULL);
     }
 
+    DEBUG("Found %d temperature sensors\r\n", sensor_count);
+
     while(true)
     {
       temp_sensors.requestTemperatures();
