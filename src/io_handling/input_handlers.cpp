@@ -44,8 +44,8 @@ namespace InputHandling
     channel4_switch.begin();
 #endif
 
-    attachInterrupt(ROT_A, update_encoder, FALLING);
-    attachInterrupt(ROT_B, update_encoder, FALLING);
+    attachInterrupt(ROT_A, update_encoder, CHANGE);
+    attachInterrupt(ROT_B, update_encoder, CHANGE);
 
     xTaskCreateUniversal(encoder_task, "enc", 2048, NULL, 1, NULL, 1);
     xTaskCreateUniversal(buttons_task, "btns", 2048, NULL, 1, NULL, 1);
@@ -107,6 +107,8 @@ namespace InputHandling
 
   void handle_encoder()
   {
+    encoder.tick();
+
     static long pos = 0;
     long newPos = encoder.getPosition();
     if (newPos != pos)
@@ -180,7 +182,6 @@ namespace InputHandling
     while (true)
     {
       handle_encoder();
-
       vTaskDelay(pdMS_TO_TICKS(ENCODER_PULLING_RATE_MS));
     }
 

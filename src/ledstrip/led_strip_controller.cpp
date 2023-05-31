@@ -67,4 +67,9 @@ namespace LedStrip
   {
     handler.setEffectIdx(effectIdx);
   }
+
+  void factoryReset()
+  {
+    handler.factoryReset();
+  }
 }

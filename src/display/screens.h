@@ -17,7 +17,6 @@ void treble_filter_menu_selector(int index);
 void sub_menu_selector(int index);
 void soft_steps_menu_selector(int index);
 void led_strip_menu_selector(int index);
-void factory_reset_configmation();
 
 void input_gain_settings();
 void master_volume_settings();
@@ -61,3 +60,11 @@ void led_strip_color_red_settings();
 void led_strip_color_green_settings();
 void led_strip_color_blue_settings();
 void led_strip_color_brightness_settings();
+
+void settings_menu_selector(int index);
+void settings_screensaver_menu_selector(int index);
+void settings_screensaver_enable();
+void settings_screensaver_delay();
+void settings_screensaver_use_spectrum();
+void settings_clip_detection();
+void factory_reset_confirmation();

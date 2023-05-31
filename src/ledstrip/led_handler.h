@@ -107,6 +107,11 @@ public:
     m_effectIdx = effectIdx;
   }
 
+  void factoryReset()
+  {
+    m_ledState.clear();
+  }
+
 private:
   uint32_t m_effectIdx = 0;
   RgbColor m_currentColor;

@@ -15,11 +15,27 @@
 #include "io_handling/potentiometer_handling.h"
 #include "io_handling/spectrum_analyzer.h"
 #include "ledstrip/led_strip_controller.h"
+#include "app_settings_store.h"
+
+void auto_saver_task(void*)
+{
+  while (true)
+  {
+    Preamp::saveChanged();
+    AppSettingsStore::save();
+
+    vTaskDelay(pdMS_TO_TICKS(SETTING_SAVE_INTERVAL_MS));
+  }
+
+  vTaskDelete(NULL);
+}
 
 void setup()
 {
   Serial.begin(115200);
   while(!Serial);
+
+  AppSettingsStore::init();
 
 #ifdef ENABLE_LED_STRIP
   LedStrip::begin();

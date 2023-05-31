@@ -14,6 +14,7 @@
 #include "helpers.h"
 #include "io_handling/temperature_reader.h"
 #include "ledstrip/led_strip_controller.h"
+#include "app_settings_store.h"
 
 volatile Screens active_screen = Screens::MAIN_SCREEN;
 
@@ -28,6 +29,8 @@ volatile int soft_steps_menu_index = 0;
 volatile int led_strip_menu_index = 0;
 volatile int led_strip_effect_menu_index = 0;
 volatile int led_strip_color_menu_index = 0;
+volatile int settings_menu_index = 0;
+volatile int settings_screeensaver_menu_index = 0;
 
 void handle_controll(InputType type)
 {
@@ -194,6 +197,8 @@ void handle_controll(InputType type)
           soft_steps_menu_index = 0;
         else if (active_screen == Screens::LED_STRIP)
           led_strip_menu_index = 0;
+        else if (active_screen == Screens::SETTINGS)
+          settings_menu_index = 0;
         /////////////////////////////
       }
       else if (type == InputType::ENC_CW)
@@ -442,18 +447,26 @@ void handle_controll(InputType type)
       }
       break;
 
-    case Screens::FACT_RESET:
-      if (type == InputType::ENC_PUSH)
-      {
-        DEBUG("Factory reset\n");
-        Preamp::resetMemory();
-        vTaskDelay(pdMS_TO_TICKS(50));
-        ESP.restart();
-      }
-      else if (type == InputType::ENC_LPUSH)
+    case Screens::SETTINGS:
+      if (type == InputType::ENC_LPUSH)
       {
         DEBUG("Returning to main menu\n");
         active_screen = Screens::MAIN_MENU;
+      }
+      else if (type == InputType::ENC_PUSH)
+      {
+        active_screen = settings_menu_screens[settings_menu_index];
+        DEBUG("Settings menu selected submenu: %d\n", active_screen);
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        if (settings_menu_index < (number_of_settings_menu_items - 1)) settings_menu_index++;
+        else settings_menu_index = 0;
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        if (settings_menu_index > 0) settings_menu_index--;
+        else settings_menu_index = (number_of_settings_menu_items - 1);
       }
       break;
 
@@ -955,6 +968,101 @@ void handle_controll(InputType type)
       }
       break;
 
+    case Screens::SETTINGS_SCREENSAVER:
+      if (type == InputType::ENC_LPUSH)
+      {
+        DEBUG("Leaving screensaver submenu\n");
+        active_screen = Screens::SETTINGS;
+        settings_screeensaver_menu_index = 0;
+      }
+      else if (type == InputType::ENC_PUSH)
+      {
+        active_screen = settings_screensaver_menu_screens[settings_screeensaver_menu_index];
+        DEBUG("Screensaver menu selected submenu: %d\n", active_screen);
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        if (settings_screeensaver_menu_index < (number_of_settings_screensaver_menu_items - 1)) settings_screeensaver_menu_index++;
+        else settings_screeensaver_menu_index = 0;
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        if (settings_screeensaver_menu_index > 0) settings_screeensaver_menu_index--;
+        else settings_screeensaver_menu_index = (number_of_settings_screensaver_menu_items - 1);
+      }
+      break;
+
+    case Screens::SETTINGS_SCREENSAVER_ENABLE:
+      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
+      {
+        DEBUG("Leaving screensaver enable submenu\n");
+        active_screen = Screens::SETTINGS_SCREENSAVER;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        AppSettingsStore::toggleScreenSaverEnabled();
+      }
+      break;
+
+    case Screens::SETTINGS_SCREENSAVER_DELAY:
+      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
+      {
+        DEBUG("Leaving screensaver delay submenu\n");
+        active_screen = Screens::SETTINGS_SCREENSAVER;
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        if (AppSettingsStore::getScreensaverDelay() < 3600)
+          AppSettingsStore::setScreensaverDelay(AppSettingsStore::getScreensaverDelay() + 30);
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        if (AppSettingsStore::getScreensaverDelay() > 30)
+          AppSettingsStore::setScreensaverDelay(AppSettingsStore::getScreensaverDelay() - 30);
+      }
+      break;
+
+    case Screens::SETTINGS_SCREENSAVER_SPECTRUM:
+      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
+      {
+        DEBUG("Leaving screensaver use spectrum submenu\n");
+        active_screen = Screens::SETTINGS_SCREENSAVER;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        AppSettingsStore::toggleScreensaverSpectrum();
+      }
+      break;
+
+    case Screens::SETTINGS_FACT_RESET:
+      if (type == InputType::ENC_PUSH)
+      {
+        DEBUG("Factory reset\n");
+        Preamp::resetMemory();
+        LedStrip::factoryReset();
+        AppSettingsStore::reset();
+        vTaskDelay(pdMS_TO_TICKS(50));
+        ESP.restart();
+      }
+      else if (type == InputType::ENC_LPUSH)
+      {
+        DEBUG("Returning to settings\n");
+        active_screen = Screens::SETTINGS;
+      }
+      break;
+
+    case Screens::SETTINGS_CLIPPING_DETECTION:
+      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
+      {
+        DEBUG("Leaving clip detection submenu\n");
+        active_screen = Screens::SETTINGS;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        AppSettingsStore::toggleClipDetection();
+      }
+      break;
+
     case Screens::MASTER_VOLUME:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
@@ -1054,9 +1162,8 @@ void handle_controll(InputType type)
       else
         active_screen = Screens::MAIN_SCREEN;
 
-#ifndef SPECTRUM_AS_SCREEN_SAVER
-      display.setPowerSave(false);
-#endif
+      if (!AppSettingsStore::getScreensaverSpectrum())
+        display.setPowerSave(false);
 
       DEBUG("Screen saver: OFF\n");
       break;
@@ -1074,20 +1181,20 @@ void check_timeouts()
   switch (active_screen)
   {
   case Screens::MAIN_SCREEN:
-#ifdef ENABLE_SCREEN_SAVER
-    if (current_stopwatch_time > SCREEN_SAVER_TIMEOUT_S)
+    if (AppSettingsStore::getScreensaverEnabled())
     {
-      active_screen = Screens::SCREEN_SAVER;
+      if (current_stopwatch_time > AppSettingsStore::getScreensaverDelay())
+      {
+        active_screen = Screens::SCREEN_SAVER;
 
-#ifndef SPECTRUM_AS_SCREEN_SAVER
-      display.setPowerSave(true);
-#endif
-      
-      restartStopwatch();
+        if (!AppSettingsStore::getScreensaverSpectrum())
+          display.setPowerSave(true);
+        
+        restartStopwatch();
 
-      DEBUG("Screen saver: ON\n");
+        DEBUG("Screen saver: ON\n");
+      }
     }
-#endif
     break;
 
   case Screens::SPECTRUM:
@@ -1202,8 +1309,8 @@ void handle_display()
     led_strip_menu_selector(led_strip_menu_index);
     break;
 
-  case Screens::FACT_RESET:
-    factory_reset_configmation();
+  case Screens::SETTINGS:
+    settings_menu_selector(settings_menu_index);
     break;
   ////////////
 
@@ -1332,6 +1439,34 @@ void handle_display()
     break;
   /////////////////
 
+  // Settings menu
+  case Screens::SETTINGS_SCREENSAVER:
+    settings_screensaver_menu_selector(settings_screeensaver_menu_index);
+    break;
+
+  case Screens::SETTINGS_CLIPPING_DETECTION:
+    settings_clip_detection();
+    break;
+
+  case Screens::SETTINGS_FACT_RESET:
+    factory_reset_confirmation();
+    break;
+  ////////////////
+
+  // Settings screensaver submenu
+  case Screens::SETTINGS_SCREENSAVER_ENABLE:
+    settings_screensaver_enable();
+    break;
+
+  case Screens::SETTINGS_SCREENSAVER_DELAY:
+    settings_screensaver_delay();
+    break;
+
+  case Screens::SETTINGS_SCREENSAVER_SPECTRUM:
+    settings_screensaver_use_spectrum();
+    break;
+  ///////////////////////////////
+
   // Popups
   case Screens::MASTER_VOLUME:
     master_volume_settings();
@@ -1355,9 +1490,8 @@ void handle_display()
   /////////
 
   case Screens::SCREEN_SAVER:
-#ifdef SPECTRUM_AS_SCREEN_SAVER
-    spectrum();
-#endif
+    if (AppSettingsStore::getScreensaverSpectrum())
+      spectrum();
     break;
 
   default:
@@ -1402,18 +1536,6 @@ void display_draw_task(void*)
     } while (display.nextPage());
 
     vTaskDelay(pdMS_TO_TICKS(DISPLAY_UPDATE_INTERVAL_MS));
-  }
-
-  vTaskDelete(NULL);
-}
-
-void auto_saver_task(void*)
-{
-  while (true)
-  {
-    Preamp::saveChanged();
-
-    vTaskDelay(pdMS_TO_TICKS(SETTING_SAVE_INTERVAL_MS));
   }
 
   vTaskDelete(NULL);

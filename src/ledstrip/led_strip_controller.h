@@ -16,4 +16,5 @@ namespace LedStrip
   void decBrightness();
   uint32_t getEffectIdx();
   void setEffectIdx(uint32_t effectIdx);
+  void factoryReset();
 }

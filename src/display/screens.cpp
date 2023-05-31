@@ -12,6 +12,7 @@
 #include "ledstrip/led_strip_controller.h"
 #include "debug.h"
 #include "interpolator.h"
+#include "app_settings_store.h"
 
 Interpolator<uint16_t, SA_BANDS_NUMBER, SPECTRUM_DISPLAY_BANDS> rawInterpolatedSpectrum;
 Interpolator<uint16_t, SA_BANDS_NUMBER, SPECTRUM_DISPLAY_BANDS> avgInterpolatedSpectrum;
@@ -86,19 +87,20 @@ void main_screen()
 #endif
 #endif
 
-#ifdef SPECTRUM_CLIPPING_DETECTION_ON_MAIN
-  for (auto& val : SpectrumAnalyzer::spectrumRaw)
+  if (AppSettingsStore::getClipDetection())
   {
-    if (val >= 4095)
+    for (auto& val : SpectrumAnalyzer::spectrumRaw)
     {
-      display.setDrawColor(2);
-      display.setFont(u8g2_font_ncenB18_tr);
-      display_draw_center("Clipping");
-      display.setDrawColor(1);
-      break;
+      if (val >= SPECTRUM_MAX_VAL)
+      {
+        display.setDrawColor(2);
+        display.setFont(u8g2_font_ncenB18_tr);
+        display_draw_center("Clipping");
+        display.setDrawColor(1);
+        break;
+      }
     }
   }
-#endif
 }
 
 void mute_screen()
@@ -318,11 +320,6 @@ void soft_mute_time_settings()
   draw_centered_desc_and_val("Soft Mute Time", String(String(soft_mute_times[Preamp::getSoftMuteTime()], 2) + "ms").c_str());
 }
 
-void factory_reset_configmation()
-{
-  draw_centered_desc_and_val("Factory Reset", "Are you sure?");
-}
-
 void led_strip_menu_selector(int index)
 {
   draw_menu("LED Strip", led_strip_menu_names[index].c_str());
@@ -366,4 +363,39 @@ void led_strip_color_blue_settings()
 void led_strip_color_brightness_settings()
 {
   draw_amount_selector("Brightness", static_cast<int>(LedStrip::getBrightness()), 0, 255);
+}
+
+void settings_menu_selector(int index)
+{
+  draw_menu("Settings", settings_menu_names[index].c_str());
+}
+
+void settings_screensaver_menu_selector(int index)
+{
+  draw_menu("Screensaver", settings_screensaver_menu_names[index].c_str());
+}
+
+void settings_screensaver_enable()
+{
+  draw_bool_selector("Screensaver", AppSettingsStore::getScreensaverEnabled());
+}
+
+void settings_screensaver_delay()
+{
+  draw_centered_desc_and_val("Delay", (String(static_cast<double>(AppSettingsStore::getScreensaverDelay()) / 60.0, 1) + "min").c_str());
+}
+
+void settings_screensaver_use_spectrum()
+{
+  draw_bool_selector("Use Spectrum", AppSettingsStore::getScreensaverSpectrum());
+}
+
+void settings_clip_detection()
+{
+  draw_bool_selector("Clip Detection", AppSettingsStore::getClipDetection());
+}
+
+void factory_reset_confirmation()
+{
+  draw_centered_desc_and_val("Factory Reset", "Are you sure?");
 }
