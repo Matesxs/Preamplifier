@@ -9,6 +9,7 @@ namespace AppSettingsStore
 
   volatile bool screensaver_dirty = false;
   volatile bool clip_detection_dirty = false;
+  volatile bool overheat_dirty = false;
 
   void init()
   {
@@ -19,6 +20,11 @@ namespace AppSettingsStore
     settings.spectrumAsScreensaver = settingsStore.getBool("ss_spec", false);
 
     settings.clip_detection = settingsStore.getBool("cd", false);
+
+    settings.overheat_detection_enabled = settingsStore.getBool("ode", true);
+    settings.overheat_temperature = settingsStore.getFloat("odt", 90.0f);
+    settings.overheat_mute = settingsStore.getBool("odm", true);
+    settings.overheat_flash_lights = settingsStore.getBool("odfl", true);
   }
 
   void save()
@@ -37,6 +43,16 @@ namespace AppSettingsStore
       settingsStore.putBool("cd", settings.clip_detection);
 
       clip_detection_dirty = false;
+    }
+
+    if (overheat_dirty)
+    {
+      settingsStore.putBool("ode", settings.overheat_detection_enabled);
+      settingsStore.putFloat("odt", settings.overheat_temperature);
+      settingsStore.putBool("odm", settings.overheat_mute);
+      settingsStore.putBool("odfl", settings.overheat_flash_lights);
+
+      overheat_dirty = false;
     }
   }
 
@@ -88,5 +104,49 @@ namespace AppSettingsStore
   {
     settings.clip_detection = !settings.clip_detection;
     clip_detection_dirty = true;
+  }
+
+  bool getOverheatDetection()
+  {
+    return settings.overheat_detection_enabled;
+  }
+
+  void toggleOverheatDetection()
+  {
+    settings.overheat_detection_enabled = !settings.overheat_detection_enabled;
+    overheat_dirty = true;
+  }
+
+  float getOverheatTemperature()
+  {
+    return settings.overheat_temperature;
+  }
+
+  void setOverheatTemperature(float temperature)
+  {
+    settings.overheat_temperature = temperature;
+    overheat_dirty = true;
+  }
+
+  bool getOverheatMute()
+  {
+    return settings.overheat_mute;
+  }
+
+  void toggleOverheatMute()
+  {
+    settings.overheat_mute = !settings.overheat_mute;
+    overheat_dirty = true;
+  }
+
+  bool getOverheatFlashLights()
+  {
+    return settings.overheat_flash_lights;
+  }
+
+  void toggleOverheatFlashLights()
+  {
+    settings.overheat_flash_lights = !settings.overheat_flash_lights;
+    overheat_dirty = true;
   }
 }

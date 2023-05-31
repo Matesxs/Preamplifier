@@ -5,11 +5,12 @@
 #include "lerper.h"
 #include "base_effect.h"
 #include "ledstrip/led_state.h"
+#include "debug.h"
 
 class Breath: public BaseEffect
 {
 public:
-  Breath(uint32_t duration=10000) :
+  Breath(uint32_t duration=20000) :
     m_lerpProgress(0.0),
     m_duration(duration)
   {
@@ -17,7 +18,7 @@ public:
     m_lerper.set(255, duration);
   }
 
-  Breath(RgbColor color, uint32_t duration=10000) :
+  Breath(RgbColor color, uint32_t duration=20000) :
     BaseEffect(color),
     m_lerpProgress(0.0),
     m_duration(duration)
@@ -35,11 +36,13 @@ public:
 
     if (m_lerper.finished())
     {
-      if (m_lerpProgress == 0)
+      if (m_lerper.getTarget() == 0)
         m_lerper.set(255, m_duration);
       else
         m_lerper.set(0, m_duration);
     }
+
+    DEBUG("%d\n", m_lerpProgress);
   }
 
 private:

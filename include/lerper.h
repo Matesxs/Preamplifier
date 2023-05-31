@@ -11,7 +11,7 @@ public:
     m_start_state(0),
     m_target_state(0),
     m_duration(0),
-    m_progress(0) {}
+    m_progress_time(0) {}
 
   bool setReference(T* reference)
   {
@@ -37,8 +37,11 @@ public:
     m_start_state = *m_reference;
     m_target_state = target;
     m_duration = duration;
-    m_progress = 0;
+    m_progress_time = 0;
     m_prev = millis();
+
+    m_minValue = min(m_start_state, m_target_state);
+    m_maxValue = max(m_start_state, m_target_state);
   }
 
   void update()
@@ -51,10 +54,10 @@ public:
   void update(uint32_t ticks)
   {
     if (m_reference == NULL) return;
-    if (m_progress == m_duration) return;
-    m_progress += ticks;
-    m_progress = min(m_duration, m_progress);
-    (*m_reference) = static_cast<T>(m_progress * (m_target_state - m_start_state) / m_duration + m_start_state);
+    if (finished()) return;
+    m_progress_time += ticks;
+    float progress = max(min(1.0f, static_cast<float>(m_progress_time) / static_cast<float>(m_duration)), 0.0f);
+    (*m_reference) = max(min(lerp(m_start_state, m_target_state, progress), m_maxValue), m_minValue);
   }
 
   bool finished() 
@@ -63,11 +66,24 @@ public:
     return (*m_reference) == m_target_state; 
   }
 
+  T getTarget()
+  {
+    return m_target_state;
+  }
+
 private:
+  T lerp(T a, T b, float p)
+	{
+		return static_cast<T>(a + p * (b - a));
+	}
+
   uint32_t m_prev;
   T* m_reference;
   T m_start_state;
   T m_target_state;
   uint32_t m_duration;
-  uint32_t m_progress;
+  uint32_t m_progress_time;
+
+  T m_minValue;
+  T m_maxValue;
 };

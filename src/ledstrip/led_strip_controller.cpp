@@ -72,4 +72,14 @@ namespace LedStrip
   {
     handler.factoryReset();
   }
+
+  void setAlarm()
+  {
+    handler.setAlarm();
+  }
+
+  void disableAlarm()
+  {
+    handler.disableAlarm();
+  }
 }

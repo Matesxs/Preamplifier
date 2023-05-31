@@ -87,7 +87,14 @@ void main_screen()
 #endif
 #endif
 
-  if (AppSettingsStore::getClipDetection())
+  if (AppSettingsStore::getOverheatDetection() && TemperatureReader::maxTemp() >= AppSettingsStore::getOverheatTemperature())
+  {
+    display.setDrawColor(2);
+    display.setFont(u8g2_font_ncenB18_tr);
+    display_draw_center("High temperature!");
+    display.setDrawColor(1);
+  }
+  else if (AppSettingsStore::getClipDetection())
   {
     for (auto& val : SpectrumAnalyzer::spectrumRaw)
     {
@@ -107,8 +114,7 @@ void mute_screen()
 {
   display.setFont(u8g2_font_ncenB18_tr);
 #ifdef ENABLE_TEMPERATURE_MONITORING
-#ifdef OVERTEMPERATURE_PROTECTION
-  if (TemperatureReader::maxTemp() >= OVERTEMPERATURE_MAX_TEMP_C)
+  if (AppSettingsStore::getOverheatDetection() && TemperatureReader::maxTemp() >= AppSettingsStore::getOverheatTemperature())
   {
     display.setDrawColor(2);
     display.setFont(u8g2_font_ncenB18_tr);
@@ -119,9 +125,6 @@ void mute_screen()
   {
     display_draw_center("MUTED");
   }
-#else
-  display_draw_center("MUTED");
-#endif
 #else
   display_draw_center("MUTED");
 #endif
@@ -393,6 +396,31 @@ void settings_screensaver_use_spectrum()
 void settings_clip_detection()
 {
   draw_bool_selector("Clip Detection", AppSettingsStore::getClipDetection());
+}
+
+void settings_overheat_menu_selector(int index)
+{
+  draw_menu("Overheat detection", settings_overheat_menu_names[index].c_str());
+}
+
+void settings_overheat_detection_enable()
+{
+  draw_bool_selector("Overheat Detection", AppSettingsStore::getOverheatDetection());
+}
+
+void settings_overheat_temperature()
+{
+  draw_centered_desc_and_val("Temperature", (String(AppSettingsStore::getOverheatTemperature(), 1) + "C").c_str());
+}
+
+void settings_overheat_mute()
+{
+  draw_bool_selector("Mute on OH", AppSettingsStore::getOverheatMute());
+}
+
+void settings_overheat_blink()
+{
+  draw_bool_selector("Blink on OH", AppSettingsStore::getOverheatFlashLights());
 }
 
 void factory_reset_confirmation()

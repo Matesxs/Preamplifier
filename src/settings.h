@@ -5,8 +5,6 @@
 // Temperature
 // PS. Max number of sensors for individual values is 2!
 #define ENABLE_TEMPERATURE_MONITORING
-#define OVERTEMPERATURE_PROTECTION
-#define OVERTEMPERATURE_MAX_TEMP_C 90
 #define UPDATE_TEMP_INTERVAL_MS 5000
 // #define ONLY_MAX_TEMPERATURE
 

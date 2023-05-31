@@ -16,6 +16,7 @@
 #include "ledstrip/led_strip_controller.h"
 #include "app_settings_store.h"
 
+bool hightTempWarning = false;
 volatile Screens active_screen = Screens::MAIN_SCREEN;
 
 volatile int main_menu_index = 0;
@@ -31,6 +32,7 @@ volatile int led_strip_effect_menu_index = 0;
 volatile int led_strip_color_menu_index = 0;
 volatile int settings_menu_index = 0;
 volatile int settings_screeensaver_menu_index = 0;
+volatile int settings_overheat_menu_index = 0;
 
 void handle_controll(InputType type)
 {
@@ -1063,6 +1065,97 @@ void handle_controll(InputType type)
       }
       break;
 
+    case Screens::SETTINGS_OVERHEAT:
+      if (type == InputType::ENC_LPUSH)
+      {
+        DEBUG("Leaving overheat submenu\n");
+        active_screen = Screens::SETTINGS;
+        settings_overheat_menu_index = 0;
+      }
+      else if (type == InputType::ENC_PUSH)
+      {
+        active_screen = settings_overheat_menu_screens[settings_overheat_menu_index];
+        DEBUG("Overheat menu selected submenu: %d\n", active_screen);
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        if (settings_overheat_menu_index < (number_of_settings_overheat_menu_items - 1)) settings_overheat_menu_index++;
+        else settings_overheat_menu_index = 0;
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        if (settings_overheat_menu_index > 0) settings_overheat_menu_index--;
+        else settings_overheat_menu_index = (number_of_settings_overheat_menu_items - 1);
+      }
+      break;
+
+    case Screens::SETTINGS_OVERHEAT_ENABLE:
+      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
+      {
+        DEBUG("Leaving overheat enable submenu\n");
+        active_screen = Screens::SETTINGS_OVERHEAT;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        AppSettingsStore::toggleOverheatDetection();
+        hightTempWarning = false;
+        LedStrip::disableAlarm();
+      }
+      break;
+
+    case Screens::SETTINGS_OVERHEAT_TEMP:
+      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
+      {
+        DEBUG("Leaving overheat temperature submenu\n");
+        active_screen = Screens::SETTINGS_OVERHEAT;
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        if (AppSettingsStore::getOverheatTemperature() < 100)
+        {
+          AppSettingsStore::setOverheatTemperature(AppSettingsStore::getOverheatTemperature() + 0.5f);
+          hightTempWarning = false;
+          LedStrip::disableAlarm();
+        }
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        if (AppSettingsStore::getOverheatTemperature() > 0)
+        {
+          AppSettingsStore::setOverheatTemperature(AppSettingsStore::getOverheatTemperature() - 0.5f);
+          hightTempWarning = false;
+          LedStrip::disableAlarm();
+        }
+      }
+      break;
+
+    case Screens::SETTINGS_OVERHEAT_MUTE:
+      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
+      {
+        DEBUG("Leaving overheat mute submenu\n");
+        active_screen = Screens::SETTINGS_OVERHEAT;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        AppSettingsStore::toggleOverheatMute();
+        hightTempWarning = false;
+      }
+      break;
+
+    case Screens::SETTINGS_OVERHEAT_BLINK:
+      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
+      {
+        DEBUG("Leaving overheat blink lights submenu\n");
+        active_screen = Screens::SETTINGS_OVERHEAT;
+      }
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+      {
+        AppSettingsStore::toggleOverheatFlashLights();
+        LedStrip::disableAlarm();
+        hightTempWarning = false;
+      }
+      break;
+
     case Screens::MASTER_VOLUME:
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
       {
@@ -1197,9 +1290,10 @@ void check_timeouts()
     }
     break;
 
+  case Screens::MUTE_SCREEN:
   case Screens::SPECTRUM:
   case Screens::SCREEN_SAVER:
-    // No timeouts for screen saver
+    // No timeouts for screen saver, mute screen and spectrum
     break;
 
   // Popups timeout
@@ -1448,6 +1542,10 @@ void handle_display()
     settings_clip_detection();
     break;
 
+  case Screens::SETTINGS_OVERHEAT:
+    settings_overheat_menu_selector(settings_overheat_menu_index);
+    break;
+
   case Screens::SETTINGS_FACT_RESET:
     factory_reset_confirmation();
     break;
@@ -1466,6 +1564,24 @@ void handle_display()
     settings_screensaver_use_spectrum();
     break;
   ///////////////////////////////
+
+  // Settings overheat submenu
+  case Screens::SETTINGS_OVERHEAT_ENABLE:
+    settings_overheat_detection_enable();
+    break;
+
+  case Screens::SETTINGS_OVERHEAT_TEMP:
+    settings_overheat_temperature();
+    break;
+
+  case Screens::SETTINGS_OVERHEAT_MUTE:
+    settings_overheat_mute();
+    break;
+
+  case Screens::SETTINGS_OVERHEAT_BLINK:
+    settings_overheat_blink();
+    break;
+  ////////////////////////////
 
   // Popups
   case Screens::MASTER_VOLUME:
@@ -1502,7 +1618,6 @@ void handle_display()
   }
 }
 
-bool hightTempWarning = false;
 void display_draw_task(void*)
 {
   startStopwatch(1000000);
@@ -1510,22 +1625,39 @@ void display_draw_task(void*)
   while (true)
   {
 #ifdef ENABLE_TEMPERATURE_MONITORING
-#ifdef OVERTEMPERATURE_PROTECTION
-    if (TemperatureReader::maxTemp() >= OVERTEMPERATURE_MAX_TEMP_C)
+    if (AppSettingsStore::getOverheatDetection() && active_screen != Screens::SETTINGS_OVERHEAT && active_screen != Screens::SETTINGS_OVERHEAT_BLINK && active_screen != Screens::SETTINGS_OVERHEAT_ENABLE && active_screen != Screens::SETTINGS_OVERHEAT_MUTE && active_screen != Screens::SETTINGS_OVERHEAT_TEMP)
     {
-      if (active_screen != Screens::MUTE_SCREEN && !hightTempWarning)
+      if (TemperatureReader::maxTemp() >= AppSettingsStore::getOverheatTemperature())
       {
-        DEBUG("Too high temperature\n");
-        active_screen = Screens::MUTE_SCREEN;
-        Preamp::mute();
-        hightTempWarning = true;
+        if (!hightTempWarning)
+        {
+          if (AppSettingsStore::getOverheatMute())
+          {
+            if (active_screen != Screens::MUTE_SCREEN)
+            {
+              active_screen = Screens::MUTE_SCREEN;
+              Preamp::mute();
+            }
+          }
+
+          if (AppSettingsStore::getOverheatFlashLights())
+            LedStrip::setAlarm();
+
+          DEBUG("Too high temperature\n");
+          hightTempWarning = true;
+        }
+      }
+      else
+      {
+        if (hightTempWarning)
+        {
+          LedStrip::disableAlarm();
+
+          DEBUG("High temperature cleared\n");
+          hightTempWarning = false;
+        }
       }
     }
-    else
-    {
-      hightTempWarning = false;
-    }
-#endif
 #endif
 
     display.firstPage();

@@ -1,5 +1,6 @@
 #include "helpers.h"
 #include "settings.h"
+#include "app_settings_store.h"
 
 float mapfloat(float x, float in_min, float in_max, float out_min, float out_max)
 {
@@ -44,5 +45,5 @@ String format_string(const char *format, ...)
 
 float temperatureToHue(float temperature)
 {
-  return mapfloat(temperature, 35.0f, OVERTEMPERATURE_MAX_TEMP_C, static_cast<float>(115.0 / 360.0), static_cast<float>(0.0 / 360.0));
+  return mapfloat(temperature, 35.0f, AppSettingsStore::getOverheatTemperature(), static_cast<float>(115.0 / 360.0), static_cast<float>(0.0 / 360.0));
 }

@@ -7,6 +7,7 @@
 #include "led_state.h"
 #include "fader.h"
 #include "effects/solid_color.h"
+#include "effects/breathing.h"
 #include "effects_getter.h"
 
 class StripHandler
@@ -112,6 +113,25 @@ public:
     m_ledState.clear();
   }
 
+  void setAlarm()
+  {
+    if (!m_alarm)
+    {
+      m_targetLedStates.setFunction(new Breath({250, 2, 6}, 500));
+      m_ledFader.start(2000);
+      m_alarm = true;
+    }
+  }
+
+  void disableAlarm()
+  {
+    if (m_alarm)
+    {
+      applyEffect();
+      m_alarm = false;
+    }
+  }
+
 private:
   uint32_t m_effectIdx = 0;
   RgbColor m_currentColor;
@@ -123,4 +143,6 @@ private:
   LedState m_targetLedStates;
   Fader<LedState> m_ledFader;
   Preferences m_ledState;
+
+  bool m_alarm = false;
 };

@@ -11,6 +11,11 @@ namespace AppSettingsStore
     bool spectrumAsScreensaver;
 
     bool clip_detection;
+
+    bool overheat_detection_enabled;
+    float overheat_temperature;
+    bool overheat_mute;
+    bool overheat_flash_lights;
   } AppSettings;
 
   void init();
@@ -26,4 +31,13 @@ namespace AppSettingsStore
 
   bool getClipDetection();
   void toggleClipDetection();
+
+  bool getOverheatDetection();
+  void toggleOverheatDetection();
+  float getOverheatTemperature();
+  void setOverheatTemperature(float temperature);
+  bool getOverheatMute();
+  void toggleOverheatMute();
+  bool getOverheatFlashLights();
+  void toggleOverheatFlashLights();
 }

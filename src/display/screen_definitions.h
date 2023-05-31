@@ -92,12 +92,19 @@ typedef enum
   // Settings menu
   SETTINGS_SCREENSAVER,
   SETTINGS_CLIPPING_DETECTION,
+  SETTINGS_OVERHEAT,
   SETTINGS_FACT_RESET,
 
   // Settings screen saver submenu
   SETTINGS_SCREENSAVER_ENABLE,
   SETTINGS_SCREENSAVER_DELAY,
   SETTINGS_SCREENSAVER_SPECTRUM,
+
+  // Settings overheat detection submenu
+  SETTINGS_OVERHEAT_ENABLE,
+  SETTINGS_OVERHEAT_TEMP,
+  SETTINGS_OVERHEAT_MUTE,
+  SETTINGS_OVERHEAT_BLINK,
 } Screens;
 
 #ifdef INPUT_GAIN_POTENTIOMETER
@@ -185,25 +192,44 @@ const Screens sub_menu_screens[] = { Screens::SUB_CUTOFF_FREQ, Screens::SUB_ATT 
 const int number_of_sub_menu_items = sizeof(sub_menu_names) / sizeof(sub_menu_names[0]);
 const int sub_cutoff_freqs[] = { 0, 80, 120, 160 };
 
+
 const String soft_steps_menu_names[] = { "Step Time", "Volume", "Loudness", "Middle", "Bass", "Left Att", "Right Att", "Sub Att" };
 const Screens soft_steps_menu_screens[] = { Screens::SOFT_STEPS_TIME, Screens::SOFT_STEPS_VOLUME, Screens::SOFT_STEPS_LOUDNESS, Screens::SOFT_STEPS_MIDDLE, Screens::SOFT_STEPS_BASS, Screens::SOFT_STEPS_LEFT, Screens::SOFT_STEPS_RIGHT, Screens::SOFT_STEPS_SUB };
 const int number_of_soft_steps_menu_items = sizeof(soft_steps_menu_names) / sizeof(soft_steps_menu_names[0]);
 const float soft_step_times[] = {0.160f, 0.321f, 0.642f, 1.28f, 2.56f, 5.12f, 10.24f, 20.48f};
-
 const float soft_mute_times[] = { 0.48f, 0.96f, 123.0f };
+
 
 const String led_strip_menu_names[] = { "Effect", "Color" };
 const Screens led_strip_menu_screens[] = { Screens::LED_STRIP_EFFECT, Screens::LED_STRIP_COLOR };
 const int number_of_led_strip_menu_items = sizeof(led_strip_menu_names) / sizeof(led_strip_menu_names[0]);
+
 const String led_strip_effect_menu_names[] = { "Off", "Solid", "Temperature", "Wave", "Breathing", "KITT", "Spectrum", "Spectrum Temp", "Volume Bars", "Volume Bars Temp" };
 const int number_of_led_strip_effect_menu_items = sizeof(led_strip_effect_menu_names) / sizeof(led_strip_effect_menu_names[0]);
+
 const String led_strip_color_menu_names[] = { "Red", "Green", "Blue", "Brightness" };
 const Screens led_strip_color_menu_screens[] = { Screens::LED_STRIP_COLOR_RED, Screens::LED_STRIP_COLOR_GREEN, Screens::LED_STRIP_COLOR_BLUE, Screens::LED_STRIP_COLOR_BRIGHTNESS };
 const int number_of_led_strip_color_menu_items = sizeof(led_strip_color_menu_names) / sizeof(led_strip_color_menu_names[0]);
 
-const String settings_menu_names[] = { "Screensaver", "Clip Detection", "Factory Reset" };
-const Screens settings_menu_screens[] = { Screens::SETTINGS_SCREENSAVER, Screens::SETTINGS_CLIPPING_DETECTION, Screens::SETTINGS_FACT_RESET };
+
+#ifdef ENABLE_TEMPERATURE_MONITORING
+  const String settings_menu_names[] = { "Screensaver", "Clip Detection", "Overheat Detection", "Factory Reset" };
+  const Screens settings_menu_screens[] = { Screens::SETTINGS_SCREENSAVER, Screens::SETTINGS_CLIPPING_DETECTION, Screens::SETTINGS_OVERHEAT, Screens::SETTINGS_FACT_RESET };
+#else
+  const String settings_menu_names[] = { "Screensaver", "Clip Detection", "Factory Reset" };
+  const Screens settings_menu_screens[] = { Screens::SETTINGS_SCREENSAVER, Screens::SETTINGS_CLIPPING_DETECTION, Screens::SETTINGS_FACT_RESET };
+#endif
 const int number_of_settings_menu_items = sizeof(settings_menu_names) / sizeof(settings_menu_names[0]);
+
 const String settings_screensaver_menu_names[] = { "Enable", "Delay", "Use spectrum" };
 const Screens settings_screensaver_menu_screens[] = { Screens::SETTINGS_SCREENSAVER_ENABLE, Screens::SETTINGS_SCREENSAVER_DELAY, Screens::SETTINGS_SCREENSAVER_SPECTRUM };
 const int number_of_settings_screensaver_menu_items = sizeof(settings_screensaver_menu_names) / sizeof(settings_screensaver_menu_names[0]);
+
+#ifdef ENABLE_LED_STRIP
+  const String settings_overheat_menu_names[] = { "Enable", "Temperature", "Mute on OH", "Blink on OH" };
+  const Screens settings_overheat_menu_screens[] = { Screens::SETTINGS_OVERHEAT_ENABLE, Screens::SETTINGS_OVERHEAT_TEMP, Screens::SETTINGS_OVERHEAT_MUTE, Screens::SETTINGS_OVERHEAT_BLINK };
+#else
+  const String settings_overheat_menu_names[] = { "Enable", "Temperature", "Mute on OH" };
+  const Screens settings_overheat_menu_screens[] = { Screens::SETTINGS_OVERHEAT_ENABLE, Screens::SETTINGS_OVERHEAT_TEMP, Screens::SETTINGS_OVERHEAT_MUTE };
+#endif
+const int number_of_settings_overheat_menu_items = sizeof(settings_overheat_menu_names) / sizeof(settings_overheat_menu_names[0]);

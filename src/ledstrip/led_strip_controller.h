@@ -17,4 +17,6 @@ namespace LedStrip
   uint32_t getEffectIdx();
   void setEffectIdx(uint32_t effectIdx);
   void factoryReset();
+  void setAlarm();
+  void disableAlarm();
 }
