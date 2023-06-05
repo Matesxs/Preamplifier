@@ -6,7 +6,7 @@
 
 U8G2_SH1122_256X64_F_4W_HW_SPI display(U8G2_R0, DISPLAY_CS_PIN, DISPLAY_DATA_COMMAND_PIN, DISPLAY_RESET_PIN);
 
-void prepare_display()
+void prepare_display(uint8_t brightness)
 {
   display.begin();
   display.setBusClock(20000000);
@@ -19,6 +19,7 @@ void prepare_display()
   display.setFontMode(1);
   display.setFontPosTop();
   display.setFontDirection(0);
+  display.setContrast(brightness);
 }
 
 void display_draw_center(const char* text, uint16_t y)

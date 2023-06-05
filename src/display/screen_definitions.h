@@ -93,6 +93,7 @@ typedef enum
   SETTINGS_SCREENSAVER,
   SETTINGS_CLIPPING_DETECTION,
   SETTINGS_OVERHEAT,
+  SETTINGS_BRIGHTNESS,
   SETTINGS_FACT_RESET,
 
   // Settings screen saver submenu
@@ -102,7 +103,6 @@ typedef enum
 
   // Settings overheat detection submenu
   SETTINGS_OVERHEAT_ENABLE,
-  SETTINGS_OVERHEAT_TEMP,
   SETTINGS_OVERHEAT_MUTE,
   SETTINGS_OVERHEAT_BLINK,
 } Screens;
@@ -110,37 +110,37 @@ typedef enum
 #ifdef INPUT_GAIN_POTENTIOMETER
   #ifndef INPUT_SWITCH_IN_MENU
     #ifdef ENABLE_LED_STRIP
-      const String main_menu_names[] = { "Spectrum", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "LED Strip", "Settings" };
-      const Screens main_menu_index_to_screen[] = { Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::LED_STRIP, Screens::SETTINGS };
+      const String main_menu_names[] = { "Spectrum", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "LED Strip", "Settings", "Turn off Screen" };
+      const Screens main_menu_index_to_screen[] = { Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::LED_STRIP, Screens::SETTINGS, Screens::SCREEN_SAVER };
     #else
-      const String main_menu_names[] = { "Spectrum", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Settings" };
-      const Screens main_menu_index_to_screen[] = { Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::SETTINGS };
+      const String main_menu_names[] = { "Spectrum", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Settings", "Turn off Screen" };
+      const Screens main_menu_index_to_screen[] = { Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::SETTINGS, Screens::SCREEN_SAVER };
     #endif
   #else
     #ifdef ENABLE_LED_STRIP
-      const String main_menu_names[] = { "Input", "Spectrum", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "LED Strip", "Settings" };
-      const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::LED_STRIP, Screens::SETTINGS };
+      const String main_menu_names[] = { "Input", "Spectrum", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "LED Strip", "Settings", "Turn off Screen" };
+      const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::LED_STRIP, Screens::SETTINGS, Screens::SCREEN_SAVER };
     #else
-      const String main_menu_names[] = { "Input", "Spectrum", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Settings" };
-      const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::SETTINGS };
+      const String main_menu_names[] = { "Input", "Spectrum", "Loudness", "Balance", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Settings", "Turn off Screen" };
+      const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::SETTINGS, Screens::SCREEN_SAVER };
     #endif
   #endif
 #else
   #ifndef INPUT_SWITCH_IN_MENU
     #ifdef ENABLE_LED_STRIP
-      const String main_menu_names[] = { "Spectrum", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "LED Strip", "Settings" };
-      const Screens main_menu_index_to_screen[] = {Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::LED_STRIP, Screens::SETTINGS };
+      const String main_menu_names[] = { "Spectrum", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "LED Strip", "Settings", "Turn off Screen" };
+      const Screens main_menu_index_to_screen[] = {Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::LED_STRIP, Screens::SETTINGS, Screens::SCREEN_SAVER };
     #else
-      const String main_menu_names[] = { "Spectrum", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Settings" };
-      const Screens main_menu_index_to_screen[] = {Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::SETTINGS };
+      const String main_menu_names[] = { "Spectrum", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Settings", "Turn off Screen" };
+      const Screens main_menu_index_to_screen[] = {Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::SETTINGS, Screens::SCREEN_SAVER };
     #endif
   #else
     #ifdef ENABLE_LED_STRIP
-      const String main_menu_names[] = { "Input", "Spectrum", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "LED Strip", "Settings" };
-      const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::LED_STRIP, Screens::SETTINGS };
+      const String main_menu_names[] = { "Input", "Spectrum", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "LED Strip", "Settings", "Turn off Screen" };
+      const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::LED_STRIP, Screens::SETTINGS, Screens::SCREEN_SAVER };
     #else
-      const String main_menu_names[] = { "Input", "Spectrum", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Settings" };
-      const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::SETTINGS };
+      const String main_menu_names[] = { "Input", "Spectrum", "Loudness", "Balance", "Input Gain", "Bass Filter", "Middle Filter", "Treble Filter", "Subwoofer", "Soft Steps", "Soft Mute Time", "Settings", "Turn off Screen" };
+      const Screens main_menu_index_to_screen[] = { Screens::INPUT_SWITCH, Screens::SPECTRUM, Screens::LOUDNESS, Screens::ATTENUATION, Screens::INPUT_GAIN, Screens::BASS_FILTER, Screens::MIDDLE_FILTER, Screens::TREBLE_FILTER, Screens::SUBWOOFER, Screens::SOFT_STEPS, Screens::SOFT_MUTE_TIME, Screens::SETTINGS, Screens::SCREEN_SAVER };
     #endif
   #endif
 #endif
@@ -213,11 +213,11 @@ const int number_of_led_strip_color_menu_items = sizeof(led_strip_color_menu_nam
 
 
 #ifdef ENABLE_TEMPERATURE_MONITORING
-  const String settings_menu_names[] = { "Screensaver", "Clip Detection", "Overheat Detection", "Factory Reset" };
-  const Screens settings_menu_screens[] = { Screens::SETTINGS_SCREENSAVER, Screens::SETTINGS_CLIPPING_DETECTION, Screens::SETTINGS_OVERHEAT, Screens::SETTINGS_FACT_RESET };
+  const String settings_menu_names[] = { "Screen Saver", "Clip Detection", "Overheat Detection", "Brightness", "Factory Reset" };
+  const Screens settings_menu_screens[] = { Screens::SETTINGS_SCREENSAVER, Screens::SETTINGS_CLIPPING_DETECTION, Screens::SETTINGS_OVERHEAT, Screens::SETTINGS_BRIGHTNESS, Screens::SETTINGS_FACT_RESET };
 #else
-  const String settings_menu_names[] = { "Screensaver", "Clip Detection", "Factory Reset" };
-  const Screens settings_menu_screens[] = { Screens::SETTINGS_SCREENSAVER, Screens::SETTINGS_CLIPPING_DETECTION, Screens::SETTINGS_FACT_RESET };
+  const String settings_menu_names[] = { "Screen Saver", "Clip Detection", "Brightness", "Factory Reset" };
+  const Screens settings_menu_screens[] = { Screens::SETTINGS_SCREENSAVER, Screens::SETTINGS_CLIPPING_DETECTION, Screens::SETTINGS_BRIGHTNESS, Screens::SETTINGS_FACT_RESET };
 #endif
 const int number_of_settings_menu_items = sizeof(settings_menu_names) / sizeof(settings_menu_names[0]);
 
@@ -226,10 +226,10 @@ const Screens settings_screensaver_menu_screens[] = { Screens::SETTINGS_SCREENSA
 const int number_of_settings_screensaver_menu_items = sizeof(settings_screensaver_menu_names) / sizeof(settings_screensaver_menu_names[0]);
 
 #ifdef ENABLE_LED_STRIP
-  const String settings_overheat_menu_names[] = { "Enable", "Temperature", "Mute on OH", "Blink on OH" };
-  const Screens settings_overheat_menu_screens[] = { Screens::SETTINGS_OVERHEAT_ENABLE, Screens::SETTINGS_OVERHEAT_TEMP, Screens::SETTINGS_OVERHEAT_MUTE, Screens::SETTINGS_OVERHEAT_BLINK };
+  const String settings_overheat_menu_names[] = { "Enable", "Mute on OH", "Blink on OH" };
+  const Screens settings_overheat_menu_screens[] = { Screens::SETTINGS_OVERHEAT_ENABLE, Screens::SETTINGS_OVERHEAT_MUTE, Screens::SETTINGS_OVERHEAT_BLINK };
 #else
-  const String settings_overheat_menu_names[] = { "Enable", "Temperature", "Mute on OH" };
-  const Screens settings_overheat_menu_screens[] = { Screens::SETTINGS_OVERHEAT_ENABLE, Screens::SETTINGS_OVERHEAT_TEMP, Screens::SETTINGS_OVERHEAT_MUTE };
+  const String settings_overheat_menu_names[] = { "Enable", "Mute on OH" };
+  const Screens settings_overheat_menu_screens[] = { Screens::SETTINGS_OVERHEAT_ENABLE, Screens::SETTINGS_OVERHEAT_MUTE };
 #endif
 const int number_of_settings_overheat_menu_items = sizeof(settings_overheat_menu_names) / sizeof(settings_overheat_menu_names[0]);

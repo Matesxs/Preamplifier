@@ -2,7 +2,7 @@
 
 #include <NeoPixelBus.h>
 
-#include "lerper.h"
+#include "time_lerper.h"
 #include "base_effect.h"
 #include "ledstrip/led_state.h"
 

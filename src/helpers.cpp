@@ -1,6 +1,7 @@
 #include "helpers.h"
 #include "settings.h"
 #include "app_settings_store.h"
+#include "interpolator.h"
 
 float mapfloat(float x, float in_min, float in_max, float out_min, float out_max)
 {
@@ -43,7 +44,8 @@ String format_string(const char *format, ...)
   return String(temp);
 }
 
+PointInterpolator<float, float, sizeof(temperatureToHueMapping) / sizeof(temperatureToHueMapping[0])>hueIntepolator(temperatureToHueMapping);
 float temperatureToHue(float temperature)
 {
-  return mapfloat(temperature, 35.0f, AppSettingsStore::getOverheatTemperature(), static_cast<float>(115.0 / 360.0), static_cast<float>(0.0 / 360.0));
+  return max(0.0f, min(1.0f, hueIntepolator.Get(temperature)));
 }

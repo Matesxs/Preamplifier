@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-void prepare_display();
+void prepare_display(uint8_t brightness);
 
 void display_draw_center(const char* text, uint16_t y);
 void display_draw_center(const char* text);

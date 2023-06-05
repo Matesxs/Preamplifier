@@ -45,7 +45,7 @@ void setup()
 
   Preamp::init(&Wire);
 
-  prepare_display();
+  prepare_display(AppSettingsStore::getDisplayBrightness());
 
   InputHandling::init();
   PotentiometerHandling::init();

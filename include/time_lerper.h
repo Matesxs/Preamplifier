@@ -3,10 +3,10 @@
 #include <Arduino.h>
 
 template<class T>
-class Lerper
+class TimeLerper
 {
 public:
-  Lerper() :
+  TimeLerper() :
     m_reference(NULL),
     m_start_state(0),
     m_target_state(0),
@@ -26,15 +26,15 @@ public:
 
   void set(T target, uint32_t duration, T ref_overwrite)
   {
-    set(target, duration);
     (*m_reference) = ref_overwrite;
+    set(target, duration);
   }
 
   void set(T target, uint32_t duration)
   {
     if (m_reference == NULL) return;
 
-    m_start_state = *m_reference;
+    m_start_state = (*m_reference);
     m_target_state = target;
     m_duration = duration;
     m_progress_time = 0;

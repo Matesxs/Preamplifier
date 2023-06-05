@@ -87,7 +87,7 @@ void main_screen()
 #endif
 #endif
 
-  if (AppSettingsStore::getOverheatDetection() && TemperatureReader::maxTemp() >= AppSettingsStore::getOverheatTemperature())
+  if (AppSettingsStore::getOverheatDetection() && TemperatureReader::maxTemp() >= OVERHEAT_TEMPERATURE)
   {
     display.setDrawColor(2);
     display.setFont(u8g2_font_ncenB18_tr);
@@ -114,7 +114,7 @@ void mute_screen()
 {
   display.setFont(u8g2_font_ncenB18_tr);
 #ifdef ENABLE_TEMPERATURE_MONITORING
-  if (AppSettingsStore::getOverheatDetection() && TemperatureReader::maxTemp() >= AppSettingsStore::getOverheatTemperature())
+  if (AppSettingsStore::getOverheatDetection() && TemperatureReader::maxTemp() >= OVERHEAT_TEMPERATURE)
   {
     display.setDrawColor(2);
     display.setFont(u8g2_font_ncenB18_tr);
@@ -181,7 +181,7 @@ void loudness_menu_selector(int index)
 
 void loudness_att_settings()
 {
-  draw_amount_selector("Attenuation", Preamp::getLoudnessAttenuation(), 0, 15);
+  draw_amount_selector("Attenuation", Preamp::getLoudnessAttenuation(), -15, 0);
 }
 
 void loudness_center_freq_settings()
@@ -408,11 +408,6 @@ void settings_overheat_detection_enable()
   draw_bool_selector("Overheat Detection", AppSettingsStore::getOverheatDetection());
 }
 
-void settings_overheat_temperature()
-{
-  draw_centered_desc_and_val("Temperature", (String(AppSettingsStore::getOverheatTemperature(), 1) + "C").c_str());
-}
-
 void settings_overheat_mute()
 {
   draw_bool_selector("Mute on OH", AppSettingsStore::getOverheatMute());
@@ -421,6 +416,11 @@ void settings_overheat_mute()
 void settings_overheat_blink()
 {
   draw_bool_selector("Blink on OH", AppSettingsStore::getOverheatFlashLights());
+}
+
+void settings_brightness()
+{
+  draw_amount_selector("Brightness", static_cast<int>(AppSettingsStore::getDisplayBrightness()), 0, 255);
 }
 
 void factory_reset_confirmation()

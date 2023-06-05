@@ -76,7 +76,7 @@ namespace Preamp
     m_controller.setFilter_Middle(m_middleFilter.gain, m_middleFilter.qfactor, m_middleFilter.soft_step);
     m_controller.setFilter_Bass(m_bassFilter.gain, m_bassFilter.qfactor, m_bassFilter.soft_step);
     m_controller.setSub_M_B(m_freqSettings.sub_cutoff_freq, m_freqSettings.mid_center_freq, m_freqSettings.bass_center_freq, m_freqSettings.bass_dc, PREAMP_SMOOTHING_FILTER);
-    m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+    m_controller.setAtt_loudness(-m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
     m_controller.setAtt_LF(m_attenuation.att_lf, m_attenuation.soft_steps_lf);
     m_controller.setAtt_RF(m_attenuation.att_rf, m_attenuation.soft_steps_rf);
     m_controller.setAtt_SUB(m_attenuation.att_sub, m_attenuation.soft_steps_sub);
@@ -211,31 +211,31 @@ namespace Preamp
 
   void setLoudnessAttenuation(int val)
   {
-    if (val < 0) val = 0;
-    if (val > 15) val = 15;
+    if (val < -15) val = -15;
+    if (val > 0) val = 0;
     if (val == m_loudnessSettings.attenuation) return;
 
     m_loudnessSettings.attenuation = val;
     m_loudnessSettingsChanged = true;
-    m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+    m_controller.setAtt_loudness(-m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
   }
 
   void incLoudnessAttenuation()
   {
-    if (m_loudnessSettings.attenuation >= 15) return;
+    if (m_loudnessSettings.attenuation >= 0) return;
 
     m_loudnessSettings.attenuation++;
     m_loudnessSettingsChanged = true;
-    m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+    m_controller.setAtt_loudness(-m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
   }
 
   void decLoudnessAttenuation()
   {
-    if (m_loudnessSettings.attenuation <= 0) return;
+    if (m_loudnessSettings.attenuation <= -15) return;
 
     m_loudnessSettings.attenuation--;
     m_loudnessSettingsChanged = true;
-    m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+    m_controller.setAtt_loudness(-m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
   }
 
   int getLoudnessCenterFreq() { return m_loudnessSettings.center_freq; }
@@ -248,7 +248,7 @@ namespace Preamp
 
     m_loudnessSettings.center_freq = val;
     m_loudnessSettingsChanged = true;
-    m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+    m_controller.setAtt_loudness(-m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
   }
 
   void incLoudnessCenterFreq()
@@ -257,7 +257,7 @@ namespace Preamp
 
     m_loudnessSettings.center_freq++;
     m_loudnessSettingsChanged = true;
-    m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+    m_controller.setAtt_loudness(-m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
   }
 
   void decLoudnessCenterFreq()
@@ -266,7 +266,7 @@ namespace Preamp
 
     m_loudnessSettings.center_freq--;
     m_loudnessSettingsChanged = true;
-    m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+    m_controller.setAtt_loudness(-m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
   }
 
   int getLoudnessHighBoost() { return !m_loudnessSettings.high_boost; }
@@ -279,14 +279,14 @@ namespace Preamp
 
     m_loudnessSettings.high_boost = !val;
     m_loudnessSettingsChanged = true;
-    m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+    m_controller.setAtt_loudness(-m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
   }
 
   void switchLoudnessHighBoost()
   {
     m_loudnessSettings.high_boost = !m_loudnessSettings.high_boost;
     m_loudnessSettingsChanged = true;
-    m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+    m_controller.setAtt_loudness(-m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
   }
 
   int getLoudnessSoftStep() { return !m_loudnessSettings.soft_step; }
@@ -299,14 +299,14 @@ namespace Preamp
 
     m_loudnessSettings.soft_step = !val;
     m_loudnessSettingsChanged = true;
-    m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+    m_controller.setAtt_loudness(-m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
   }
 
   void switchLoudnessSoftStep()
   {
     m_loudnessSettings.soft_step = !m_loudnessSettings.soft_step;
     m_loudnessSettingsChanged = true;
-    m_controller.setAtt_loudness(m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
+    m_controller.setAtt_loudness(-m_loudnessSettings.attenuation, m_loudnessSettings.center_freq, m_loudnessSettings.high_boost, m_loudnessSettings.soft_step);
   }
 
   int getVolume() { return m_volumeSettings.volume; }

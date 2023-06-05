@@ -8,7 +8,7 @@
 #include "ledstrip/led_state.h"
 #include "io_handling/spectrum_analyzer.h"
 #include "io_handling/temperature_reader.h"
-#include "lerper.h"
+#include "time_lerper.h"
 #include "settings.h"
 #include "helpers.h"
 
@@ -63,7 +63,7 @@ public:
 
 private:
   uint8_t m_brightness;
-  Lerper<float> m_lerper;
+  TimeLerper<float> m_lerper;
   float m_lerpProgress;
   float m_targetTemperature;
   RgbColor m_targetColor = {0, 0, 0};
@@ -111,7 +111,7 @@ public:
 private:
   uint8_t m_brightness;
   Interpolator<uint16_t, SA_BANDS_NUMBER, LED_SEGMENT_COUNT> m_interpolator;
-  Lerper<float> m_lerper;
+  TimeLerper<float> m_lerper;
   float m_lerpProgress;
   float m_targetTemperature;
   RgbColor m_targetColor = {0, 0, 0};

@@ -2,7 +2,7 @@
 
 #include <NeoPixelBus.h>
 
-#include "lerper.h"
+#include "time_lerper.h"
 #include "base_effect.h"
 #include "ledstrip/led_state.h"
 #include "debug.h"
@@ -47,6 +47,6 @@ public:
 
 private:
   uint32_t m_duration;
-  Lerper<uint8_t> m_lerper;
+  TimeLerper<uint8_t> m_lerper;
   uint8_t m_lerpProgress;
 };

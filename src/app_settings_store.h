@@ -13,9 +13,10 @@ namespace AppSettingsStore
     bool clip_detection;
 
     bool overheat_detection_enabled;
-    float overheat_temperature;
     bool overheat_mute;
     bool overheat_flash_lights;
+
+    uint8_t display_brightness;
   } AppSettings;
 
   void init();
@@ -34,10 +35,12 @@ namespace AppSettingsStore
 
   bool getOverheatDetection();
   void toggleOverheatDetection();
-  float getOverheatTemperature();
-  void setOverheatTemperature(float temperature);
   bool getOverheatMute();
   void toggleOverheatMute();
   bool getOverheatFlashLights();
   void toggleOverheatFlashLights();
+
+  uint8_t getDisplayBrightness();
+  void incDisplayBrightness();
+  void decDisplayBrightness();
 }

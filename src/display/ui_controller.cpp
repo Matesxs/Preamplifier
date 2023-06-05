@@ -34,8 +34,12 @@ volatile int settings_menu_index = 0;
 volatile int settings_screeensaver_menu_index = 0;
 volatile int settings_overheat_menu_index = 0;
 
+SemaphoreHandle_t handleControlSemaphore = xSemaphoreCreateMutex();
+
 void handle_controll(InputType type)
 {
+  xSemaphoreTake(handleControlSemaphore, portMAX_DELAY);
+
   // DEBUG("Received controll signal %d\n", type);
 
   if (type == InputType::POT1_CH)
@@ -1036,6 +1040,24 @@ void handle_controll(InputType type)
       }
       break;
 
+    case Screens::SETTINGS_BRIGHTNESS:
+      if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
+      {
+        DEBUG("Returning to settings\n");
+        active_screen = Screens::SETTINGS;
+      }
+      else if (type == InputType::ENC_CW)
+      {
+        AppSettingsStore::incDisplayBrightness();
+        display.setContrast(AppSettingsStore::getDisplayBrightness());
+      }
+      else if (type == InputType::ENC_CCW)
+      {
+        AppSettingsStore::decDisplayBrightness();
+        display.setContrast(AppSettingsStore::getDisplayBrightness());
+      }
+      break;
+
     case Screens::SETTINGS_FACT_RESET:
       if (type == InputType::ENC_PUSH)
       {
@@ -1100,32 +1122,6 @@ void handle_controll(InputType type)
         AppSettingsStore::toggleOverheatDetection();
         hightTempWarning = false;
         LedStrip::disableAlarm();
-      }
-      break;
-
-    case Screens::SETTINGS_OVERHEAT_TEMP:
-      if (type == InputType::ENC_LPUSH || type == InputType::ENC_PUSH)
-      {
-        DEBUG("Leaving overheat temperature submenu\n");
-        active_screen = Screens::SETTINGS_OVERHEAT;
-      }
-      else if (type == InputType::ENC_CW)
-      {
-        if (AppSettingsStore::getOverheatTemperature() < 100)
-        {
-          AppSettingsStore::setOverheatTemperature(AppSettingsStore::getOverheatTemperature() + 0.5f);
-          hightTempWarning = false;
-          LedStrip::disableAlarm();
-        }
-      }
-      else if (type == InputType::ENC_CCW)
-      {
-        if (AppSettingsStore::getOverheatTemperature() > 0)
-        {
-          AppSettingsStore::setOverheatTemperature(AppSettingsStore::getOverheatTemperature() - 0.5f);
-          hightTempWarning = false;
-          LedStrip::disableAlarm();
-        }
       }
       break;
 
@@ -1265,6 +1261,8 @@ void handle_controll(InputType type)
       break;
     }
   }
+
+  xSemaphoreGive(handleControlSemaphore);
 }
 
 void check_timeouts()
@@ -1546,6 +1544,10 @@ void handle_display()
     settings_overheat_menu_selector(settings_overheat_menu_index);
     break;
 
+  case Screens::SETTINGS_BRIGHTNESS:
+    settings_brightness();
+    break;
+
   case Screens::SETTINGS_FACT_RESET:
     factory_reset_confirmation();
     break;
@@ -1568,10 +1570,6 @@ void handle_display()
   // Settings overheat submenu
   case Screens::SETTINGS_OVERHEAT_ENABLE:
     settings_overheat_detection_enable();
-    break;
-
-  case Screens::SETTINGS_OVERHEAT_TEMP:
-    settings_overheat_temperature();
     break;
 
   case Screens::SETTINGS_OVERHEAT_MUTE:
@@ -1625,9 +1623,9 @@ void display_draw_task(void*)
   while (true)
   {
 #ifdef ENABLE_TEMPERATURE_MONITORING
-    if (AppSettingsStore::getOverheatDetection() && active_screen != Screens::SETTINGS_OVERHEAT && active_screen != Screens::SETTINGS_OVERHEAT_BLINK && active_screen != Screens::SETTINGS_OVERHEAT_ENABLE && active_screen != Screens::SETTINGS_OVERHEAT_MUTE && active_screen != Screens::SETTINGS_OVERHEAT_TEMP)
+    if (AppSettingsStore::getOverheatDetection() && active_screen != Screens::SETTINGS_OVERHEAT && active_screen != Screens::SETTINGS_OVERHEAT_BLINK && active_screen != Screens::SETTINGS_OVERHEAT_ENABLE && active_screen != Screens::SETTINGS_OVERHEAT_MUTE)
     {
-      if (TemperatureReader::maxTemp() >= AppSettingsStore::getOverheatTemperature())
+      if (TemperatureReader::maxTemp() >= OVERHEAT_TEMPERATURE)
       {
         if (!hightTempWarning)
         {

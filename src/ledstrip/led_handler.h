@@ -47,17 +47,20 @@ public:
 
   void applyEffect()
   {
-    BaseEffect* effect = effectFromData(m_effectIdx, m_currentColor.Dim(m_brightness), m_brightness);
-    if (effect == NULL)
+    if (!m_alarm)
     {
-      effect = new SolidColor({0, 0, 0});
-      m_currentColor = {0, 0, 0};
-      m_brightness = 255;
-      m_effectIdx = 0;
-    }
+      BaseEffect* effect = effectFromData(m_effectIdx, m_currentColor.Dim(m_brightness), m_brightness);
+      if (effect == NULL)
+      {
+        effect = new SolidColor({0, 0, 0});
+        m_currentColor = {0, 0, 0};
+        m_brightness = 255;
+        m_effectIdx = 0;
+      }
 
-    m_targetLedStates.setFunction(effect);
-    m_ledFader.start(2000);
+      m_targetLedStates.setFunction(effect);
+      m_ledFader.start(2000);
+    }
 
     m_ledState.putULong("eff_id", m_effectIdx);
     m_ledState.putUChar("cr", m_currentColor.R);

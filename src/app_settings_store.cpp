@@ -10,6 +10,7 @@ namespace AppSettingsStore
   volatile bool screensaver_dirty = false;
   volatile bool clip_detection_dirty = false;
   volatile bool overheat_dirty = false;
+  volatile bool display_dirty = false;
 
   void init()
   {
@@ -22,9 +23,10 @@ namespace AppSettingsStore
     settings.clip_detection = settingsStore.getBool("cd", false);
 
     settings.overheat_detection_enabled = settingsStore.getBool("ode", true);
-    settings.overheat_temperature = settingsStore.getFloat("odt", 90.0f);
     settings.overheat_mute = settingsStore.getBool("odm", true);
     settings.overheat_flash_lights = settingsStore.getBool("odfl", true);
+
+    settings.display_brightness = settingsStore.getUChar("disp_br", 255);
   }
 
   void save()
@@ -48,11 +50,17 @@ namespace AppSettingsStore
     if (overheat_dirty)
     {
       settingsStore.putBool("ode", settings.overheat_detection_enabled);
-      settingsStore.putFloat("odt", settings.overheat_temperature);
       settingsStore.putBool("odm", settings.overheat_mute);
       settingsStore.putBool("odfl", settings.overheat_flash_lights);
 
       overheat_dirty = false;
+    }
+
+    if (display_dirty)
+    {
+      settingsStore.putUChar("disp_br", settings.display_brightness);
+
+      display_dirty = false;
     }
   }
 
@@ -117,17 +125,6 @@ namespace AppSettingsStore
     overheat_dirty = true;
   }
 
-  float getOverheatTemperature()
-  {
-    return settings.overheat_temperature;
-  }
-
-  void setOverheatTemperature(float temperature)
-  {
-    settings.overheat_temperature = temperature;
-    overheat_dirty = true;
-  }
-
   bool getOverheatMute()
   {
     return settings.overheat_mute;
@@ -148,5 +145,28 @@ namespace AppSettingsStore
   {
     settings.overheat_flash_lights = !settings.overheat_flash_lights;
     overheat_dirty = true;
+  }
+
+  uint8_t getDisplayBrightness()
+  {
+    return settings.display_brightness;
+  }
+
+  void incDisplayBrightness()
+  {
+    if (settings.display_brightness < 255)
+    {
+      settings.display_brightness++;
+      display_dirty = true;
+    }
+  }
+
+  void decDisplayBrightness()
+  {
+    if (settings.display_brightness > 0)
+    {
+      settings.display_brightness--;
+      display_dirty = true;
+    }
   }
 }

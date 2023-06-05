@@ -5,7 +5,7 @@
 #include "base_effect.h"
 #include "io_handling/temperature_reader.h"
 #include "ledstrip/led_state.h"
-#include "lerper.h"
+#include "time_lerper.h"
 #include "settings.h"
 #include "helpers.h"
 
@@ -44,7 +44,7 @@ public:
 
 private:
   uint8_t m_brightness;
-  Lerper<float> m_lerper;
+  TimeLerper<float> m_lerper;
   float m_lerpProgress;
   float m_targetTemperature;
   RgbColor m_targetColor = {0, 0, 0};

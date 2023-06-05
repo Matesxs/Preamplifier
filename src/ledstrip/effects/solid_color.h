@@ -2,7 +2,6 @@
 
 #include <NeoPixelBus.h>
 
-#include "lerper.h"
 #include "base_effect.h"
 #include "ledstrip/led_state.h"
 

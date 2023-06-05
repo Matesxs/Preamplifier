@@ -69,7 +69,7 @@ void settings_screensaver_use_spectrum();
 void settings_clip_detection();
 void settings_overheat_menu_selector(int index);
 void settings_overheat_detection_enable();
-void settings_overheat_temperature();
 void settings_overheat_mute();
 void settings_overheat_blink();
+void settings_brightness();
 void factory_reset_confirmation();

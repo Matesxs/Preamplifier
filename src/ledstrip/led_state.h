@@ -81,7 +81,7 @@ public:
   {
     for(int i = 0; i < count; i++)
     {
-      RgbColor targetColor(RgbColor::LinearBlend(values[i], to.values[i], static_cast<uint8_t>(prog * 255)));
+      RgbColor targetColor(RgbColor::LinearBlend(values[i], to.values[i], static_cast<uint8_t>(prog * 255.0)));
       if (pixels.GetPixelColor(i) != targetColor)
         pixels.SetPixelColor(i, targetColor);
     }
