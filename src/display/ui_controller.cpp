@@ -46,69 +46,37 @@ void handle_controll(InputType type)
   {
     // DEBUG("POT1 val: %d\n", PotentiometerHandling::values[0]);
 
-    int newGain = (int)map(PotentiometerHandling::values[0], POT_MIN_VAL, POT_MAX_VAL, -15, 15);
-    int settingDiff = abs(newGain - Preamp::getTrebleGain());
-
-    if ((settingDiff >= POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP && active_screen != Screens::TREBLE_GAIN) ||
-        (settingDiff > 0 && active_screen == Screens::TREBLE_GAIN))
-    {
-      DEBUG("Mapped treble gain: %d\n", newGain);
-      restartStopwatch();
+    restartStopwatch();
       
-      active_screen = Screens::TREBLE_GAIN;
-      Preamp::setTrebleGain(newGain);
-    }
+    active_screen = Screens::TREBLE_GAIN;
+    Preamp::setTrebleGain(PotentiometerHandling::values[0]);
   }
   else if (type == InputType::POT2_CH)
   {
     // DEBUG("POT2 val: %d\n", PotentiometerHandling::values[1]);
 
-    int newGain = (int)map(PotentiometerHandling::values[1], POT_MIN_VAL, POT_MAX_VAL, -15, 15);
-    int settingDiff = abs(newGain - Preamp::getMiddleGain());
-
-    if ((settingDiff >= POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP && active_screen != Screens::MIDDLE_GAIN) ||
-        (settingDiff > 0 && active_screen == Screens::MIDDLE_GAIN))
-    {
-      DEBUG("Mapped middle gain: %d\n", newGain);
-      restartStopwatch();
+    restartStopwatch();
       
-      active_screen = Screens::MIDDLE_GAIN;
-      Preamp::setMiddleGain(newGain);
-    }
+    active_screen = Screens::MIDDLE_GAIN;
+    Preamp::setMiddleGain(PotentiometerHandling::values[1]);
   }
   else if (type == InputType::POT3_CH)
   {
     // DEBUG("POT3 val: %d\n", PotentiometerHandling::values[2]);
 
-    int newGain = (int)map(PotentiometerHandling::values[2], POT_MIN_VAL, POT_MAX_VAL, -15, 15);
-    int settingDiff = abs(newGain - Preamp::getBassGain());
-
-    if ((settingDiff >= POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP && active_screen != Screens::BASS_GAIN) ||
-        (settingDiff > 0 && active_screen == Screens::BASS_GAIN))
-    {
-      DEBUG("Mapped bass gain: %d\n", newGain);
-      restartStopwatch();
+    restartStopwatch();
       
-      active_screen = Screens::BASS_GAIN;
-      Preamp::setBassGain(newGain);
-    }
+    active_screen = Screens::BASS_GAIN;
+    Preamp::setBassGain(PotentiometerHandling::values[2]);
   }
   else if (type == InputType::POT4_CH)
   {
     // DEBUG("POT4 val: %d\n", PotentiometerHandling::values[3]);
 
-    int newInputGain = (int)map(PotentiometerHandling::values[3], POT_MIN_VAL, POT_MAX_VAL, 0, 15);
-    int settingDiff = abs(newInputGain - Preamp::getInputGain());
-
-    if ((settingDiff >= POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP && active_screen != Screens::INPUT_GAIN) ||
-        (settingDiff > 0 && active_screen == Screens::INPUT_GAIN))
-    {
-      DEBUG("Mapped input gain: %d\n", newInputGain);
-      restartStopwatch();
+    restartStopwatch();
       
-      active_screen = Screens::INPUT_GAIN;
-      Preamp::setInputGain(newInputGain);
-    }
+    active_screen = Screens::INPUT_GAIN;
+    Preamp::setInputGain(PotentiometerHandling::values[3]);
   }
   else if (type == InputType::CH_SW_PUSH)
   {

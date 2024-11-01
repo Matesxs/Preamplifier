@@ -50,14 +50,12 @@ const int number_of_channels = max((int)(sizeof(input_mapping) / sizeof(input_ma
 
 #define POT_MIN_VAL 70
 #define POT_MAX_VAL 4025
-#define POT_FILTER_SAMPLES 8 // 2, 4, 8, 16, 32, 64 ...
+#define POT_FILTER_SAMPLES 4 // 2, 4, 8, 16, 32, 64 ...
 #define BASS_GAIN_POTENTIOMETER POT1
 #define MIDDLE_GAIN_POTENTIOMETER POT2
 #define TREBLE_GAIN_POTENTIOMETER POT3
 // #define INPUT_GAIN_POTENTIOMETER POT4
 #define POTENTIOMETER_PULLING_RATE_MS 20
-#define POTENTIOMETER_MIN_CHANGE 50
-#define POTENTIOMETER_MIN_DB_CHANGE_FOR_POPUP 2
 
 // Settings saving
 #define SETTING_SAVE_INTERVAL_MS 10000

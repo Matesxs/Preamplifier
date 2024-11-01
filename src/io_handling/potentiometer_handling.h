@@ -6,7 +6,7 @@ namespace PotentiometerHandling
 {
   void init();
 
-  extern volatile uint16_t values[];
+  extern volatile int values[];
 
   void handle_potentiometer_task(void *);
 };
