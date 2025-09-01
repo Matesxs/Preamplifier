@@ -1,7 +1,11 @@
 #include "preamp.h"
 
-#include "debug.h"
-#include "pins.h"
+#include <Arduino.h>
+#include <Preferences.h>
+
+#include <TDA7419.h>
+#include <debug.h>
+
 #include "settings.h"
 
 namespace Preamp
@@ -48,11 +52,15 @@ namespace Preamp
   void init(TwoWire *wire)
   {
     wire->beginTransmission(TDA7419_address);
-    uint8_t error = wire->endTransmission();
+    const uint8_t error = wire->endTransmission();
     if (error != 0)
-      DEBUG("Failed to connect to TDA7419: %d\n", error);
+    {
+      DEBUG("Failed to connect to TDA7419 preamplifier: %d\n", error);
+    }
     else
+    {
       DEBUG("TDA7419 connected\n");
+    }
 
     m_controller = TDA7419(wire);
 

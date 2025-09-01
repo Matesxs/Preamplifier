@@ -2,16 +2,14 @@
 
 #include <Arduino.h>
 #include <esp_task_wdt.h>
-#include <stopWatch.h>
+
+#include <debug.h>
 
 #include "settings.h"
-#include "debug.h"
-#include "display_handler.h"
 #include "screens.h"
 #include "global_objects.h"
 #include "io_handling/potentiometer_handling.h"
 #include "preamp.h"
-#include "helpers.h"
 #include "io_handling/temperature_reader.h"
 #include "ledstrip/led_strip_controller.h"
 #include "app_settings_store.h"
@@ -34,9 +32,16 @@ volatile int settings_menu_index = 0;
 volatile int settings_screeensaver_menu_index = 0;
 volatile int settings_overheat_menu_index = 0;
 
+volatile unsigned long lastInteraction = 0;
+
 SemaphoreHandle_t handleControlSemaphore = xSemaphoreCreateMutex();
 
-void handle_controll(InputType type)
+void resetInteractionTimer()
+{
+  lastInteraction = millis();
+}
+
+void handle_controll(const InputType type)
 {
   xSemaphoreTake(handleControlSemaphore, portMAX_DELAY);
 
@@ -46,7 +51,7 @@ void handle_controll(InputType type)
   {
     // DEBUG("POT1 val: %d\n", PotentiometerHandling::values[0]);
 
-    restartStopwatch();
+    resetInteractionTimer();
       
     active_screen = Screens::TREBLE_GAIN;
     Preamp::setTrebleGain(PotentiometerHandling::values[0]);
@@ -55,7 +60,7 @@ void handle_controll(InputType type)
   {
     // DEBUG("POT2 val: %d\n", PotentiometerHandling::values[1]);
 
-    restartStopwatch();
+    resetInteractionTimer();
       
     active_screen = Screens::MIDDLE_GAIN;
     Preamp::setMiddleGain(PotentiometerHandling::values[1]);
@@ -64,7 +69,7 @@ void handle_controll(InputType type)
   {
     // DEBUG("POT3 val: %d\n", PotentiometerHandling::values[2]);
 
-    restartStopwatch();
+    resetInteractionTimer();
       
     active_screen = Screens::BASS_GAIN;
     Preamp::setBassGain(PotentiometerHandling::values[2]);
@@ -73,7 +78,7 @@ void handle_controll(InputType type)
   {
     // DEBUG("POT4 val: %d\n", PotentiometerHandling::values[3]);
 
-    restartStopwatch();
+    resetInteractionTimer();
       
     active_screen = Screens::INPUT_GAIN;
     Preamp::setInputGain(PotentiometerHandling::values[3]);
@@ -105,7 +110,7 @@ void handle_controll(InputType type)
   }
   else
   {
-    restartStopwatch();
+    resetInteractionTimer();
 
     switch (active_screen)
     {
@@ -1143,17 +1148,14 @@ void handle_controll(InputType type)
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
 #ifdef INPUT_GAIN_POTENTIOMETER
         active_screen = Screens::MAIN_SCREEN;
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+        active_screen = Screens::MASTER_VOLUME;
 #else
         active_screen = Screens::MAIN_MENU;
-#endif
-#ifndef INPUT_GAIN_POTENTIOMETER
       else if (type == InputType::ENC_CW)
         Preamp::incInputGain();
       else if (type == InputType::ENC_CCW)
         Preamp::decInputGain();
-#else
-      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
-        active_screen = Screens::MASTER_VOLUME;
 #endif
       break;
 
@@ -1161,17 +1163,14 @@ void handle_controll(InputType type)
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
 #ifdef TREBLE_GAIN_POTENTIOMETER
         active_screen = Screens::MAIN_SCREEN;
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+        active_screen = Screens::MASTER_VOLUME;
 #else
         active_screen = Screens::MAIN_MENU;
-#endif
-#ifndef TREBLE_GAIN_POTENTIOMETER
       else if (type == InputType::ENC_CW)
         Preamp::incTrebleGain();
       else if (type == InputType::ENC_CCW)
         Preamp::decTrebleGain();
-#else
-      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
-        active_screen = Screens::MASTER_VOLUME;
 #endif
       break;
 
@@ -1179,17 +1178,14 @@ void handle_controll(InputType type)
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
 #ifdef MIDDLE_GAIN_POTENTIOMETER
         active_screen = Screens::MAIN_SCREEN;
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+        active_screen = Screens::MASTER_VOLUME;
 #else
         active_screen = Screens::MAIN_MENU;
-#endif
-#ifndef MIDDLE_GAIN_POTENTIOMETER
       else if (type == InputType::ENC_CW)
         Preamp::incMiddleGain();
       else if (type == InputType::ENC_CCW)
         Preamp::decMiddleGain();
-#else
-      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
-        active_screen = Screens::MASTER_VOLUME;
 #endif
       break;
 
@@ -1197,17 +1193,14 @@ void handle_controll(InputType type)
       if (type == InputType::ENC_PUSH || type == InputType::ENC_LPUSH)
 #ifdef BASS_GAIN_POTENTIOMETER
         active_screen = Screens::MAIN_SCREEN;
+      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
+        active_screen = Screens::MASTER_VOLUME;
 #else
         active_screen = Screens::MAIN_MENU;
-#endif
-#ifndef BASS_GAIN_POTENTIOMETER
       else if (type == InputType::ENC_CW)
         Preamp::incBassGain();
       else if (type == InputType::ENC_CCW)
         Preamp::decBassGain();
-#else
-      else if (type == InputType::ENC_CW || type == InputType::ENC_CCW)
-        active_screen = Screens::MASTER_VOLUME;
 #endif
       break;
     ///////////////////////
@@ -1235,21 +1228,21 @@ void handle_controll(InputType type)
 
 void check_timeouts()
 {
-  unsigned long long current_stopwatch_time = getStopwatchVal();
+  const unsigned long interactionDelta = millis() - lastInteraction;
 
   switch (active_screen)
   {
   case Screens::MAIN_SCREEN:
     if (AppSettingsStore::getScreensaverEnabled())
     {
-      if (current_stopwatch_time > AppSettingsStore::getScreensaverDelay())
+      if (interactionDelta > AppSettingsStore::getScreensaverDelay())
       {
         active_screen = Screens::SCREEN_SAVER;
 
         if (!AppSettingsStore::getScreensaverSpectrum())
           display.setPowerSave(true);
         
-        restartStopwatch();
+        resetInteractionTimer();
 
         DEBUG("Screen saver: ON\n");
       }
@@ -1276,10 +1269,10 @@ void check_timeouts()
   case Screens::BASS_GAIN:
 #endif
   case Screens::MASTER_VOLUME:
-    if (current_stopwatch_time > BACK_TO_MAIN_SCREEN_POPUP_TIMEOUT_S)
+    if (interactionDelta > BACK_TO_MAIN_SCREEN_POPUP_TIMEOUT_S)
     {
       active_screen = Screens::MAIN_SCREEN;
-      restartStopwatch();
+      resetInteractionTimer();
       DEBUG("Leaving popup to main screen\n");
     }
     break;
@@ -1287,10 +1280,10 @@ void check_timeouts()
   
   // Default timeout to main screen
   default:
-    if (current_stopwatch_time > BACK_TO_MAIN_SCREEN_TIMEOUT_S)
+    if (interactionDelta > BACK_TO_MAIN_SCREEN_TIMEOUT_S)
     {
       active_screen = Screens::MAIN_SCREEN;
-      restartStopwatch();
+      resetInteractionTimer();
       DEBUG("Leaving menu to main screen\n");
     }
     break;
@@ -1584,9 +1577,9 @@ void handle_display()
   }
 }
 
-void display_draw_task(void*)
+[[noreturn]] void display_draw_task(void*)
 {
-  startStopwatch(1000000);
+  resetInteractionTimer();
 
   while (true)
   {
@@ -1635,6 +1628,4 @@ void display_draw_task(void*)
 
     vTaskDelay(pdMS_TO_TICKS(DISPLAY_UPDATE_INTERVAL_MS));
   }
-
-  vTaskDelete(NULL);
 }

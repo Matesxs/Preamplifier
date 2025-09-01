@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Arduino.h>
 #include <NeoPixelBus.h>
 #include <Preferences.h>
 
@@ -13,7 +12,7 @@
 class StripHandler
 {
 public:
-  StripHandler(uint16_t countPixels, uint8_t pin) :
+  StripHandler(const uint16_t countPixels, const uint8_t pin) :
     m_length(countPixels),
     m_strip(countPixels, pin),
     m_currentLedStates(m_strip),
@@ -50,7 +49,7 @@ public:
     if (!m_alarm)
     {
       BaseEffect* effect = effectFromData(m_effectIdx, m_currentColor.Dim(m_brightness), m_brightness);
-      if (effect == NULL)
+      if (effect == nullptr)
       {
         effect = new SolidColor({0, 0, 0});
         m_currentColor = {0, 0, 0};
@@ -69,22 +68,22 @@ public:
     m_ledState.putUChar("br", m_brightness);
   }
 
-  RgbColor getColor()
+  RgbColor getColor() const
   {
     return m_currentColor;
   }
 
-  void setColor(RgbColor color)
+  void setColor(const RgbColor color)
   {
     m_currentColor = color;
   }
 
-  uint8_t getBrightness()
+  uint8_t getBrightness() const
   {
     return m_brightness;
   }
 
-  void setBrighness(uint8_t brightness)
+  void setBrighness(const uint8_t brightness)
   {
     m_brightness = brightness;
   }
@@ -101,12 +100,12 @@ public:
     m_brightness--;
   }
 
-  uint32_t getEffectIdx()
+  uint32_t getEffectIdx() const
   {
     return m_effectIdx;
   }
 
-  void setEffectIdx(uint32_t effectIdx)
+  void setEffectIdx(const uint32_t effectIdx)
   {
     m_effectIdx = effectIdx;
   }

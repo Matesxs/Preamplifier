@@ -6,25 +6,24 @@
 #include "io_handling/temperature_reader.h"
 #include "ledstrip/led_state.h"
 #include "time_lerper.h"
-#include "settings.h"
 #include "helpers.h"
 
-class Temperature: public BaseEffect
+class Temperature final : public BaseEffect
 {
 public:
-  Temperature(uint8_t brightness = 255) :
-    m_lerpProgress(0.0),
-    m_brightness(brightness)
+  explicit Temperature(const uint8_t brightness = 255) :
+    m_brightness(brightness),
+    m_lerpProgress(0.0)
   {
-    float temperature = TemperatureReader::maxTemp();
+    const float temperature = TemperatureReader::maxTemp();
     m_targetTemperature = temperature;
     rgb = RgbColor(HslColor(temperatureToHue(temperature), 1.0, 0.5));
     m_lerper.setReference(&m_lerpProgress);
   }
 
-  virtual void render()
+  void render() override
   {
-    float temperature = TemperatureReader::maxTemp();
+    const float temperature = TemperatureReader::maxTemp();
     if (m_targetTemperature != temperature)
     {
       m_targetColor = RgbColor(HslColor(temperatureToHue(temperature), 1.0, 0.5));

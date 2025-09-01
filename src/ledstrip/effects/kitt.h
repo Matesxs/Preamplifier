@@ -5,27 +5,26 @@
 #include "base_effect.h"
 #include "ledstrip/led_state.h"
 
-class Kitt: public BaseEffect
+class Kitt final : public BaseEffect
 {
 public:
   uint16_t _counter_mode_step = 0;
   const uint8_t delay_ms = 100;
-  unsigned long last_update;
+  unsigned long last_update = 0;
 
-  Kitt()
-  {
-  }
+  Kitt() = default;
 
-  Kitt(RgbColor color) :
+  explicit Kitt(const RgbColor color) :
     BaseEffect(color)
   {
   }
 
-  virtual void render()
+  void render() override
   {
-    if (((unsigned long)millis() - last_update) >= delay_ms)
+    if ((millis() - last_update) >= delay_ms)
     {
-      for(uint16_t i=0; i < state->count; i++) {
+      for(int i=0; i < state->count; i++)
+      {
         RgbColor px_rgb = state->getColorOfPixel(i);
         px_rgb.R = px_rgb.R >> 1;
         px_rgb.G = px_rgb.G >> 1;

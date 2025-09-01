@@ -5,29 +5,28 @@
 #include "time_lerper.h"
 #include "base_effect.h"
 #include "ledstrip/led_state.h"
-#include "debug.h"
 
-class Breath: public BaseEffect
+class Breath final : public BaseEffect
 {
 public:
-  Breath(uint32_t duration=20000) :
-    m_lerpProgress(0.0),
-    m_duration(duration)
+  explicit Breath(const uint32_t duration=20000) :
+    m_duration(duration),
+    m_lerpProgress(0.0)
   {
     m_lerper.setReference(&m_lerpProgress);
     m_lerper.set(255, duration);
   }
 
-  Breath(RgbColor color, uint32_t duration=20000) :
+  explicit Breath(const RgbColor color, const uint32_t duration=20000) :
     BaseEffect(color),
-    m_lerpProgress(0.0),
-    m_duration(duration)
+    m_duration(duration),
+    m_lerpProgress(0.0)
   {
     m_lerper.setReference(&m_lerpProgress);
     m_lerper.set(255, duration);
   }
   
-  virtual void render()
+  void render() override
   {
     m_lerper.update();
 
@@ -41,8 +40,6 @@ public:
       else
         m_lerper.set(0, m_duration);
     }
-
-    DEBUG("%d\n", m_lerpProgress);
   }
 
 private:

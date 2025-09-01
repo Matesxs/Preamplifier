@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Arduino.h"
 #include <NeoPixelBus.h>
 
 #include "effects/base_effect.h"

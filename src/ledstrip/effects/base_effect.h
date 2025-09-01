@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Arduino.h>
 #include <NeoPixelBus.h>
 
 class LedState;
@@ -8,7 +7,9 @@ class LedState;
 class BaseEffect
 {  
 public:
-  LedState *state;
+  virtual ~BaseEffect() = default;
+
+  LedState *state = nullptr;
   unsigned long start;
   RgbColor rgb = {0, 0, 0};
 
@@ -17,7 +18,7 @@ public:
     start = millis();
   }
   
-  BaseEffect(RgbColor color)
+  explicit BaseEffect(const RgbColor color)
   {
     setColor(color);
     start = millis();

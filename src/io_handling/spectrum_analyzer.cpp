@@ -6,7 +6,6 @@
 
 #include "pins.h"
 #include "settings.h"
-#include "debug.h"
 
 namespace SpectrumAnalyzer
 {
@@ -40,8 +39,8 @@ namespace SpectrumAnalyzer
       ads.startSingleConversion();
       while (!ads.conversionDone())
         vTaskDelay(pdMS_TO_TICKS(1));
-    
-      uint16_t val = ads.value;
+
+      const uint16_t val = ads.value;
       spectrumRaw[i] = val;
       spectrum[i] = filters[i].add(val);
     }
@@ -50,7 +49,7 @@ namespace SpectrumAnalyzer
     vTaskDelay(pdMS_TO_TICKS(1));
   }
 
-  void updateSpectrumTask(void*)
+  [[noreturn]] void updateSpectrumTask(void*)
   {
     while (true)
     {
@@ -63,7 +62,5 @@ namespace SpectrumAnalyzer
 
       vTaskDelay(pdMS_TO_TICKS(SPECTRUM_UPDATE_INTERVAL_MS));
     }
-
-    vTaskDelete(NULL);
   }
 }

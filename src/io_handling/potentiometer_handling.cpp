@@ -1,9 +1,7 @@
 #include "potentiometer_handling.h"
 
-#include <Arduino.h>
 #include <MovingAverage.h>
 
-#include "global_objects.h"
 #include "preamp.h"
 #include "settings.h"
 #include "pins.h"
@@ -47,7 +45,7 @@ namespace PotentiometerHandling
 #endif
   }
 
-  void handle_potentiometer_task(void *)
+  [[noreturn]] void handle_potentiometer_task(void *)
   {
     int tmp;
 
@@ -111,7 +109,5 @@ namespace PotentiometerHandling
 
       vTaskDelay(pdMS_TO_TICKS(POTENTIOMETER_PULLING_RATE_MS));
     }
-
-    vTaskDelete(NULL);
   }
 };

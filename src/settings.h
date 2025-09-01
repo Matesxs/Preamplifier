@@ -17,8 +17,8 @@
 #define BACK_TO_MAIN_SCREEN_POPUP_TIMEOUT_S 5
 
 const String channel_names[] = { "1", "2", "3", "BT" }; // Need to be same length as input mapings!
-const int input_mapping[] = { 2, 3, 0, 1 }; // There must be always atlast one input! Number of channels is determined from this!
-const int number_of_channels = max((int)(sizeof(input_mapping) / sizeof(input_mapping[0])), 1);
+constexpr int input_mapping[] = { 2, 3, 0, 1 }; // There must be always atlast one input! Number of channels is determined from this!
+const int number_of_channels = max(static_cast<int>(sizeof(input_mapping) / sizeof(input_mapping[0])), 1);
 
 // Input settings
 #define ENCODER_PULLING_RATE_MS 12
@@ -73,4 +73,4 @@ const int number_of_channels = max((int)(sizeof(input_mapping) / sizeof(input_ma
 #define ENABLE_LED_STRIP
 #define LED_SEGMENT_COUNT 4
 #define EFFECTS_SPECTRUM_GAIN 2
-const std::tuple<float, float>temperatureToHueMapping[] = { {20.0f, 250.0f / 360.0f}, { 35.0f, 175.0f / 360.0f }, { 60.0f, 60.0f / 360.0f }, { OVERHEAT_TEMPERATURE, 0.0f } };
+constexpr std::tuple<float, float>temperatureToHueMapping[] = { {20.0f, 250.0f / 360.0f}, { 35.0f, 175.0f / 360.0f }, { 60.0f, 60.0f / 360.0f }, { OVERHEAT_TEMPERATURE, 0.0f } };

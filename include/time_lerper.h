@@ -7,7 +7,6 @@ class TimeLerper
 {
 public:
   TimeLerper() :
-    m_reference(NULL),
     m_start_state(0),
     m_target_state(0),
     m_duration(0),
@@ -24,15 +23,15 @@ public:
     return false;
   }
 
-  void set(T target, uint32_t duration, T ref_overwrite)
+  void set(T target, const uint32_t duration, T ref_overwrite)
   {
     (*m_reference) = ref_overwrite;
     set(target, duration);
   }
 
-  void set(T target, uint32_t duration)
+  void set(T target, const uint32_t duration)
   {
-    if (m_reference == NULL) return;
+    if (m_reference == nullptr) return;
 
     m_start_state = (*m_reference);
     m_target_state = target;
@@ -46,23 +45,23 @@ public:
 
   void update()
   {
-    uint32_t currTime = millis();
+    const uint32_t currTime = millis();
     update(currTime - m_prev);
     m_prev = currTime;
   }
 
-  void update(uint32_t ticks)
+  void update(const uint32_t ticks)
   {
-    if (m_reference == NULL) return;
+    if (m_reference == nullptr) return;
     if (finished()) return;
     m_progress_time += ticks;
-    float progress = max(min(1.0f, static_cast<float>(m_progress_time) / static_cast<float>(m_duration)), 0.0f);
+    const float progress = max(min(1.0f, static_cast<float>(m_progress_time) / static_cast<float>(m_duration)), 0.0f);
     (*m_reference) = max(min(lerp(m_start_state, m_target_state, progress), m_maxValue), m_minValue);
   }
 
   bool finished() 
   {
-    if (m_reference == NULL) return true;
+    if (m_reference == nullptr) return true;
     return (*m_reference) == m_target_state; 
   }
 
@@ -72,13 +71,13 @@ public:
   }
 
 private:
-  T lerp(T a, T b, float p)
+  static T lerp(T a, T b, float p)
 	{
 		return static_cast<T>(a + p * (b - a));
 	}
 
-  uint32_t m_prev;
-  T* m_reference;
+  uint32_t m_prev = 0;
+  T* m_reference = nullptr;
   T m_start_state;
   T m_target_state;
   uint32_t m_duration;

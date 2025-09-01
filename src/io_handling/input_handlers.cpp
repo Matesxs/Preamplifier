@@ -2,11 +2,10 @@
 
 #include <JC_Button.h>
 #include <RotaryEncoder.h>
+#include <debug.h>
 
-#include "global_objects.h"
 #include "display/ui_controller.h"
 #include "settings.h"
-#include "debug.h"
 #include "pins.h"
 #include "preamp.h"
 
@@ -47,8 +46,8 @@ namespace InputHandling
     attachInterrupt(ROT_A, update_encoder, CHANGE);
     attachInterrupt(ROT_B, update_encoder, CHANGE);
 
-    xTaskCreateUniversal(encoder_task, "enc", 2048, NULL, 1, NULL, 1);
-    xTaskCreateUniversal(buttons_task, "btns", 2048, NULL, 1, NULL, 1);
+    xTaskCreateUniversal(encoder_task, "enc", 2048, nullptr, 1, nullptr, 1);
+    xTaskCreateUniversal(buttons_task, "btns", 2048, nullptr, 1, nullptr, 1);
   }
 
   void handle_encoder_cw()
@@ -110,7 +109,7 @@ namespace InputHandling
     encoder.tick();
 
     static long pos = 0;
-    long newPos = encoder.getPosition();
+    const long newPos = encoder.getPosition();
     if (newPos != pos)
     {
       if (newPos < pos)
@@ -177,18 +176,16 @@ namespace InputHandling
 #endif
   }
 
-  void encoder_task(void*)
+  [[noreturn]] void encoder_task(void*)
   {
     while (true)
     {
       handle_encoder();
       vTaskDelay(pdMS_TO_TICKS(ENCODER_PULLING_RATE_MS));
     }
-
-    vTaskDelete(NULL);
   }
 
-  void buttons_task(void*)
+  [[noreturn]] void buttons_task(void*)
   {
     encoder_button.read();
 #ifdef CHANNEL_SWITCH_BUTTON
@@ -229,7 +226,5 @@ namespace InputHandling
 
       vTaskDelay(pdMS_TO_TICKS(BUTTONS_PULLING_RATE_MS));
     }
-
-    vTaskDelete(NULL);
   }
 };

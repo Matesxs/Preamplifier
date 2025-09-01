@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdio.h>
-#include <math.h>
 #include <algorithm>
 #include <tuple>
 
@@ -15,13 +13,13 @@ public:
 		memset(m_finalData, 0, sizeof(T) * target_size);
 	};
 
-	Interpolator(T(&source_data)[current_size])
+	explicit Interpolator(T(&source_data)[current_size])
 	{
 		SetData(source_data);
 		memset(m_finalData, 0, sizeof(T) * target_size);
 	}
 
-	Interpolator(const T(&source_data)[current_size])
+	explicit Interpolator(const T(&source_data)[current_size])
 	{
 		SetData(source_data);
 		memset(m_finalData, 0, sizeof(T) * target_size);
@@ -68,17 +66,17 @@ public:
 	}
 
 private:
-	T lerp(T a, T b, float p)
+	static T lerp(T a, T b, float p)
 	{
 		return static_cast<T>(a + p * (b - a));
 	}
 
-	T calculateValue(size_t index)
+	T calculateValue(const size_t index)
 	{
-		float rawIndex = m_stepSize * index;
-		size_t leftSrcIndex = static_cast<size_t>(rawIndex);
-		size_t rightSrcIndex = static_cast<size_t>(std::min(leftSrcIndex + 1, current_size - 1));
-		float idxDiff = rawIndex - static_cast<float>(leftSrcIndex);
+		const float rawIndex = m_stepSize * static_cast<float>(index);
+		auto leftSrcIndex = static_cast<size_t>(rawIndex);
+		size_t rightSrcIndex = std::min(leftSrcIndex + 1, current_size - 1);
+		const float idxDiff = rawIndex - static_cast<float>(leftSrcIndex);
 		return lerp(m_sourceData[leftSrcIndex], m_sourceData[rightSrcIndex], idxDiff);
 	}
 
@@ -99,12 +97,12 @@ public:
 		memset(m_sourceData, 0, sizeof(std::tuple<IT, VT>) * size);
 	};
 
-	PointInterpolator(std::tuple<IT, VT>(&source_data)[size])
+	explicit PointInterpolator(std::tuple<IT, VT>(&source_data)[size])
 	{
 		Set(source_data);
 	}
 
-	PointInterpolator(const std::tuple<IT, VT>(&source_data)[size])
+	explicit PointInterpolator(const std::tuple<IT, VT>(&source_data)[size])
 	{
 		Set(source_data);
 	}

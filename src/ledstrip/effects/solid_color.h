@@ -5,20 +5,17 @@
 #include "base_effect.h"
 #include "ledstrip/led_state.h"
 
-class SolidColor: public BaseEffect
+class SolidColor final : public BaseEffect
 {
 public:
-  SolidColor()
+  SolidColor() = default;
+
+  explicit SolidColor(const RgbColor color) :
+    BaseEffect(color)
   {
   }
 
-  SolidColor(RgbColor color) : 
-    BaseEffect(color)
-  {
-    
-  }
-  
-  virtual void render()
+  void render() override
   {
     for(int i = 0; i < state->count; i++)
       state->setRgb(i, rgb);

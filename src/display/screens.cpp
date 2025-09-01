@@ -10,7 +10,6 @@
 #include "settings.h"
 #include "io_handling/spectrum_analyzer.h"
 #include "ledstrip/led_strip_controller.h"
-#include "debug.h"
 #include "interpolator.h"
 #include "app_settings_store.h"
 
@@ -21,7 +20,7 @@ bool overtemperature = false;
 
 void push_indicator()
 {
-  uint16_t screenCenter = display.getDisplayWidth() / 2;
+  const uint16_t screenCenter = display.getDisplayWidth() / 2;
 
   if (InputHandling::longPush)
     display.drawLine(screenCenter - ENCODER_LONG_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1, screenCenter + ENCODER_LONG_PUSH_INDICATOR_LENGTH, display.getDisplayHeight() - 1);
@@ -41,8 +40,8 @@ void spectrum()
 
   for (int i = 0; i < SPECTRUM_DISPLAY_BANDS; i++)
   {
-    uint16_t avgHeight = max((uint16_t)max((uint16_t)0, min((uint16_t)map(avgInterpolatedSpectrum[i], 0, SPECTRUM_MAX_VAL, 0, display.getDisplayHeight() - 1), (uint16_t)(display.getDisplayHeight() - 1))), (uint16_t)1);
-    uint16_t rawHeight = max((uint16_t)0, min((uint16_t)map(rawInterpolatedSpectrum[i], 0, SPECTRUM_MAX_VAL, 0, display.getDisplayHeight() - 1), (uint16_t)(display.getDisplayHeight() - 1)));
+    const uint16_t avgHeight = max(max(static_cast<uint16_t>(0), min(static_cast<uint16_t>(map(avgInterpolatedSpectrum[i], 0, SPECTRUM_MAX_VAL, 0, display.getDisplayHeight() - 1)), static_cast<uint16_t>(display.getDisplayHeight() - 1))), static_cast<uint16_t>(1));
+    const uint16_t rawHeight = max(static_cast<uint16_t>(0), min(static_cast<uint16_t>(map(rawInterpolatedSpectrum[i], 0, SPECTRUM_MAX_VAL, 0, display.getDisplayHeight() - 1)), static_cast<uint16_t>(display.getDisplayHeight() - 1)));
 
     display.drawFrame(i * freqWidth, display.getDisplayHeight() - avgHeight, freqWidth, avgHeight);
 
@@ -56,11 +55,11 @@ void main_screen()
   display.setFont(u8g2_font_ncenB14_tr);
   if (number_of_channels > 1)
     display_draw_center(String(String("INPUT ") + String(channel_names[Preamp::getInput()])).c_str(), 0);
-  
-  String volumeString = String(String("VOL: ") + String(Preamp::getVolume()));
-  String gainString = String(String("GAIN: ") + String(Preamp::getInputGain()));
 
-  uint16_t bottomRowYOffset = display.getDisplayHeight() - display.getMaxCharHeight();
+  const auto volumeString = String(String("VOL: ") + String(Preamp::getVolume()));
+  const auto gainString = String(String("GAIN: ") + String(Preamp::getInputGain()));
+
+  const uint16_t bottomRowYOffset = display.getDisplayHeight() - display.getMaxCharHeight();
 
   display.setFont(u8g2_font_ncenB12_tr);
   display.drawStr(15, bottomRowYOffset, volumeString.c_str());
@@ -70,15 +69,15 @@ void main_screen()
 
 #ifdef ENABLE_TEMPERATURE_MONITORING
 #ifndef ONLY_MAX_TEMPERATURE
-  uint8_t sensor_count = TemperatureReader::getSensorCount();
+  const uint8_t sensor_count = TemperatureReader::getSensorCount();
   if (sensor_count >= 1)
   {
-    String tempStr = String(String(TemperatureReader::temperatures[0], 1) + String("C"));
+    const auto tempStr = String(String(TemperatureReader::temperatures[0], 1) + String("C"));
     display.drawStr(5, 0, tempStr.c_str());
   }
   if (sensor_count >= 2)
   {
-    String tempStr = String(String(TemperatureReader::temperatures[1], 1) + String("C"));
+    const auto tempStr = String(String(TemperatureReader::temperatures[1], 1) + String("C"));
     display.drawStr(display.getDisplayWidth() - (display.getStrWidth(tempStr.c_str()) + 5), 0, tempStr.c_str());
   }
 #else
@@ -96,7 +95,7 @@ void main_screen()
   }
   else if (AppSettingsStore::getClipDetection())
   {
-    for (auto& val : SpectrumAnalyzer::spectrumRaw)
+    for (const auto& val : SpectrumAnalyzer::spectrumRaw)
     {
       if (val >= SPECTRUM_MAX_VAL)
       {
@@ -132,14 +131,14 @@ void mute_screen()
   display.setFont(u8g2_font_ncenB10_tr);
 
 #ifdef ENABLE_TEMPERATURE_MONITORING
-  String temp1Str = String(String(TemperatureReader::temperatures[0], 1) + String("C"));
-  String temp2Str = String(String(TemperatureReader::temperatures[1], 1) + String("C"));
+  const auto temp1Str = String(String(TemperatureReader::temperatures[0], 1) + String("C"));
+  const auto temp2Str = String(String(TemperatureReader::temperatures[1], 1) + String("C"));
   display.drawStr(0, 0, temp1Str.c_str());
   display.drawStr(display.getDisplayWidth() - display.getStrWidth(temp2Str.c_str()), 0, temp2Str.c_str());
 #endif
 }
 
-void main_menu_selector(int index)
+void main_menu_selector(const int index)
 {
   draw_menu("Menu", main_menu_names[index].c_str());
 }
@@ -174,7 +173,7 @@ void input_selector()
   draw_centered_desc_and_val("Input", String(channel_names[Preamp::getInput()]).c_str());
 }
 
-void loudness_menu_selector(int index)
+void loudness_menu_selector(const int index)
 {
   draw_menu("Loudness", loudness_menu_names[index].c_str());
 }
@@ -186,8 +185,8 @@ void loudness_att_settings()
 
 void loudness_center_freq_settings()
 {
-  int loudnessCenterFreqIndex = Preamp::getLoudnessCenterFreq();
-  String stringToDisplay = loudnessCenterFreqIndex != 0 ? String(String(loudness_center_freqs[loudnessCenterFreqIndex]) + String("Hz")) : String("Flat");
+  const int loudnessCenterFreqIndex = Preamp::getLoudnessCenterFreq();
+  const String stringToDisplay = loudnessCenterFreqIndex != 0 ? String(String(loudness_center_freqs[loudnessCenterFreqIndex]) + String("Hz")) : String("Flat");
   draw_centered_desc_and_val("Center Frequency", stringToDisplay.c_str());
 }
 
@@ -196,7 +195,7 @@ void loudness_high_boost_settings()
   draw_bool_selector("High Boost", Preamp::getLoudnessHighBoost());
 }
 
-void attenuations_menu_selector(int index)
+void attenuations_menu_selector(const int index)
 {
   draw_menu("Attenuations", attenuations_menu_names[index].c_str());
 }
@@ -216,7 +215,7 @@ void attenuation_sub_setting()
   draw_amount_selector("Sub", Preamp::getSubAttenuation(), -80, 15);
 }
 
-void bass_filter_menu_selector(int index)
+void bass_filter_menu_selector(const int index)
 {
   draw_menu("Bass Filter", bass_menu_names[index].c_str());
 }
@@ -236,7 +235,7 @@ void bass_dc_settings()
   draw_bool_selector("Bass DC", Preamp::getBassDC());
 }
 
-void middle_filter_menu_selector(int index)
+void middle_filter_menu_selector(const int index)
 {
   draw_menu("Middle Filter", middle_menu_names[index].c_str());
 }
@@ -251,7 +250,7 @@ void middle_center_freq_settings()
   draw_centered_desc_and_val("Center Frequency", String(String(middle_center_freqs[Preamp::getMiddleCenterFreq()]) + String("Hz")).c_str());
 }
 
-void treble_filter_menu_selector(int index)
+void treble_filter_menu_selector(const int index)
 {
   draw_menu("Treble Filter", treble_menu_names[index].c_str());
 }
@@ -261,19 +260,19 @@ void treble_center_freq_settings()
   draw_centered_desc_and_val("Center Frequency", String(String(treble_center_freqs[Preamp::getTrebleCenterFreq()]) + String("kHz")).c_str());
 }
 
-void sub_menu_selector(int index)
+void sub_menu_selector(const int index)
 {
   draw_menu("Subwoofer", sub_menu_names[index].c_str());
 }
 
 void sub_cutoff_freq_settings()
 {
-  int freqIndex = Preamp::getSubCutoffFreq();
-  String descString = freqIndex == 0 ? String("Flat") : String(String(sub_cutoff_freqs[freqIndex]) + String("Hz"));
+  const int freqIndex = Preamp::getSubCutoffFreq();
+  const String descString = freqIndex == 0 ? String("Flat") : String(String(sub_cutoff_freqs[freqIndex]) + String("Hz"));
   draw_centered_desc_and_val("Cutoff Frequency", descString.c_str());
 }
 
-void soft_steps_menu_selector(int index)
+void soft_steps_menu_selector(const int index)
 {
   draw_menu("Soft Steps", soft_steps_menu_names[index].c_str());
 }
@@ -323,14 +322,14 @@ void soft_mute_time_settings()
   draw_centered_desc_and_val("Soft Mute Time", String(String(soft_mute_times[Preamp::getSoftMuteTime()], 2) + "ms").c_str());
 }
 
-void led_strip_menu_selector(int index)
+void led_strip_menu_selector(const int index)
 {
   draw_menu("LED Strip", led_strip_menu_names[index].c_str());
 }
 
-void led_strip_effect_menu_selector(int index)
+void led_strip_effect_menu_selector(const int index)
 {
-  uint32_t currentEffect = LedStrip::getEffectIdx();
+  const uint32_t currentEffect = LedStrip::getEffectIdx();
 
   display.setFont(u8g2_font_ncenB14_tr);
   display_draw_center("Effect", 0);
@@ -343,7 +342,7 @@ void led_strip_effect_menu_selector(int index)
   display_draw_center(led_strip_effect_menu_names[index].c_str(), display.getDisplayHeight() - display.getMaxCharHeight() - 5);
 }
 
-void led_strip_color_menu_selector(int index)
+void led_strip_color_menu_selector(const int index)
 {
   draw_menu("Color", led_strip_color_menu_names[index].c_str());
 }
@@ -368,12 +367,12 @@ void led_strip_color_brightness_settings()
   draw_amount_selector("Brightness", static_cast<int>(LedStrip::getBrightness()), 0, 255);
 }
 
-void settings_menu_selector(int index)
+void settings_menu_selector(const int index)
 {
   draw_menu("Settings", settings_menu_names[index].c_str());
 }
 
-void settings_screensaver_menu_selector(int index)
+void settings_screensaver_menu_selector(const int index)
 {
   draw_menu("Screensaver", settings_screensaver_menu_names[index].c_str());
 }
@@ -398,7 +397,7 @@ void settings_clip_detection()
   draw_bool_selector("Clip Detection", AppSettingsStore::getClipDetection());
 }
 
-void settings_overheat_menu_selector(int index)
+void settings_overheat_menu_selector(const int index)
 {
   draw_menu("Overheat detection", settings_overheat_menu_names[index].c_str());
 }

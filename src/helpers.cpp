@@ -1,51 +1,14 @@
 #include "helpers.h"
 #include "settings.h"
-#include "app_settings_store.h"
 #include "interpolator.h"
 
-float mapfloat(float x, float in_min, float in_max, float out_min, float out_max)
+float mapfloat(const float x, const float in_min, const float in_max, const float out_min, const float out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-String format_string(const char *format, ...)
-{
-  char loc_buf[64];
-  char *temp = loc_buf;
-  va_list arg;
-  va_list copy;
-
-  va_start(arg, format);
-  
-  va_copy(copy, arg);
-  int len = vsnprintf(temp, sizeof(loc_buf), format, copy);
-  va_end(copy);
-
-  if (len < 0)
-  {
-    va_end(arg);
-    return String();
-  }
-
-  if (len >= sizeof(loc_buf))
-  {
-    temp = (char *)malloc(len + 1);
-    if (temp == NULL)
-    {
-      va_end(arg);
-      return String();
-    }
-    len = vsnprintf(temp, len + 1, format, arg);
-  }
-  va_end(arg);
-
-  if (temp != loc_buf)
-    free(temp);
-  return String(temp);
-}
-
 PointInterpolator<float, float, sizeof(temperatureToHueMapping) / sizeof(temperatureToHueMapping[0])>hueIntepolator(temperatureToHueMapping);
-float temperatureToHue(float temperature)
+float temperatureToHue(const float temperature)
 {
   return max(0.0f, min(1.0f, hueIntepolator.Get(temperature)));
 }

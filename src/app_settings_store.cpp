@@ -86,7 +86,7 @@ namespace AppSettingsStore
     return settings.screensaverDelay;
   }
 
-  void setScreensaverDelay(uint64_t ssdelay)
+  void setScreensaverDelay(const uint64_t ssdelay)
   {
     settings.screensaverDelay = ssdelay;
     screensaver_dirty = true;

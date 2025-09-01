@@ -19,7 +19,7 @@ public:
     m_lerper.setReference(&m_progres);
   }
 
-  bool start(uint32_t duration)
+  bool start(const uint32_t duration)
   {
     m_lerper.set(1.0, duration, 0.0);
     return true;

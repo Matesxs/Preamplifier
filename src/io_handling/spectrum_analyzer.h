@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Arduino.h>
 #include <Wire.h>
 
 namespace SpectrumAnalyzer
@@ -12,7 +11,7 @@ namespace SpectrumAnalyzer
 
   void init(TwoWire *wire);
   void updateSpectrum();
-  void updateSpectrumTask(void*);
+  [[noreturn]] void updateSpectrumTask(void*);
 
   extern uint16_t spectrum[SA_BANDS_NUMBER];
   extern uint16_t spectrumRaw[SA_BANDS_NUMBER];

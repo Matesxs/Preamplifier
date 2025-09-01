@@ -6,16 +6,16 @@
 
 #define MAX_LED_COUNT 100
 
-class LedState
+class LedState final
 {
 public:
   RgbColor values[MAX_LED_COUNT] = {{0, 0, 0}};
   int count = 0;
   bool dirty = false;
   NeoPixelBus<NeoBrgFeature, NeoWs2811Method> &pixels;
-  BaseEffect *function = 0;
+  BaseEffect *function = nullptr;
   
-  LedState(NeoPixelBus<NeoBrgFeature, NeoWs2811Method> &ledPixels)
+  explicit LedState(NeoPixelBus<NeoBrgFeature, NeoWs2811Method> &ledPixels)
   :pixels(ledPixels)
   {
     count = pixels.PixelCount();
@@ -23,15 +23,15 @@ public:
 
   void setFunction(BaseEffect *newFunction)
   {
-    if(function)
-      delete function;
+    delete function;
     function = newFunction;
+
     if(!function)
       return;
     function->state = this;
   }
 
-  void setRgb(int i, uint8_t r, uint8_t g, uint8_t b)
+  void setRgb(const int i, const uint8_t r, const uint8_t g, const uint8_t b)
   {
     values[i][0] = r;
     values[i][1] = g;
@@ -39,18 +39,18 @@ public:
     dirty = true;
   }
 
-  void setRgb(int i, RgbColor color)
+  void setRgb(const int i, const RgbColor color)
   {
     values[i] = color;
     dirty = true;
   }
 
-  RgbColor getColorOfPixel(int index)
+  RgbColor getColorOfPixel(const int index) const
   {
     return pixels.GetPixelColor(index);
   }
 
-  virtual void render()
+  void render() const
   {
     if(function)
       function->render();
@@ -62,7 +62,7 @@ public:
       for(int j = 0; j < 3; j++)
         values[i][j] = to.values[i][j];
     setFunction(to.function);
-    to.function = 0;
+    to.function = nullptr;
     dirty = true;
   }
 
@@ -77,7 +77,7 @@ public:
     dirty = false;
   }
 
-  void fade(LedState &to, double prog)
+  void fade(const LedState &to, const double prog)
   {
     for(int i = 0; i < count; i++)
     {

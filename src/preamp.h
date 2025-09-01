@@ -1,10 +1,6 @@
 #pragma once
 
-#include <Arduino.h>
-#include <Preferences.h>
 #include <Wire.h>
-
-#include "TDA7419.h"
 
 // Input
 #define PREAMP_INPUT_AUTO_Z 1              // 0 - 1 (on, off)

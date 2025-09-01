@@ -8,19 +8,19 @@ namespace LedStrip
 {
   StripHandler handler(LED_SEGMENT_COUNT, LED_STRIP_PIN);
 
-  void led_strips_task(void *)
+  [[noreturn]] void led_strips_task(void *)
   {
     while (true)
     {
       handler.render();
-      vTaskDelay(10);
+      vTaskDelay(pdMS_TO_TICKS(1));
     }
   }
 
   void begin()
   {
     handler.begin();
-    xTaskCreateUniversal(led_strips_task, "led_strips", 2048, NULL, 1, NULL, 1);
+    xTaskCreateUniversal(led_strips_task, "led_strips", 2048, nullptr, 1, nullptr, 1);
   }
 
   void applyEffect()
@@ -33,7 +33,7 @@ namespace LedStrip
     return handler.getColor();
   }
 
-  void setColor(RgbColor color)
+  void setColor(const RgbColor color)
   {
     handler.setColor(color);
   }
@@ -43,7 +43,7 @@ namespace LedStrip
     return handler.getBrightness();
   }
 
-  void setBrightness(uint8_t brightness)
+  void setBrightness(const uint8_t brightness)
   {
     handler.setBrighness(brightness);
   }
@@ -63,7 +63,7 @@ namespace LedStrip
     return handler.getEffectIdx();
   }
 
-  void setEffectIdx(uint32_t effectIdx)
+  void setEffectIdx(const uint32_t effectIdx)
   {
     handler.setEffectIdx(effectIdx);
   }
