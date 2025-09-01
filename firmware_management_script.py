@@ -13,7 +13,7 @@ standard_bin = "firmware.bin"
 merged_bin = "firmware-merged.bin"
 
 
-def merge_bin_action(source, target, env):
+def create_binaries(source, target, env):
   flash_images = [
     *env.Flatten(env.get("FLASH_EXTRA_IMAGES", [])),
     "$ESP32_APP_OFFSET",
@@ -37,26 +37,15 @@ def merge_bin_action(source, target, env):
       *flash_images,
     ]
   )
+
+  copyfile(source[0].get_abspath(), standard_bin)
   env.Execute(merge_cmd)
 
-def copy_standard_firmware(source, target, env):
-  copyfile(source[0].get_abspath(), standard_bin)
-
-
 env.AddCustomTarget(
-  name="mergebin",
+  name="create-binaries",
   dependencies=firmware_build_bin,
-  actions=merge_bin_action,
-  title="Merge binary",
-  description="Build combined image",
-  always_build=True,
-)
-
-env.AddCustomTarget(
-  name="copybin",
-  dependencies=firmware_build_bin,
-  actions=copy_standard_firmware,
-  title="Copy firmware",
-  description="Copy firmware to root directory",
+  actions=create_binaries,
+  title="Create binaries",
+  description="Build firmware images",
   always_build=True,
 )
